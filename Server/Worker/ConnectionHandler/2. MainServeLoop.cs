@@ -15,30 +15,18 @@ namespace Server
             {
                 if (!GetHeader(connection, out String header)) return;
 
-                switch (header.Split(' ')[1].ToLower())
+                String[] path = header.Split(' ')[1].ToLower().Split(['/'], 3);
+
+                if (path[1] == "filesharing")
                 {
-                    case "/":
-                        HTML.LandingPage(connection);
-                        return;
-
-                    case "/favicon.ico":
-                        connection.Send(HTML.HTML_STATIC.FaviconResponse, 0, HTML.HTML_STATIC.FaviconResponse.Length, SocketFlags.None);
-                        CloseConnection(connection);
-                        return;
-
-                    case "/filesharing":
-                        LoginPageLoop(connection);
-                        return;
-
-                    case "/datacollection":
-                        HTML.DataCollection(connection);
-                        return;
-
-                    default:
-                        Log.FastLog($"Resource not found: {header.Split(' ')[1].ToLower()}", LogSeverity.Info, "Worker");
-                        connection.Send(HTML.HTML_STATIC._404_response, 0, HTML.HTML_STATIC._404_response.Length, SocketFlags.None);
-                        CloseConnection(connection);
-                        return;
+                    CloseConnection(connection, true);waergergrgg
+                    return;
+                }
+                else
+                {
+                    Log.FastLog($"Resource not found: {header.Split(' ')[1].ToLower()}", LogSeverity.Info, "Worker");
+                    HTML.STATIC.Send_404(connection);
+                    return;
                 }
             }
             catch (SocketException exception)
@@ -49,6 +37,7 @@ namespace Server
             catch (Exception exception)
             {
                 Log.FastLog($"An unknown error occurred and was caught in MainServeLoop():\n{exception.Message}", LogSeverity.Error, "Worker");
+                CloseConnection(connection, true);
                 return;
             }
         }

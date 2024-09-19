@@ -42,7 +42,7 @@ namespace Server
 
                     try
                     {
-                        connection.Send(HTML.HTML_STATIC._429_response, 0, HTML.HTML_STATIC._429_response.Length, SocketFlags.None);
+                        connection.Send(HTML.STATIC._429_response, 0, HTML.STATIC._429_response.Length, SocketFlags.None);
                         CloseConnection(connection);
                     }
                     catch { }   

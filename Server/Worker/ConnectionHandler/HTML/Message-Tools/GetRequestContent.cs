@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using System.Text;
 
+#pragma warning disable CS8625
+
 namespace Server
 {
     internal static partial class Worker
@@ -14,7 +16,7 @@ namespace Server
 
             if (!success)
             {
-                connection.Send(HTML.HTML_STATIC._400_response, 0, HTML.HTML_STATIC._400_response.Length, SocketFlags.None);
+                connection.Send(HTML.STATIC._400_response, 0, HTML.STATIC._400_response.Length, SocketFlags.None);
                 CloseConnection(connection);
 
                 content = null;

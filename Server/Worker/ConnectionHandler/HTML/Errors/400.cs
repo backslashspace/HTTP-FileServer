@@ -4,12 +4,12 @@ namespace Server
 {
     internal static partial class HTML
     {
-        internal static partial class HTML_STATIC
+        internal static partial class STATIC
         {
             /// <summary>Bad Request</summary>
-            internal static Byte[] _400_response;
+            internal static readonly Byte[] _400_response;
 
-            private static readonly String _400_body =
+            private const String _400_body =
     @"<!DOCTYPE html>
 <html>
 

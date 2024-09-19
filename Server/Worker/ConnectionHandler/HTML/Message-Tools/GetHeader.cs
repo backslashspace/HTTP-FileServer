@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
+#pragma warning disable CS8619
+
 namespace Server
 {
     internal static partial class Worker
@@ -14,11 +16,11 @@ namespace Server
 
             if (!success)
             {
-                if (wasHeaderError) Log.FastLog("Unable to parse request header, sending 431 and closing connection", LogSeverity.Error, "ReceiveRequestHeader()");
+                if (wasHeaderError) Log.FastLog("Unable to parse request header, sending 431", LogSeverity.Error, "ReceiveRequestHeader()");
 
                 try
                 {
-                    if (wasHeaderError) connection.Send(HTML.HTML_STATIC._431_response, 0, HTML.HTML_STATIC._431_response.Length, SocketFlags.None);
+                    if (wasHeaderError) connection.Send(HTML.STATIC._431_response, 0, HTML.STATIC._431_response.Length, SocketFlags.None);
                 }
                 catch { }
 

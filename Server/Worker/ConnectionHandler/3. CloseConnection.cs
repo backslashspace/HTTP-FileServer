@@ -7,19 +7,32 @@ namespace Server
 {
     internal static partial class Worker
     {
-        internal static void CloseConnection(Socket connection)
+        internal static void CloseConnection(Socket connection, Boolean fastClose = false)
         {
             if (connection == null)
             {
                 xDebug.WriteLine("CloseConnection() => socket was null");
                 return;
             }
+
+            connection.ReceiveTimeout = 384;
+
+            if (fastClose)
+            {
+                try
+                {
+                    connection.Close(1);
+                }
+                catch { }
+
+                connection = null;
+
+                return;
+            }
             
-
-            Byte[] buffer = new Byte[1];
-
             try
             {
+                Byte[] buffer = new Byte[1];
                 if (connection.Receive(buffer, 0, 1, SocketFlags.None) == 0)
                 {
                     connection.Shutdown(SocketShutdown.Both);
@@ -27,11 +40,21 @@ namespace Server
                 }
                 else
                 {
-                    connection.Close(1);
+                    try
+                    {
+                        connection.Close(1);
+                    }
+                    catch { }
                 }
             }
             catch
-            { }
+            {
+                try
+                {
+                    connection.Close(1);
+                }
+                catch { }
+            }
 
             connection = null;
         }

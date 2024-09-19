@@ -77,22 +77,17 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Worker\ConnectionHandler\3. CloseConnection.cs" />
-    <Compile Include="Worker\ConnectionHandler\GetHeader.cs" />
-    <Compile Include="Worker\ConnectionHandler\GetRequestContent.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Dynamic\DataCollection.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Dynamic\LandingPage.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Dynamic\LoginPage.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\FileSharing\LoginPageLoop.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Static\Errors\400.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Static\Errors\404.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Static\Errors\431.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Errors\400.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Errors\404.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Errors\429.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Errors\431.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Errors\InitializeErrors.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Errors\SendError.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetHeader.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetRequestContent.cs" />
     <Compile Include="Worker\ConnectionHandler\1. AcceptConnection - Main Loop.cs" />
     <Compile Include="Worker\ConnectionHandler\2. MainServeLoop.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\ConstructHttpResponse.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Static\Errors\429.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Static\Errors\InitializeErrors.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Static\favicon.cs" />
-    <Compile Include="Worker\ConnectionHandler\html\Static\StaticCtor.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\ConstructHttpResponse.cs" />
     <Compile Include="Worker\InitializeWorker.cs" />
     <Compile Include="Worker\Logging\Interface.cs" />
     <Compile Include="Worker\Logging\LogMessage.cs" />

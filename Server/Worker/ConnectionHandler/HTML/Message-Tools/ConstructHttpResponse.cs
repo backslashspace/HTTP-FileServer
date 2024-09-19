@@ -9,22 +9,6 @@ namespace Server
 {
     internal static partial class HTML
     {
-        private const String KEEP_ALIVE_HEADER = "Connection: Keep-Alive\r\nKeep-Alive: timeout=1800, max=63072000\r\n";
-        private const String CLOSE_CONNECTION_HEADER = "Connection: close\r\n";
-
-        private const String DEFAULT_HEADERS =
-                        "X-Frame-Options: DENY\r\n" +
-                        "Referrer-Policy: no-referrer-when-downgrade\r\n" +
-                        "X-Content-Type-Options: nosniff\r\n" +
-                        "Permissions-Policy: camera=(), display-capture=(), fullscreen=(self), geolocation=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), speaker-selection=()\r\n" +
-                        "Cache-Control: private\r\n" +
-                        "Cross-Origin-Embedder-Policy: require-corp\r\n" +
-                        "Cross-Origin-Opener-Policy: same-origin\r\n" +
-                        "Access-Control-Allow-Methods: GET, POST\r\n" +
-                        "Cross-Origin-Resource-Policy: same-site\r\n" +
-                        "Server: Improvised-Explosive\r\n" +
-                        "\r\n";
-
         private enum ContentType : UInt16
         {
             /// <summary>application/octet-stream</summary>
@@ -59,13 +43,10 @@ namespace Server
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
         
-        private static ValueTuple<Byte[], Boolean> CraftHeader(ResponseType responseType, ContentType contentType, Int64 contentLength, Boolean keepAlive, String[] arguments)
+        private static ValueTuple<Byte[], Boolean> CraftHeader(ResponseType responseType, ContentType contentType, Int64 contentLength, String[] arguments)
         {
-            keepAlive = false;
-
             String header = null;
             String contentTypeHeader = null;
-            String connectionHeader = keepAlive ? KEEP_ALIVE_HEADER : CLOSE_CONNECTION_HEADER;
 
             switch (contentType)
             {
@@ -93,9 +74,7 @@ namespace Server
                 case ResponseType.HTTP_200:
                     header = "HTTP/1.1 200 OK\r\n" +
                         contentTypeHeader +
-                        connectionHeader +
-                        $"Content-length: {contentLength}\r\n" +
-                        DEFAULT_HEADERS;
+                        $"Content-length: {contentLength}\r\n\r\n";
                     break;
 
                 case ResponseType.HTTP_307:
@@ -103,10 +82,7 @@ namespace Server
                     if (arguments.Length > 3 && arguments[3].Length > 0)
                     {
                         header = "HTTP/1.1 307 Temporary Redirect\r\n" +
-                        $"Location: {arguments[3]}\r\n" +
-                        contentTypeHeader +
-                        connectionHeader +
-                        DEFAULT_HEADERS;
+                        $"Location: {arguments[3]}\r\n\r\n";
                     }
                     else return (null, false);
                     break;
@@ -114,33 +90,26 @@ namespace Server
                 case ResponseType.HTTP_400:
                     header = "HTTP/1.1 400 Bad Request\r\n" +
                         contentTypeHeader +
-                        connectionHeader +
-                        $"Content-length: {contentLength}" +
-                        DEFAULT_HEADERS;
+                        $"Content-length: {contentLength}\r\n\r\n";
                     break;
 
                 case ResponseType.HTTP_404:
                     header = "HTTP/1.1 404 Not Found\r\n" +
                         contentTypeHeader +
-                        connectionHeader +
-                        $"Content-length: {contentLength}\r\n" +
-                        DEFAULT_HEADERS;
+                        $"Content-length: {contentLength}\r\n\r\n";
                     break;
 
                 case ResponseType.HTTP_429:
                     header = "HTTP/1.1 429 Too Many Requests\r\n" +
                         contentTypeHeader +
                         "Retry-After: 300\r\n" +
-                        $"Content-length: {contentLength}\r\n" +
-                        DEFAULT_HEADERS;
+                        $"Content-length: {contentLength}\r\n\r\n";
                     break;
 
                 case ResponseType.HTTP_431:
                     header = "HTTP/1.1 431 Request Header Fields Too Large\r\n" +
                         contentTypeHeader +
-                        connectionHeader +
-                        $"Content-length: {contentLength}\r\n" +
-                        DEFAULT_HEADERS;
+                        $"Content-length: {contentLength}\r\n\r\n";
                     break;
             }
 

@@ -27,7 +27,7 @@ namespace Server
 
             ThreadPoolFast.Initialize(maximumConcurrentConnections);
             
-            if (!HTML.HTML_STATIC.IsInitialized)
+            if (!HTML.STATIC.IsInitialized)
             {
                 Log.FastLog("HTTP_ERRORS not initialized", LogSeverity.Info, "Init()");
                 Environment.Exit(-1);
@@ -91,16 +91,16 @@ namespace Server
                 Environment.Exit(-1);
             }
 
-            try
-            {
-                SetSocketKeepAlive(listener);
-                Log.FastLog($"Successfully enabled socket keep-alive: 15000, 1000", LogSeverity.Info, "Init->Socket");
-            }
-            catch
-            {
-                Log.FastLog($"Failed to enable socket keep-alive", LogSeverity.Error, "Init->Socket");
-                Environment.Exit(-1);
-            }
+            //try
+            //{
+            //    SetSocketKeepAlive(listener);
+            //    Log.FastLog($"Successfully enabled socket keep-alive: 15000, 1000", LogSeverity.Info, "Init->Socket");
+            //}
+            //catch
+            //{
+            //    Log.FastLog($"Failed to enable socket keep-alive", LogSeverity.Error, "Init->Socket");
+            //    Environment.Exit(-1);
+            //}
 
             return listener;
         }

@@ -4,12 +4,12 @@ namespace Server
 {
     internal static partial class HTML
     {
-        internal static partial class HTML_STATIC
+        internal static partial class STATIC
         {
-            /// <summary>Too Many Requests - Connection: close</summary>
-            internal static Byte[] _429_response;
+            /// <summary>Too Many Requests</summary>
+            internal static readonly Byte[] _429_response;
 
-            private static readonly String _429_body =
+            private const String _429_body =
     @"<!DOCTYPE html>
 <html>
 
