@@ -61,6 +61,8 @@ namespace Server
         
         private static ValueTuple<Byte[], Boolean> CraftHeader(ResponseType responseType, ContentType contentType, Int64 contentLength, Boolean keepAlive, String[] arguments)
         {
+            keepAlive = false;
+
             String header = null;
             String contentTypeHeader = null;
             String connectionHeader = keepAlive ? KEEP_ALIVE_HEADER : CLOSE_CONNECTION_HEADER;
