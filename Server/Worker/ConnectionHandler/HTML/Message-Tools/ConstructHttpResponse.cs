@@ -25,7 +25,7 @@ namespace Server
 
         private enum ResponseType : UInt16
         {
-            /// <summary>OK</summary>
+            /// <summary>OK - arg[1] can be set cookie name | arg2 can be the cookie value | for 5 min</summary>
             HTTP_200 = 200,
 
             /// <summary>Temporary Redirect - arg[3] must be location</summary>
@@ -33,6 +33,8 @@ namespace Server
 
             /// <summary>Bad Request</summary>
             HTTP_400 = 400,
+            /// <summary>Unauthorized</summary>
+            HTTP_401 = 401,
             /// <summary>Not Found</summary>
             HTTP_404 = 404,
             /// <summary>Too Many Requests</summary>
@@ -72,9 +74,20 @@ namespace Server
             switch (responseType)
             {
                 case ResponseType.HTTP_200:
-                    header = "HTTP/1.1 200 OK\r\n" +
+                    // cookie will be set
+                    if (arguments != null && arguments.Length > 2 && arguments[1] != null && arguments[2] != null)
+                    {
+                        header = "HTTP/1.1 200 OK\r\n" +
+                        $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; SameSite=Strict; Max-Age=300\r\n" +
                         contentTypeHeader +
                         $"Content-length: {contentLength}\r\n\r\n";
+                    }
+                    else
+                    {
+                        header = "HTTP/1.1 200 OK\r\n" +
+                        contentTypeHeader +
+                        $"Content-length: {contentLength}\r\n\r\n";
+                    }
                     break;
 
                 case ResponseType.HTTP_307:
@@ -89,6 +102,12 @@ namespace Server
 
                 case ResponseType.HTTP_400:
                     header = "HTTP/1.1 400 Bad Request\r\n" +
+                        contentTypeHeader +
+                        $"Content-length: {contentLength}\r\n\r\n";
+                    break;
+
+                case ResponseType.HTTP_401:
+                    header = "HTTP/1.1 401 Unauthorized\r\n" +
                         contentTypeHeader +
                         $"Content-length: {contentLength}\r\n\r\n";
                     break;

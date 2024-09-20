@@ -13,6 +13,13 @@ namespace Server
                 Worker.CloseConnection(connection);
             }
 
+            /// <summary>Unauthorized</summary>
+            internal static void Send_401(Socket connection)
+            {
+                connection.Send(_401_response, 0, _401_response.Length, SocketFlags.None);
+                Worker.CloseConnection(connection);
+            }
+
             /// <summary>Not Found</summary>
             internal static void Send_404(Socket connection)
             {

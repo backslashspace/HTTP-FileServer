@@ -19,7 +19,8 @@ namespace Server
 
                 if (path[1] == "filesharing")
                 {
-                    CloseConnection(connection, true);waergergrgg
+                    if (path.Length < 3) Login(connection, header);
+                    else ValidateLogin(connection, header);
                     return;
                 }
                 else

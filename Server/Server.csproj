@@ -7,7 +7,7 @@
     <ProjectGuid>{B4ED84B9-4C1E-4E53-B0A6-4B384944E6A6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Server</RootNamespace>
-    <AssemblyName>Server</AssemblyName>
+    <AssemblyName>Http-FileServer</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
@@ -77,6 +77,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Worker\ConnectionHandler\3. CloseConnection.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\PostLoginHandler.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\SendLoginPage.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\Login.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Errors\401.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\400.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\404.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\429.cs" />
@@ -110,7 +114,6 @@
     <Content Include="App\shell32_241.ico" />
     <None Include="bin\Debug\html\fileSharing\login.html" />
     <None Include="bin\Debug\html\dataCollection.html" />
-    <None Include="bin\Debug\html\favicon.ico" />
     <None Include="bin\Debug\html\landingPage.html" />
   </ItemGroup>
   <ItemGroup>
