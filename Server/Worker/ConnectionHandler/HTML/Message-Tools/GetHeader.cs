@@ -34,7 +34,7 @@ namespace Server
             return true;
         }
 
-        // todo: verify header to long request
+        // todo: verify header to long request - faster parse
         private static ValueTuple<String, Boolean, Boolean> ReceiveRequestHeader(Socket connection)
         {
             _receiveBuffer = new Byte[2048];

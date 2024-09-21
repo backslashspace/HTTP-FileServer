@@ -15,12 +15,12 @@ namespace Server
             {
                 if (!GetHeader(connection, out String header)) return;
 
-                String[] path = header.Split(' ')[1].ToLower().Split(['/'], 3);
+                String[] path = header.Split(' ')[1].ToLower().Split(['/'], 3, StringSplitOptions.RemoveEmptyEntries);
 
-                if (path[1] == "filesharing")
+                if (path.Length != 0 && path[0] == "filesharing")
                 {
                     if (path.Length < 3) Login(connection, header);
-                    else ValidateLogin(connection, header);
+                    else ValidateCookie(connection, header);
                     return;
                 }
                 else

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
 
 namespace Server
@@ -7,9 +8,22 @@ namespace Server
     {
         private static void Login(Socket connection, String header)
         {
+            
+
+
+
+
             switch (GetRequestMethode(header))
             {
                 case RequestMethode.GET:
+
+                    String token = GetTokenCookieValue(header);
+
+                    if (token != null)
+                    {
+                        ValidateToken(token, GetClientIP(header));
+                    }
+
                     HTML.SendLoginPage(connection);
                     return;
 
@@ -27,50 +41,25 @@ namespace Server
         {
             if (GetContent(header, connection, out String content))
             {
-                
+                IPAddress ip = GetClientIP(header);
             }
-
-
-            HTML.STATIC.Send_401(connection);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public enum RequestMethode : UInt16
-        {
-            Invalid = 0,
-            GET = 1,
-            POST = 2
-        }
-
-        private static RequestMethode GetRequestMethode(String header)
-        {
-            if (header == null || header.Length < 8) return RequestMethode.Invalid;
-
-            if (header[0] == 'G' || header[0] == 'g')
+            else
             {
-                return RequestMethode.GET;
+                HTML.STATIC.Send_401(connection);
             }
-            if ((header[0] == 'P' || header[0] == 'p') && (header[1] == 'O' || header[1] == 'o'))
-            {
-                return RequestMethode.POST;
-            }
-
-            return RequestMethode.Invalid;
         }
 
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+
+        private static Boolean ValidateToken(String token, IPAddress clientIP)
+        {
+            if (!SessionState.Cookies.TryGetValue(token, out SessionState.CookieInfo cookieInfo)) return false;
+
+            if (cookieInfo.ExpiresOnAsFileTimeUTC < DateTime.Now.ToFileTimeUtc()) return false;
+
+            return cookieInfo.Equals(clientIP);
+        }
 
 
 
