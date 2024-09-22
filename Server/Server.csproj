@@ -78,9 +78,10 @@
     </Compile>
     <Compile Include="Worker\ConnectionHandler\3. CloseConnection.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\PasswordTools.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\Authenticated.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. Authenticated.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\SendLoginPage.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\Login.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\1. FileSharingHandler.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. ValidateToken.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\_SessionState.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\401.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\400.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\SendError.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetCookie.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetHeader.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetHttpPath.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetRequestContent.cs" />
     <Compile Include="Worker\ConnectionHandler\1. AcceptConnection - Main Loop.cs" />
     <Compile Include="Worker\ConnectionHandler\2. MainServeLoop.cs" />
@@ -114,7 +116,10 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Worker\ConnectionHandler\FileShare-Login\FilesViewCGI\" />
+    <Folder Include="Worker\ConnectionHandler\FileShare-Login\User\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="App\shell32_241.ico" />
     <None Include="bin\Debug\html\fileSharing\login.html" />

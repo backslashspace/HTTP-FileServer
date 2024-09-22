@@ -10,6 +10,9 @@ namespace Server
 {
     internal static partial class Worker
     {
+        private static Byte[] _receiveBuffer = new Byte[2048];
+        private static Byte[] _receiveBufferIterator = new Byte[1];
+
         private static Boolean GetHeader(Socket connection, out String header)
         {
             (header, Boolean success, Boolean wasHeaderError) = ReceiveRequestHeader(connection);

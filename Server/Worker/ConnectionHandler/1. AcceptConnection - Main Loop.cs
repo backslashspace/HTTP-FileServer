@@ -49,7 +49,7 @@ namespace Server
                 }
                 else
                 {
-                    
+                    // todo: session data cleaner
                 }
             }
         }

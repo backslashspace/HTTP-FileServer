@@ -6,21 +6,25 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Byte[] _receiveBuffer = new Byte[2048];
-        private static Byte[] _receiveBufferIterator = new Byte[1];
-
         private static void MainServeLoop(Socket connection)
         {
             try
             {
                 if (!GetHeader(connection, out String header)) return;
 
-                String[] path = header.Split(' ')[1].ToLower().Split(['/'], 3, StringSplitOptions.RemoveEmptyEntries);
-
-                if (path.Length != 0 && path[0] == "filesharing")
+                String httpPath = GetHttpPath(header);
+                if (httpPath == null)
                 {
-                    if (path.Length < 3) Login(connection, header);
-                    else ValidateCookie(connection, header);
+                    Log.FastLog($"Client send invalid http path, sending 400", LogSeverity.Info, "Worker");
+                    HTML.STATIC.Send_400(connection);
+                    return;
+                }
+
+                String[] pathParts = httpPath.ToLower().Split(['/'], 2, StringSplitOptions.RemoveEmptyEntries);
+
+                if (pathParts.Length != 0 && pathParts[0] == "filesharing")
+                {
+                    FileSharingHandler(connection, header, pathParts);
                     return;
                 }
                 else

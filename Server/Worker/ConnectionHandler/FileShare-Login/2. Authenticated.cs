@@ -5,7 +5,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static void ValidateCookie(Socket connection, String header)
+        private static void ddd(Socket connection, String header)
         {
             CloseConnection(connection);
         }

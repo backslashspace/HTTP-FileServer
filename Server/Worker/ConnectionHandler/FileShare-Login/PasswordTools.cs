@@ -6,6 +6,11 @@ using System.Threading;
 #pragma warning disable CS8600
 #pragma warning disable CS8602
 
+/*
+* waiting for bcgit/bc-csharp to implement Argon2
+* https://github.com/bcgit/bc-csharp/pull/559
+*/
+
 namespace Server
 {
     internal static partial class Worker

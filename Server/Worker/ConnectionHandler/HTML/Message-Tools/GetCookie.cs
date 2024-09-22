@@ -9,8 +9,8 @@ namespace Server
             if (header == null || header.Length < 10) return null;
 
             Int32 headerLength = header.Length;
-            Int32 cookieValueStart = 0;
-            Int32 cookieValueEnd = 0;
+            Int32 cookieValueStartIndex = 0;
+            Int32 cookieValueEndIndex = 0;
 
             // extract first cookie pair
 
@@ -24,39 +24,39 @@ namespace Server
                 if (header[i + 5] != 'e') continue;
                 if (header[i + 6] != ':') continue;
 
-                if (header[i + 7] == ' ') cookieValueStart = i + 8;
-                else cookieValueStart = i + 7;
+                if (header[i + 7] == ' ') cookieValueStartIndex = i + 8;
+                else cookieValueStartIndex = i + 7;
 
                 break;
             }
 
-            if (cookieValueStart == 0) return null;
+            if (cookieValueStartIndex == 0) return null;
 
-            for (Int32 i = cookieValueStart; i < headerLength; ++i)
+            for (Int32 i = cookieValueStartIndex; i < headerLength; ++i)
             {
                 if (!(header[i] == '\r' || header[i] == ';')) continue;
 
-                cookieValueEnd = i;
+                cookieValueEndIndex = i;
 
                 break;
             }
 
-            if (cookieValueEnd == 0) return null;
+            if (cookieValueEndIndex == 0) return null;
 
             // get value if cookie is called token
 
-            Int32 cookieLength = cookieValueEnd - cookieValueStart;
+            Int32 cookieLength = cookieValueEndIndex - cookieValueStartIndex;
 
             if (cookieLength < 7) return null;
 
-            if (header[cookieValueStart] != 't') return null;
-            if (header[cookieValueStart + 1] != 'o') return null;
-            if (header[cookieValueStart + 2] != 'k') return null;
-            if (header[cookieValueStart + 3] != 'e') return null;
-            if (header[cookieValueStart + 4] != 'n') return null;
-            if (header[cookieValueStart + 5] != '=') return null;
+            if (header[cookieValueStartIndex] != 't') return null;
+            if (header[cookieValueStartIndex + 1] != 'o') return null;
+            if (header[cookieValueStartIndex + 2] != 'k') return null;
+            if (header[cookieValueStartIndex + 3] != 'e') return null;
+            if (header[cookieValueStartIndex + 4] != 'n') return null;
+            if (header[cookieValueStartIndex + 5] != '=') return null;
 
-            return header.Substring(cookieValueStart + 6, cookieLength - 6);
+            return header.Substring(cookieValueStartIndex + 6, cookieLength - 6);
         }
     }
 }

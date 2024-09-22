@@ -12,6 +12,9 @@ namespace Server
 {
     internal static partial class Worker
     {
+        /// <summary>Time before the login cookie expires in seconds</summary>
+        internal const Int32 LOGIN_TIME = 300;
+
         internal static volatile Boolean ShutdownPending = false;
         internal static Socket Listener;
         internal static String AssemblyPath;
