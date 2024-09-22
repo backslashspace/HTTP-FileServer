@@ -35,12 +35,19 @@ namespace Server
             HTTP_400 = 400,
             /// <summary>Unauthorized</summary>
             HTTP_401 = 401,
+            /// <summary>Forbidden</summary>
+            HTTP_403 = 403,
             /// <summary>Not Found</summary>
             HTTP_404 = 404,
             /// <summary>Too Many Requests</summary>
             HTTP_429 = 429,
             /// <summary>Request Header Fields Too Large</summary>
-            HTTP_431 = 431
+            HTTP_431 = 431,
+
+            /// <summary>Not Implemented</summary>
+            HTTP_501 = 501,
+            /// <summary>Insufficient Storage</summary>
+            HTTP_507 = 507
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -112,6 +119,12 @@ namespace Server
                         $"Content-length: {contentLength}\r\n\r\n";
                     break;
 
+                case ResponseType.HTTP_403:
+                    header = "HTTP/1.1 403 Forbidden\r\n" +
+                        contentTypeHeader +
+                        $"Content-length: {contentLength}\r\n\r\n";
+                    break;
+
                 case ResponseType.HTTP_404:
                     header = "HTTP/1.1 404 Not Found\r\n" +
                         contentTypeHeader +
@@ -127,6 +140,18 @@ namespace Server
 
                 case ResponseType.HTTP_431:
                     header = "HTTP/1.1 431 Request Header Fields Too Large\r\n" +
+                        contentTypeHeader +
+                        $"Content-length: {contentLength}\r\n\r\n";
+                    break;
+
+                case ResponseType.HTTP_501:
+                    header = "HTTP/1.1 501 Not Implemented\r\n" +
+                        contentTypeHeader +
+                        $"Content-length: {contentLength}\r\n\r\n";
+                    break;
+
+                case ResponseType.HTTP_507:
+                    header = "HTTP/1.1 507 Insufficient Storage\r\n" +
                         contentTypeHeader +
                         $"Content-length: {contentLength}\r\n\r\n";
                     break;

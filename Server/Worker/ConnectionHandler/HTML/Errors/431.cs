@@ -15,7 +15,7 @@ namespace Server
 
     <head>
 	    <meta charset=""utf-8"">
-	    <title>Request Header Fields Too Large 431</title>
+	    <title>431 Request Header Fields Too Large </title>
     </head>
 
     <center>

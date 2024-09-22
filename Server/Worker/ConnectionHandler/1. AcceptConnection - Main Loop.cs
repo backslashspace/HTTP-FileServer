@@ -36,7 +36,7 @@ namespace Server
 
                 //
 
-                if (!ThreadPoolFast.Execute(() => MainServeLoop(connection)))
+                if (!ThreadPoolFast.Execute(() => Serve(connection)))
                 {
                     Log.FastLog($"To many requests, ran out of threads", LogSeverity.Warning, "MainWorker");
 

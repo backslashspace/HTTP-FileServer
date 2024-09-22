@@ -20,6 +20,13 @@ namespace Server
                 Worker.CloseConnection(connection);
             }
 
+            /// <summary>Forbidden</summary>
+            internal static void Send_403(Socket connection)
+            {
+                connection.Send(_403_response, 0, _403_response.Length, SocketFlags.None);
+                Worker.CloseConnection(connection);
+            }
+
             /// <summary>Not Found</summary>
             internal static void Send_404(Socket connection)
             {
@@ -38,6 +45,20 @@ namespace Server
             internal static void Send_431(Socket connection)
             {
                 connection.Send(_431_response, 0, _431_response.Length, SocketFlags.None);
+                Worker.CloseConnection(connection);
+            }
+
+            /// <summary>Not Implemented</summary>
+            internal static void Send_501(Socket connection)
+            {
+                connection.Send(_501_response, 0, _501_response.Length, SocketFlags.None);
+                Worker.CloseConnection(connection);
+            }
+
+            /// <summary>Insufficient Storage</summary>
+            internal static void Send_507(Socket connection)
+            {
+                connection.Send(_507_response, 0, _507_response.Length, SocketFlags.None);
                 Worker.CloseConnection(connection);
             }
         }

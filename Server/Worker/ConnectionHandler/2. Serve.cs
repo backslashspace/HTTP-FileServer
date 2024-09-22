@@ -6,7 +6,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static void MainServeLoop(Socket connection)
+        private static void Serve(Socket connection)
         {
             try
             {
@@ -37,11 +37,12 @@ namespace Server
             catch (SocketException exception)
             {
                 Log.FastLog($"A socket error occurred, connection to client lost:\n{exception.Message}", LogSeverity.Warning, "Worker");
+                CloseConnection(connection, true);
                 return;
             }
             catch (Exception exception)
             {
-                Log.FastLog($"An unknown error occurred and was caught in MainServeLoop():\n{exception.Message}", LogSeverity.Error, "Worker");
+                Log.FastLog($"An unknown error occurred and was caught in Serve():\n{exception.Message}", LogSeverity.Error, "Worker");
                 CloseConnection(connection, true);
                 return;
             }

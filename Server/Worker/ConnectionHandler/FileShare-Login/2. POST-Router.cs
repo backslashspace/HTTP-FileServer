@@ -5,9 +5,9 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static void ddd(Socket connection, String header)
+        private static void PostRouter(Socket connection, String header, String[] pathParts)
         {
-            CloseConnection(connection);
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BSS.Logging;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -20,21 +21,28 @@ namespace Server
             {
                 if (!ValidateClient(header, connection, out String userName))
                 {
+                    HTML.SendLoginPage(connection);
                     return;
                 }
 
-                // after this section, client is considered as valid for all further steps
-                
-                // send cgi or file
+                // client 'logged in'
+                GetRouter(connection, pathParts);
 
                 return;
             }
 
             if (requestMethode == RequestMethode.POST)
             {
+                // -> valid -> send token + redirect to top level get fileshare
+                // -> invalid -> send 403
+
+                PostRouter(connection, header, pathParts);
 
                 return;
             }
+
+            Log.FastLog("This section should not be reachable, please update 'GetRequestMethode()'", LogSeverity.Error, "FileSharingHandler()");
+            HTML.STATIC.Send_501(connection);
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -45,7 +53,6 @@ namespace Server
 
             if (token == null)
             {
-                HTML.SendLoginPage(connection);
                 userName = null;
                 return false;
             }
@@ -54,14 +61,12 @@ namespace Server
 
             if (clientIP == IPAddress.None)
             {
-                HTML.SendLoginPage(connection);
                 userName = null;
                 return false;
             }
 
             if (!ValidateToken(token, clientIP, out String _userName))
             {
-                HTML.SendLoginPage(connection);
                 userName = null;
                 return false;
             }
@@ -69,21 +74,5 @@ namespace Server
             userName = _userName;
             return true;
         }
-
-
-        private static void PerformLogin(Socket connection, String header)
-        {
-            if (GetContent(header, connection, out String content))
-            {
-                IPAddress ip = GetClientIP(header);
-            }
-            else
-            {
-                HTML.STATIC.Send_401(connection);
-            }
-        }
-
-
-
     }
 }
