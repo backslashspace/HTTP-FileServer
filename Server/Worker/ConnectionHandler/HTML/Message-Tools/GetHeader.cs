@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 
 #pragma warning disable CS8619
+#pragma warning disable CS8625
 
 namespace Server
 {

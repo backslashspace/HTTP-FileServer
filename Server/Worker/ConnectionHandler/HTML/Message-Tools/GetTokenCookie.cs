@@ -19,12 +19,12 @@ namespace Server
             for (Int32 i = 0; i < headerLength; ++i)
             {
                 if (!(header[i] == 'C' || header[i] == 'c')
-                    && header[i + 1] != 'o'
-                    && header[i + 2] != 'o'
-                    && header[i + 3] != 'k'
-                    && header[i + 4] != 'i'
-                    && header[i + 5] != 'e'
-                    && header[i + 6] != ':') continue;
+                    || header[i + 1] != 'o'
+                    || header[i + 2] != 'o'
+                    || header[i + 3] != 'k'
+                    || header[i + 4] != 'i'
+                    || header[i + 5] != 'e'
+                    || header[i + 6] != ':') continue;
 
                 if (header[i + 7] == ' ') cookieValueStartIndex = i + 8;
                 else cookieValueStartIndex = i + 7;
@@ -52,11 +52,11 @@ namespace Server
             if (cookieLength < 7) return null;
 
             if (header[cookieValueStartIndex] != 't'
-                && header[cookieValueStartIndex + 1] != 'o'
-                && header[cookieValueStartIndex + 2] != 'k'
-                && header[cookieValueStartIndex + 3] != 'e'
-                && header[cookieValueStartIndex + 4] != 'n'
-                && header[cookieValueStartIndex + 5] != '=') return null;
+                || header[cookieValueStartIndex + 1] != 'o'
+                || header[cookieValueStartIndex + 2] != 'k'
+                || header[cookieValueStartIndex + 3] != 'e'
+                || header[cookieValueStartIndex + 4] != 'n'
+                || header[cookieValueStartIndex + 5] != '=') return null;
 
             return header.Substring(cookieValueStartIndex + 6, cookieLength - 6);
         }

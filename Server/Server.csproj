@@ -64,6 +64,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entry.cs" />
@@ -81,8 +82,10 @@
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. POST-Router.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\CGI\UserFilesView.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\PasswordTools.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\ParseCredentials.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\SendLoginPage.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\1. FileSharingHandler.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\ValidateClient.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\ValidateToken.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\_SessionState.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\403.cs" />
@@ -96,7 +99,7 @@
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\InitializeErrors.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\SendError.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetContent.cs" />
-    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetCookie.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetTokenCookie.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetHeader.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetHttpPath.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetContentLength.cs" />

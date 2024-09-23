@@ -16,17 +16,17 @@ namespace Server
             for (Int32 i = 0; i < headerLength; ++i)
             {
                 if (header[i] != 'X'
-                    && header[i + 1] != '-'
-                    && header[i + 2] != 'C'
-                    && header[i + 3] != 'l'
-                    && header[i + 4] != 'i'
-                    && header[i + 5] != 'e'
-                    && header[i + 6] != 'n'
-                    && header[i + 7] != 't'
-                    && header[i + 8] != '-'
-                    && header[i + 9] != 'I'
-                    && header[i + 10] != 'P'
-                    && header[i + 11] != ':') continue;
+                    || header[i + 1] != '-'
+                    || header[i + 2] != 'C'
+                    || header[i + 3] != 'l'
+                    || header[i + 4] != 'i'
+                    || header[i + 5] != 'e'
+                    || header[i + 6] != 'n'
+                    || header[i + 7] != 't'
+                    || header[i + 8] != '-'
+                    || header[i + 9] != 'I'
+                    || header[i + 10] != 'P'
+                    || header[i + 11] != ':') continue;
 
                 if (header[i + 12] == ' ') ipStartIndex = i + 13;
                 else ipStartIndex = i + 12;

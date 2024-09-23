@@ -6,7 +6,7 @@ namespace Server
     {
         private static Boolean GetContentLength(String header, out Int64 contentLength)
         {
-            if (header == null || header.Length < 16)
+            if (header == null || header.Length < 20)
             {
                 contentLength = 0;
                 return false;
@@ -19,22 +19,23 @@ namespace Server
             for (Int32 i = 0; i < headerLength; ++i)
             {
                 if (!(header[i] == 'C' || header[i] == 'c')
-                    && header[i + 1] != 'o'
-                    && header[i + 2] != 'n'
-                    && header[i + 3] != 't'
-                    && header[i + 4] != 'e'
-                    && header[i + 5] != 'n'
-                    && header[i + 6] != 't'
-                    && header[i + 7] != '-'
-                    && !(header[i + 8] == 'L' || header[i] == 'l')
-                    && header[i + 9] != 'e'
-                    && header[i + 10] != 'n'
-                    && header[i + 11] != 'g'
-                    && header[i + 12] != 't'
-                    && header[i + 13] != 'h') continue;
+                    || header[i + 1] != 'o'
+                    || header[i + 2] != 'n'
+                    || header[i + 3] != 't'
+                    || header[i + 4] != 'e'
+                    || header[i + 5] != 'n'
+                    || header[i + 6] != 't'
+                    || header[i + 7] != '-'
+                    || !(header[i + 8] == 'L' || header[i] == 'l')
+                    || header[i + 9] != 'e'
+                    || header[i + 10] != 'n'
+                    || header[i + 11] != 'g'
+                    || header[i + 12] != 't'
+                    || header[i + 13] != 'h'
+                    || header[i + 14] != ':') continue;
 
-                if (header[i + 14] == ' ') lengthStartIndex = i + 15;
-                else lengthStartIndex = i + 14;
+                if (header[i + 15] == ' ') lengthStartIndex = i + 16;
+                else lengthStartIndex = i + 15;
 
                 break;
             }

@@ -5,7 +5,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static void GetRouter(Socket connection, String[] pathParts)
+        private static void GetRouter(Socket connection, String[] pathParts, String userName)
         {
 
         }

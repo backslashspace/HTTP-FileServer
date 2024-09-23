@@ -12,8 +12,7 @@ namespace Server
         {
             if (!GetContentLength(header, out Int64 contentLength))
             {
-                connection.Send(HTML.STATIC._400_response, 0, HTML.STATIC._400_response.Length, SocketFlags.None);
-                CloseConnection(connection);
+                HTML.STATIC.Send_400(connection);
 
                 content = null;
                 return false;

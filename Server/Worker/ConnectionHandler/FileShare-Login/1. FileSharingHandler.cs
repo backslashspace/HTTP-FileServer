@@ -2,6 +2,8 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Policy;
+using System.Web;
 
 //#pragma warning disable CS8625
 
@@ -28,13 +30,19 @@ namespace Server
                 }
 
                 // client 'logged in'
-                GetRouter(connection, pathParts);
+                GetRouter(connection, pathParts, userName);
 
                 return;
             }
 
             if (requestMethode == RequestMethode.POST)
             {
+                if (pathParts.Length == 1)
+                {
+                    PerformLogin(connection, header);
+                    return;
+                }
+
                 // -> valid -> send token + redirect to top level get fileshare
                 // -> invalid -> send 403
 
@@ -49,31 +57,30 @@ namespace Server
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-        private static Boolean ValidateClient(String header, Socket connection, out String userName)
+        private static Boolean PerformLogin(Socket connection, String header)
         {
-            String token = GetTokenCookieValue(header);
-
-            if (token == null)
+            if (!GetContent(header, connection, out String credentials))
             {
-                userName = null;
+                Log.FastLog("Authenticating client send invalid login request -> sending 400", LogSeverity.Warning, "PerformLogin()");
                 return false;
             }
 
-            IPAddress clientIP = GetClientIP(header);
-
-            if (clientIP == IPAddress.None)
+            if (!ParseCredentials(credentials, out String urlEncodedUserName, out String urlEncodedPassword))
             {
-                userName = null;
+                Log.FastLog("Authenticating client send invalid login request data (encoded credentials, wrong format?) -> sending 400", LogSeverity.Warning, "PerformLogin()");
+                HTML.STATIC.Send_400(connection);
                 return false;
             }
 
-            if (!ValidateToken(token, clientIP, out String _userName))
-            {
-                userName = null;
-                return false;
-            }
+            xDebug.WriteLine("Username: " + HttpUtility.UrlDecode(urlEncodedUserName));
+            xDebug.WriteLine("Password: " + HttpUtility.UrlDecode(urlEncodedPassword));
 
-            userName = _userName;
+            /*
+             * 
+             * introduce db stuff
+             * 
+             */
+
             return true;
         }
     }
