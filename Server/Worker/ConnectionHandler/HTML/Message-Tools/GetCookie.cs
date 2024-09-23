@@ -1,5 +1,7 @@
 ﻿using System;
 
+#pragma warning disable CS8603
+
 namespace Server
 {
     internal static partial class Worker
@@ -16,13 +18,13 @@ namespace Server
 
             for (Int32 i = 0; i < headerLength; ++i)
             {
-                if (!(header[i] == 'C' || header[i] == 'c')) continue;
-                if (header[i + 1] != 'o') continue;
-                if (header[i + 2] != 'o') continue;
-                if (header[i + 3] != 'k') continue;
-                if (header[i + 4] != 'i') continue;
-                if (header[i + 5] != 'e') continue;
-                if (header[i + 6] != ':') continue;
+                if (!(header[i] == 'C' || header[i] == 'c')
+                    && header[i + 1] != 'o'
+                    && header[i + 2] != 'o'
+                    && header[i + 3] != 'k'
+                    && header[i + 4] != 'i'
+                    && header[i + 5] != 'e'
+                    && header[i + 6] != ':') continue;
 
                 if (header[i + 7] == ' ') cookieValueStartIndex = i + 8;
                 else cookieValueStartIndex = i + 7;
@@ -49,12 +51,12 @@ namespace Server
 
             if (cookieLength < 7) return null;
 
-            if (header[cookieValueStartIndex] != 't') return null;
-            if (header[cookieValueStartIndex + 1] != 'o') return null;
-            if (header[cookieValueStartIndex + 2] != 'k') return null;
-            if (header[cookieValueStartIndex + 3] != 'e') return null;
-            if (header[cookieValueStartIndex + 4] != 'n') return null;
-            if (header[cookieValueStartIndex + 5] != '=') return null;
+            if (header[cookieValueStartIndex] != 't'
+                && header[cookieValueStartIndex + 1] != 'o'
+                && header[cookieValueStartIndex + 2] != 'k'
+                && header[cookieValueStartIndex + 3] != 'e'
+                && header[cookieValueStartIndex + 4] != 'n'
+                && header[cookieValueStartIndex + 5] != '=') return null;
 
             return header.Substring(cookieValueStartIndex + 6, cookieLength - 6);
         }

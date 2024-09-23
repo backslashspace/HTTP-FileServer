@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Sockets;
 
+#pragma warning disable CS8625
+
 namespace Server
 {
     internal static partial class HTML

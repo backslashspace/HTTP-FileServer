@@ -95,10 +95,11 @@
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\431.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\InitializeErrors.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\SendError.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetContent.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetCookie.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetHeader.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetHttpPath.cs" />
-    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetRequestContent.cs" />
+    <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetContentLength.cs" />
     <Compile Include="Worker\ConnectionHandler\1. AcceptConnection - Main Loop.cs" />
     <Compile Include="Worker\ConnectionHandler\2. Serve.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\ConstructHttpResponse.cs" />

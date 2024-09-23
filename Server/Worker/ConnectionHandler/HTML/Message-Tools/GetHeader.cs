@@ -10,12 +10,12 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Byte[] _receiveBuffer = new Byte[2048];
-        private static Byte[] _receiveBufferIterator = new Byte[1];
+        [ThreadStatic] private static Byte[] _receiveBuffer = null;
+        [ThreadStatic] private static Byte[] _receiveBufferIterator = null;
 
         private static Boolean GetHeader(Socket connection, out String header)
         {
-            (header, Boolean success, Boolean wasHeaderError) = ReceiveRequestHeader(connection);
+            (Boolean success, Boolean wasHeaderError) = ReceiveRequestHeader(connection, out header);
 
             if (!success)
             {
@@ -37,8 +37,8 @@ namespace Server
             return true;
         }
 
-        // todo: verify header to long request - faster parse
-        private static ValueTuple<String, Boolean, Boolean> ReceiveRequestHeader(Socket connection)
+        // todo: verify header to long request
+        private static ValueTuple<Boolean, Boolean> ReceiveRequestHeader(Socket connection, out String header)
         {
             _receiveBuffer = new Byte[2048];
             _receiveBufferIterator = new Byte[1];
@@ -50,7 +50,8 @@ namespace Server
                     connection.Shutdown(SocketShutdown.Both);
                     connection.Close();
 
-                    return (null, false, false);
+                    header = null;
+                    return (false, false);
                 }
 
                 _receiveBuffer[i] = _receiveBufferIterator[0];
@@ -62,11 +63,13 @@ namespace Server
                     && _receiveBuffer[i - 1] == 0x0D    // second CR
                     && _receiveBuffer[i - 0] == 0x0A)   // second LF)
                 {
-                    return (Encoding.UTF8.GetString(_receiveBuffer, 0, i), true, false);
+                    header = Encoding.UTF8.GetString(_receiveBuffer, 0, i);
+                    return (true, false);
                 }
             }
 
-            return (null, false, true);
+            header = null;
+            return (false, true);
         }
     }
 }

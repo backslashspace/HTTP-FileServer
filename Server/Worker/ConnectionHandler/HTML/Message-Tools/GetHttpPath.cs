@@ -1,5 +1,7 @@
 ﻿using System;
 
+#pragma warning disable CS8603
+
 namespace Server
 {
     internal static partial class Worker

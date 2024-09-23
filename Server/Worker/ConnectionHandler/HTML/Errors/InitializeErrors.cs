@@ -57,7 +57,7 @@ namespace Server
 
                 bodyBuffer = Encoding.UTF8.GetBytes(_501_body);
                 headerBuffer = CraftHeader(ResponseType.HTTP_501, ContentType.HTML, bodyBuffer.LongLength, null).Item1;
-                _507_response = new Byte[headerBuffer.Length + bodyBuffer.Length];
+                _501_response = new Byte[headerBuffer.Length + bodyBuffer.Length];
                 Buffer.BlockCopy(headerBuffer, 0, _501_response, 0, headerBuffer.Length);
                 Buffer.BlockCopy(bodyBuffer, 0, _501_response, headerBuffer.Length, bodyBuffer.Length);
 
