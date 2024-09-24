@@ -23,14 +23,14 @@ namespace Server
 
             if (requestMethode == RequestMethode.GET)
             {
-                if (!ValidateClient(header, connection, out String userName))
+                if (!ValidateClient(header, connection, out String username))
                 {
                     HTML.SendLoginPage(connection);
                     return;
                 }
 
                 // client 'logged in'
-                GetRouter(connection, pathParts, userName);
+                GetRouter(connection, pathParts, username);
 
                 return;
             }
@@ -65,15 +65,33 @@ namespace Server
                 return false;
             }
 
-            if (!ParseCredentials(credentials, out String urlEncodedUserName, out String urlEncodedPassword))
+            if (!ParseCredentials(credentials, out String urlEncodedUsername, out String urlEncodedPassword))
             {
                 Log.FastLog("Authenticating client send invalid login request data (encoded credentials, wrong format?) -> sending 400", LogSeverity.Warning, "PerformLogin()");
                 HTML.STATIC.Send_400(connection);
                 return false;
             }
 
-            xDebug.WriteLine("Username: " + HttpUtility.UrlDecode(urlEncodedUserName));
-            xDebug.WriteLine("Password: " + HttpUtility.UrlDecode(urlEncodedPassword));
+            String decodedUsername = HttpUtility.UrlDecode(urlEncodedUsername);
+            String decodedPassword = HttpUtility.UrlDecode(urlEncodedPassword);
+
+            // get user from db
+
+            // check password
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             /*
              * 
@@ -82,6 +100,19 @@ namespace Server
              */
 
             return true;
+        }
+
+
+
+        private ref struct User
+        {
+            internal String Username;
+            internal String HashedPassword;
+
+            internal Byte IsAdministrator;
+            internal Byte IsEnabled;
+            internal Byte Read;
+            internal Byte Write;
         }
     }
 }

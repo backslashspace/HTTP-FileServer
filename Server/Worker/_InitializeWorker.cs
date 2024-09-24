@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SQLite;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -13,7 +14,9 @@ namespace Server
     internal static partial class Worker
     {
         /// <summary>Time before the login cookie expires in seconds</summary>
-        internal const Int32 LOGIN_TIME = 300;
+        private const Int32 LOGIN_TIME = 300;
+
+        private static SQLiteConnection _databaseConnection;
 
         internal static volatile Boolean ShutdownPending = false;
         internal static Socket Listener;
@@ -24,20 +27,30 @@ namespace Server
             AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             Log.Initialize(AssemblyPath);
-            Log.FastLog("\nInitializing", LogSeverity.Info, "Init()");
+            Log.FastLog("Initializing", LogSeverity.Info, "Init()");
 
             (IPAddress interfaceIP, UInt16 interfacePort, UInt16 maximumConcurrentConnections) = ValidateSettings();
 
+            if (!InitializeDatabase(out _databaseConnection))
+            {
+                Log.FastLog("Database error, shutting down", LogSeverity.Info, "Init()");
+                Environment.Exit(-1);
+            }
+
             ThreadPoolFast.Initialize(maximumConcurrentConnections);
-            
-            if (!HTML.STATIC.IsInitialized)
+
+            if (HTML.STATIC.IsInitialized)
+            {
+                Log.FastLog("Initialized static content", LogSeverity.Info, "Init()");
+            }
+            else
             {
                 Log.FastLog("HTTP_ERRORS not initialized", LogSeverity.Info, "Init()");
                 Environment.Exit(-1);
             }
 
             Listener = BindSocket(interfaceIP, interfacePort);
-            
+
             Log.FastLog("Initialization complete", LogSeverity.Info, "Init()");
 
             StartNewConnectionHandler(maximumConcurrentConnections);

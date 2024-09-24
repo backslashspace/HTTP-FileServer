@@ -7,19 +7,19 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Boolean ValidateToken(String token, IPAddress clientIP, out String userName)
+        private static Boolean ValidateToken(String token, IPAddress clientIP, out String username)
         {
             Boolean foundEntry = SessionState.Cookies.TryGetValue(token, out SessionState.CookieInfo cookieInfo);
 
             if (!foundEntry)
             {
-                userName = null;
+                username = null;
                 return false;
             }
 
             if (!cookieInfo.IP.Equals(clientIP))
             {
-                userName = null;
+                username = null;
                 return false;
             }
 
@@ -27,11 +27,11 @@ namespace Server
             {
                 SessionState.Cookies.TryRemove(token, out _);
 
-                userName = null;
+                username = null;
                 return false;
             }
 
-            userName = cookieInfo.UserName;
+            username = cookieInfo.Username;
 
             return true;
         }

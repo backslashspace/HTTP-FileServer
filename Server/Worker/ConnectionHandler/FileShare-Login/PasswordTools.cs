@@ -57,7 +57,7 @@ namespace Server
             return false;
         }
 
-        private static Byte[] CreateSalt(String userName)
+        private static Byte[] CreateSalt(String username)
         {
             Byte[] randomData = new Byte[384];
 
@@ -66,11 +66,11 @@ namespace Server
             sRandom.Dispose();
             sRandom = null;
 
-            String randomUtfStringPlusUserName = Encoding.UTF8.GetString(randomData) + userName;
-            Byte[] randomPlusUserName = Encoding.UTF8.GetBytes(randomUtfStringPlusUserName);
+            String randomUtfStringPlusUsername = Encoding.UTF8.GetString(randomData) + username;
+            Byte[] randomPlusUsername = Encoding.UTF8.GetBytes(randomUtfStringPlusUsername);
 
             SHA384 sha384 = SHA384.Create();
-            Byte[] salt = sha384.ComputeHash(randomPlusUserName, 0, randomPlusUserName.Length);
+            Byte[] salt = sha384.ComputeHash(randomPlusUsername, 0, randomPlusUsername.Length);
 
             sha384.Clear();
             sha384.Dispose();
@@ -80,9 +80,9 @@ namespace Server
         }
 
         /// <summary>returns: Password + Salt in Base64</summary>
-        private static ValueTuple<String, String> CreatePassword(String userName, String password)
+        private static ValueTuple<String, String> CreatePassword(String username, String password)
         {
-            Byte[] salt = CreateSalt(userName);
+            Byte[] salt = CreateSalt(username);
             String saltedPassword = password + Encoding.UTF8.GetString(salt);
             Byte[] rawSaltedPassword = Encoding.UTF8.GetBytes(saltedPassword);
 

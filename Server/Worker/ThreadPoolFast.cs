@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BSS.Logging;
+using System;
 using System.Threading;
 
 #pragma warning disable CS0618
@@ -46,6 +47,8 @@ namespace BSS.Threading
             }
 
             IsInitialized = true;
+
+            Log.FastLog($"Initialized ThreadPool with {_capacity} threads", LogSeverity.Info, "ThreadPool");
         }
 
         private static void Worker(Object indexObject)

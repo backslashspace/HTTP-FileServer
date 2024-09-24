@@ -14,14 +14,14 @@ namespace Server
 
         internal readonly struct CookieInfo
         {
-            internal CookieInfo(String userName, IPAddress ip, Int64 expiresOn)
+            internal CookieInfo(String username, IPAddress ip, Int64 expiresOn)
             {
-                UserName = userName;
+                Username = username;
                 IP = ip;
                 ExpiresOnAsFileTimeUTC = expiresOn;
             }
 
-            internal readonly String UserName;
+            internal readonly String Username;
             internal readonly IPAddress IP;
             internal readonly Int64 ExpiresOnAsFileTimeUTC;
         }

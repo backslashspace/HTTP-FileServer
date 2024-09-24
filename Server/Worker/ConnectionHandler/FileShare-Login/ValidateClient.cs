@@ -8,13 +8,13 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Boolean ValidateClient(String header, Socket connection, out String userName)
+        private static Boolean ValidateClient(String header, Socket connection, out String username)
         {
             String token = GetTokenCookieValue(header);
 
             if (token == null)
             {
-                userName = null;
+                username = null;
                 return false;
             }
 
@@ -22,17 +22,17 @@ namespace Server
 
             if (clientIP == IPAddress.None)
             {
-                userName = null;
+                username = null;
                 return false;
             }
 
-            if (!ValidateToken(token, clientIP, out String _userName))
+            if (!ValidateToken(token, clientIP, out String _username))
             {
-                userName = null;
+                username = null;
                 return false;
             }
 
-            userName = _userName;
+            username = _username;
             return true;
         }
     }
