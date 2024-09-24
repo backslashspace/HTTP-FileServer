@@ -57,7 +57,7 @@ namespace BSS.Threading
 
             Thread.CurrentThread.Suspend();
 
-            while (true)
+            while (!Server.Worker.ShutdownPending)
             {
                 _tasks[index].Invoke();
                 _tasks[index] = null;
@@ -68,6 +68,7 @@ namespace BSS.Threading
                     --_count;
                 }
 
+                if (Server.Worker.ShutdownPending) return;
                 Thread.CurrentThread.Suspend();
             }
         }
@@ -105,6 +106,44 @@ namespace BSS.Threading
 
             Monitor.Exit(_lock);
             return false;
+        }
+
+        internal static Boolean Shutdown(Boolean abortRunningWorkers = false)
+        {
+            if (!IsInitialized) return false;
+
+            Boolean result = true;
+
+            if (abortRunningWorkers)
+            {
+                for (UInt16 i = 0; i < _capacity; ++i)
+                {
+                    try
+                    {
+                        if (_threads[i] != null && (_threads[i].ThreadState == ThreadState.WaitSleepJoin || _threads[i].ThreadState == ThreadState.Running))
+                        {
+                            _threads[i].Abort();
+                        }
+                    }
+                    catch
+                    {
+                        result = false;
+                    }
+                }
+            }
+            else
+            {
+                for (UInt16 i = 0; i < _capacity; ++i)
+                {
+                    while (_threadIsBussy[i])
+                    {
+                        Thread.Sleep(16);
+                    }
+                }
+            }
+
+            IsInitialized = false;
+            return result;
         }
     }
 }

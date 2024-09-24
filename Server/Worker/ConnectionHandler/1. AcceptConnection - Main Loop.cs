@@ -17,7 +17,7 @@ namespace Server
 
             Listener.Listen(8);
 
-            while (true)
+            while (!ShutdownPending)
             {
                 try
                 {
@@ -27,11 +27,13 @@ namespace Server
                 {
                     Log.FastLog("Listener closed, shutting down", LogSeverity.Info, "_connectionHandler");
                     Shutdown();
+                    return;
                 }
                 catch (Exception ex)
                 {
                     Log.FastLog($"Unknown socket error: {ex.Message}", LogSeverity.Critical, "_connectionHandler");
                     Shutdown();
+                    return;
                 }
 
                 //

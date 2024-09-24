@@ -1,18 +1,29 @@
-﻿using System;
+﻿using BSS.Logging;
+using BSS.Threading;
+using System.Data.SQLite;
 
 namespace Server
 {
     internal static partial class Worker
     {
-        private static void Shutdown()
+        internal static void Shutdown()
         {
-            // todo: app shutdown triggered
+            try
+            {
+                _databaseConnection?.Close();
+                _databaseConnection?.Dispose();
+                SQLiteConnection.ClearAllPools();
+            }
+            catch
+            {
+                Log.FastLog("DB shutdown finished with errors", LogSeverity.Critical, "Shutdown()");
+            }
 
-
-
-
-
-            Environment.Exit(ShutdownPending ? -1 : 0);
+            if (!ThreadPoolFast.Shutdown())
+            {
+                Log.FastLog("ThreadPool shutdown finished with errors", LogSeverity.Critical, "ThreadPool");
+            }
+            
         }
     }
 }

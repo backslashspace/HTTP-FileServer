@@ -10,7 +10,7 @@ namespace Server
 #if DEBUG
             xDebug.Initialize();
             Console.CancelKeyPress += (s, e) => Service.ShutdownComponents();
-            Worker.Initialize();
+            Service.MainThread.Start();
 #else
             ServiceBase.Run(new Service());
 #endif

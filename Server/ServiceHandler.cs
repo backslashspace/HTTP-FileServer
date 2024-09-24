@@ -6,7 +6,7 @@ namespace Server
 {
     internal sealed class Service : ServiceBase
     {
-        private static readonly Thread _mainWorkerThread = new(Worker.Initialize) { Name = "MainWorkerThread" };
+        internal static readonly Thread MainThread = new(Worker.Initialize) { Name = "MainWorkerThread" };
 
         public Service()
         {
@@ -18,7 +18,7 @@ namespace Server
             ServiceName = "HTTP File Server";
         }
 
-        protected override void OnStart(String[] args) => _mainWorkerThread.Start();
+        protected override void OnStart(String[] args) => MainThread.Start();
 
         protected override void OnStop() => ShutdownComponents();
 
@@ -27,8 +27,9 @@ namespace Server
         internal static void ShutdownComponents()
         {
             Worker.ShutdownPending = true;
-            Worker.Listener.Close();
-            _mainWorkerThread.Join();
+            Worker.Listener?.Close();
+
+            MainThread.Join();
         }
     }
 }
