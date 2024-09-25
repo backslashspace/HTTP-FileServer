@@ -34,15 +34,15 @@ namespace Server
 
             if (!UserDB.GetLoginInfo(loginUsername, out UserDB.LoginInfo loginInfo))
             {
-                Log.FastLog($"Authenticating client send invalid username '{loginUsername}' -> sending 401", LogSeverity.Warning, "PerformLogin()");
-                HTML.STATIC.Send_401(connection);
+                Log.FastLog($"Authenticating client send invalid username '{loginUsername}'", LogSeverity.Warning, "PerformLogin()");
+                HTML.SendLoginPageError(connection);
                 return;
             }
 
             if (!ValidatePassword(decodedPassword, loginInfo.HashedPasswordBase64, loginInfo.SaltBase64))
             {
-                Log.FastLog($"Authenticating client send invalid password for username '{loginUsername}' -> sending 401", LogSeverity.Warning, "PerformLogin()");
-                HTML.STATIC.Send_401(connection);
+                Log.FastLog($"Authenticating client send invalid password for username '{loginUsername}'", LogSeverity.Warning, "PerformLogin()");
+                HTML.SendLoginPageError(connection);
                 return;
             }
 

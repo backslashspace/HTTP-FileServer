@@ -84,6 +84,7 @@
     <Compile Include="Worker\ConnectionHandler\3. CloseConnection.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. GETHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. POSTHandler.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\CGI\ControlPanel.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\CGI\UserFilesView.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\PerformLogin.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\ValidateClient.cs" />
@@ -133,6 +134,9 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="App\shell32_241.ico" />
+    <Content Include="bin\Debug\html\fileSharing\controlPanel.html" />
+    <None Include="bin\Debug\html\fileSharing\loginExpired.html" />
+    <None Include="bin\Debug\html\fileSharing\loginError.html" />
     <None Include="bin\Debug\html\fileSharing\login.html" />
     <None Include="bin\Debug\html\dataCollection.html" />
     <None Include="bin\Debug\html\landingPage.html" />

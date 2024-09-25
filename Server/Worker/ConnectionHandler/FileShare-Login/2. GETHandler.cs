@@ -7,7 +7,15 @@ namespace Server
     {
         private static void AuthenticatedGETHandler(Socket connection, String[] pathParts, String loginUsername)
         {
-            HTML.STATIC.Send_501(connection);
+            switch (pathParts[1].ToLower())
+            {
+                case "controlPanel":
+                    return;
+
+                default:
+                    HTML.STATIC.Send_404(connection);
+                    return;
+            }
         }
     }
 }

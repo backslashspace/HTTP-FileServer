@@ -18,6 +18,12 @@ namespace Server
                 return false;
             }
 
+            if (contentLength > 1048576)
+            {
+                content = null;
+                return false;
+            }
+
             Byte[] buffer = new Byte[contentLength];
             connection.Receive(buffer, 0, (Int32)contentLength, SocketFlags.None);
 

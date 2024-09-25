@@ -32,9 +32,10 @@ namespace Server
                     return;
                 }
 
-                if (!ValidateClient(connection, header, clientIP, out String loginUsername))
+                if (!ValidateClient(header, clientIP, out String loginUsername, out Boolean reasonTokenExpired))
                 {
-                    HTML.RedirectLoginPage(connection);
+                    if (reasonTokenExpired) HTML.SendSelfRedirectLoginPageExpired(connection);
+                    else HTML.RedirectLoginPage(connection);
                     return;
                 }
 
@@ -52,9 +53,10 @@ namespace Server
                     return;
                 }
 
-                if (!ValidateClient(connection, header, clientIP, out String loginUsername))
+                if (!ValidateClient(header, clientIP, out String loginUsername, out Boolean reasonTokenExpired))
                 {
-                    HTML.RedirectLoginPage(connection);
+                    if (reasonTokenExpired) HTML.SendSelfRedirectLoginPageExpired(connection);
+                    else HTML.RedirectLoginPage(connection);
                     return;
                 }
 

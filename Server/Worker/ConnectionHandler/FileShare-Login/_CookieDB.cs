@@ -91,6 +91,7 @@ namespace Server
         internal static Boolean ValidateToken(String tokenBase64, IPAddress clientIP, out String loginUsername)
         {
             Boolean clientIsValid = true;
+            loginUsername = null;
 
             lock (_dbCleanerLock)
             {
@@ -101,7 +102,6 @@ namespace Server
                 if (!dataReader.Read())
                 {
                     Log.FastLog("Client send invalid/expired token -> sending to login", LogSeverity.Info, "ValidateToken");
-                    loginUsername = null;
                     return false;
                 }
 

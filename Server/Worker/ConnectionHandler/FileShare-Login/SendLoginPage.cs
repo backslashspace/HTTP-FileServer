@@ -28,5 +28,29 @@ namespace Server
             connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
             Worker.CloseConnection(connection);
         }
+
+        internal static void SendLoginPageError(Socket connection)
+        {
+            Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\loginError.html");
+            Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, null).Item1;
+
+            xDebug.WriteLine("fileSharing\\loginError.html");
+
+            Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
+            connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
+            Worker.CloseConnection(connection);
+        }
+
+        internal static void SendSelfRedirectLoginPageExpired(Socket connection)
+        {
+            Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\loginExpired.html");
+            Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, null).Item1;
+
+            xDebug.WriteLine("fileSharing\\loginExpired.html");
+
+            Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
+            connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
+            Worker.CloseConnection(connection);
+        }
     }
 }
