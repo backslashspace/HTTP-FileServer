@@ -18,5 +18,15 @@ namespace Server
             connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
             Worker.CloseConnection(connection);
         }
+
+        internal static void RedirectLoginPage(Socket connection)
+        {
+            Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_307, HTTP.ContentType.None, 0, [null, null, null, "/fileSharing"]).Item1;
+
+            xDebug.WriteLine("-> fileSharing\\login.html");
+
+            connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
+            Worker.CloseConnection(connection);
+        }
     }
 }

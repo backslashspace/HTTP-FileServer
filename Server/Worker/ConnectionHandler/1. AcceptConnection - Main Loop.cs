@@ -49,10 +49,6 @@ namespace Server
                     }
                     catch { }   
                 }
-                else
-                {
-                    // todo: session data cleaner
-                }
             }
         }
     }

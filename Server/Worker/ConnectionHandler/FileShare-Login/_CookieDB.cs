@@ -154,7 +154,7 @@ namespace Server
                 GC.Collect(5, GCCollectionMode.Forced, true, true);
                 stopwatch.Stop();
 
-                Log.FastLog($"Successfully truncated CookieDB (removed {removedEntries}) and ran full GC in {stopwatch.ElapsedMilliseconds}", LogSeverity.Info, "CookieDB");
+                Log.FastLog($"Successfully truncated login-token database (removed {removedEntries}) and ran full GC in {stopwatch.ElapsedMilliseconds}ms", LogSeverity.Info, "CookieDB");
             }
         }
 

@@ -26,9 +26,15 @@ namespace Server
 
             if (requestMethode == RequestMethode.GET)
             {
-                if (!ValidateClient(connection, header, clientIP, out String loginUsername))
+                if (pathParts.Length == 1)
                 {
                     HTML.SendLoginPage(connection);
+                    return;
+                }
+
+                if (!ValidateClient(connection, header, clientIP, out String loginUsername))
+                {
+                    HTML.RedirectLoginPage(connection);
                     return;
                 }
 
@@ -48,7 +54,7 @@ namespace Server
 
                 if (!ValidateClient(connection, header, clientIP, out String loginUsername))
                 {
-                    HTML.SendLoginPage(connection);
+                    HTML.RedirectLoginPage(connection);
                     return;
                 }
 

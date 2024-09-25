@@ -60,7 +60,7 @@ namespace Server
                 return;
             }
 
-            //
+            Log.FastLog($"User '{loginUsername}' logged in", LogSeverity.Info, "PerformLogin()");
 
             Byte[] responseHeader = null;
             String userToken = CookieDB.Add(loginUsername, clientIP);
