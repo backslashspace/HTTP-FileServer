@@ -82,16 +82,17 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Worker\ConnectionHandler\3. CloseConnection.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. GET-Router.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. POST-Router.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. GETHandler.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. POSTHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\CGI\UserFilesView.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\PerformLogin.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\ValidateClient.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\PasswordTools.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\ParseCredentials.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\SendLoginPage.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\1. FileSharingHandler.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\ValidateClient.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\ValidateToken.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\_SessionState.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\_UserDB.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\_CookieDB.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\403.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\401.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Errors\400.cs" />
@@ -112,7 +113,6 @@
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\ConstructHttpResponse.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetClientIP.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML\Message-Tools\GetRequestMethode.cs" />
-    <Compile Include="Worker\InitializeDatabase.cs" />
     <Compile Include="Worker\_InitializeWorker.cs" />
     <Compile Include="Worker\Logging\Interface.cs" />
     <Compile Include="Worker\Logging\LogMessage.cs" />
@@ -133,9 +133,6 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="App\shell32_241.ico" />
-    <None Include="lib\SQLite.Interop.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="bin\Debug\html\fileSharing\login.html" />
     <None Include="bin\Debug\html\dataCollection.html" />
     <None Include="bin\Debug\html\landingPage.html" />

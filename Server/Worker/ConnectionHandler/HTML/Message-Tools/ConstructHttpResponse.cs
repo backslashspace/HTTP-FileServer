@@ -7,9 +7,9 @@ using System.Text;
 
 namespace Server
 {
-    internal static partial class HTML
+    internal static partial class HTTP
     {
-        private enum ContentType : UInt16
+        internal enum ContentType : UInt16
         {
             /// <summary>application/octet-stream</summary>
             Binary = 0,
@@ -21,14 +21,19 @@ namespace Server
             PainText = 3,
             /// <summary>application/octet-stream -- arg[0] must be filename</summary>
             Download = 4,
+
+            /// <summary>No content, REDIRECT</summary>
+            None = 255,
         }
 
-        private enum ResponseType : UInt16
+        internal enum ResponseType : UInt16
         {
-            /// <summary>OK - arg[1] can be set cookie name | arg2 can be the cookie value | for 5 min</summary>
+            /// <summary>OK - arg[1] can be cookie name | arg2 can be cookie value for 5 min</summary>
             HTTP_200 = 200,
 
-            /// <summary>Temporary Redirect - arg[3] must be location</summary>
+            /// <summary>See Other (make client use GET on new location) - arg[3] must be location // arg[1] can be cookie name | arg[2] can be cookie value for LOGIN_TIME sec</summary>
+            HTTP_303 = 303,
+            /// <summary>Temporary Redirect (don't change request) - arg[3] must be location // arg[1] can be cookie name | arg[2] can be cookie value for LOGIN_TIME sec</summary>
             HTTP_307 = 307,
 
             /// <summary>Bad Request</summary>
@@ -51,8 +56,8 @@ namespace Server
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-        
-        private static ValueTuple<Byte[], Boolean> CraftHeader(ResponseType responseType, ContentType contentType, Int64 contentLength, String[] arguments)
+
+        internal static ValueTuple<Byte[], Boolean> CraftHeader(ResponseType responseType, ContentType contentType, Int64 contentLength, String[] arguments)
         {
             String header = null;
             String contentTypeHeader = null;
@@ -77,15 +82,14 @@ namespace Server
                     contentTypeHeader = "Content-Type: application/octet-stream\r\n";
                     break;
             }
-            
+
             switch (responseType)
             {
                 case ResponseType.HTTP_200:
-                    // cookie will be set
                     if (arguments != null && arguments.Length > 2 && arguments[1] != null && arguments[2] != null)
                     {
                         header = "HTTP/1.1 200 OK\r\n" +
-                        $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; SameSite=Strict; Max-Age=300\r\n" +
+                        $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={CookieDB.LOGIN_TIME}\r\n" +
                         contentTypeHeader +
                         $"Content-length: {contentLength}\r\n\r\n";
                     }
@@ -97,15 +101,43 @@ namespace Server
                     }
                     break;
 
-                case ResponseType.HTTP_307:
-
+                case ResponseType.HTTP_303:
                     if (arguments.Length > 3 && arguments[3].Length > 0)
                     {
-                        header = "HTTP/1.1 307 Temporary Redirect\r\n" +
-                        $"Location: {arguments[3]}\r\n\r\n";
+                        if (arguments[1] == null || arguments[2] == null)
+                        {
+                            header = "HTTP/1.1 303 See Other\r\n" +
+                            $"Location: {arguments[3]}\r\n\r\n";
+                        }
+                        else
+                        {
+                            header = "HTTP/1.1 303 See Other\r\n" +
+                            $"Location: {arguments[3]}\r\n" +
+                            $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={CookieDB.LOGIN_TIME}\r\n\r\n";
+                        }
+
+                        break;
                     }
                     else return (null, false);
-                    break;
+
+                case ResponseType.HTTP_307:
+                    if (arguments.Length > 3 && arguments[3].Length > 0)
+                    {
+                        if (arguments[1] == null || arguments[2] == null)
+                        {
+                            header = "HTTP/1.1 307 Temporary Redirect\r\n" +
+                            $"Location: {arguments[3]}\r\n\r\n";
+                        }
+                        else
+                        {
+                            header = "HTTP/1.1 307 Temporary Redirect\r\n" +
+                            $"Location: {arguments[3]}\r\n" +
+                            $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={CookieDB.LOGIN_TIME}\r\n\r\n";
+                        }
+
+                        break;
+                    }
+                    else return (null, false);
 
                 case ResponseType.HTTP_400:
                     header = "HTTP/1.1 400 Bad Request\r\n" +
@@ -160,12 +192,14 @@ namespace Server
             return (Encoding.UTF8.GetBytes(header), true);
         }
 
-        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    }
 
-        private static Byte[] ReadFileBytes(String relativePath) => File.ReadAllBytes(Worker.AssemblyPath + "\\html\\" + relativePath);
-        private static String ReadFileText(String relativePath) => File.ReadAllText(Worker.AssemblyPath + "\\html\\" + relativePath);
+    internal static partial class Worker
+    {
+        internal static Byte[] ReadFileBytes(String relativePath) => File.ReadAllBytes(Worker.AssemblyPath + "\\html\\" + relativePath);
+        internal static String ReadFileText(String relativePath) => File.ReadAllText(Worker.AssemblyPath + "\\html\\" + relativePath);
 
-        private static Byte[] ConstructHttpResponse(Byte[] headerBuffer, Byte[] bodyBuffer)
+        internal static Byte[] ConstructHttpResponse(Byte[] headerBuffer, Byte[] bodyBuffer)
         {
             Byte[] response = new Byte[headerBuffer.Length + bodyBuffer.Length];
 

@@ -8,32 +8,16 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Boolean ValidateClient(String header, Socket connection, out String username)
+        internal static Boolean ValidateClient(Socket connection, String header, IPAddress clientIP, out String loginUsername)
         {
             String token = GetTokenCookieValue(header);
-
             if (token == null)
             {
-                username = null;
+                loginUsername = null;
                 return false;
             }
 
-            IPAddress clientIP = GetClientIP(header);
-
-            if (clientIP == IPAddress.None)
-            {
-                username = null;
-                return false;
-            }
-
-            if (!ValidateToken(token, clientIP, out String _username))
-            {
-                username = null;
-                return false;
-            }
-
-            username = _username;
-            return true;
+            return CookieDB.ValidateToken(token, clientIP, out loginUsername);
         }
     }
 }

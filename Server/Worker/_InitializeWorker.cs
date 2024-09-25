@@ -13,11 +13,6 @@ namespace Server
 {
     internal static partial class Worker
     {
-        /// <summary>Time before the login cookie expires in seconds</summary>
-        private const Int32 LOGIN_TIME = 300;
-
-        private static SQLiteConnection _databaseConnection;
-
         internal static volatile Boolean ShutdownPending = false;
         internal static Socket Listener;
         internal static String AssemblyPath;
@@ -31,9 +26,15 @@ namespace Server
 
             (IPAddress interfaceIP, UInt16 interfacePort, UInt16 maximumConcurrentConnections) = ValidateSettings();
 
-            if (!InitializeDatabase(out _databaseConnection))
+            if (!UserDB.IsInitialized)
             {
-                Log.FastLog("Database error, shutting down", LogSeverity.Info, "Init()");
+                Log.FastLog("Database error, shutting down", LogSeverity.Error, "Init()");
+                Environment.Exit(-1);
+            }
+
+            if (!CookieDB.IsInitialized)
+            {
+                Log.FastLog("Session Cookie Database error, shutting down", LogSeverity.Error, "Init()");
                 Environment.Exit(-1);
             }
 

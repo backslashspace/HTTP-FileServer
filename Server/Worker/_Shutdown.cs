@@ -8,22 +8,13 @@ namespace Server
     {
         internal static void Shutdown()
         {
-            try
-            {
-                _databaseConnection?.Close();
-                _databaseConnection?.Dispose();
-                SQLiteConnection.ClearAllPools();
-            }
-            catch
-            {
-                Log.FastLog("DB shutdown finished with errors", LogSeverity.Critical, "Shutdown()");
-            }
+            CookieDB.Shutdown();
+            SQLiteConnection.ClearAllPools();
 
             if (!ThreadPoolFast.Shutdown())
             {
                 Log.FastLog("ThreadPool shutdown finished with errors", LogSeverity.Critical, "ThreadPool");
             }
-            
         }
     }
 }

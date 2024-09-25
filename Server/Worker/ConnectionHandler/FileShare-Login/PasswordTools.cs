@@ -15,7 +15,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Boolean ValidatePassword(String password, String correctPasswordHashBase64, String saltBase64)
+        internal static Boolean ValidatePassword(String password, String correctPasswordHashBase64, String saltBase64)
         {
             Byte[] correctPasswordHash = Convert.FromBase64String(correctPasswordHashBase64);
 
@@ -57,7 +57,7 @@ namespace Server
             return false;
         }
 
-        private static Byte[] CreateSalt(String username)
+        internal static Byte[] CreateSalt(String username)
         {
             Byte[] randomData = new Byte[384];
 
@@ -80,7 +80,7 @@ namespace Server
         }
 
         /// <summary>returns: Password + Salt in Base64</summary>
-        private static ValueTuple<String, String> CreatePassword(String username, String password)
+        internal static ValueTuple<String, String> CreatePassword(String username, String password)
         {
             Byte[] salt = CreateSalt(username);
             String saltedPassword = password + Encoding.UTF8.GetString(salt);
