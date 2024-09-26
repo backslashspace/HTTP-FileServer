@@ -131,6 +131,22 @@ namespace Server
             internal readonly Boolean Write;
         }
 
+        internal readonly ref struct UserPermissions
+        {
+            internal UserPermissions(Boolean isAdministrator, Boolean isEnabled, Boolean read, Boolean write)
+            {
+                IsAdministrator = isAdministrator;
+                IsEnabled = isEnabled;
+                Read = read;
+                Write = write;
+            }
+
+            internal readonly Boolean IsAdministrator;
+            internal readonly Boolean IsEnabled;
+            internal readonly Boolean Read;
+            internal readonly Boolean Write;
+        }
+
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         internal static Boolean GetLoginInfo(String loginUsername, out LoginInfo loginInfo)
@@ -157,6 +173,33 @@ namespace Server
             Boolean write = dataReader.GetBoolean(5);
 
             loginInfo = new(hashedPassword, salt, isAdministrator, isEnabled, read, write);
+
+            databaseConnection.Close();
+            return true;
+        }
+
+        internal static Boolean GetUserPermissions(String loginUsername, out UserPermissions userPermissions)
+        {
+            SQLiteConnection databaseConnection = new(CONNECTION_STRING);
+            databaseConnection.Open();
+
+            SQLiteCommand command = databaseConnection.CreateCommand();
+            command.CommandText = "SELECT IsAdministrator,IsEnabled,Read,Write FROM User WHERE LoginName = @loginName";
+            command.Parameters.Add("@loginName", DbType.String).Value = loginUsername;
+            SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleRow);
+
+            if (!dataReader.Read())
+            {
+                userPermissions = new();
+                return false;
+            }
+
+            Boolean isAdministrator = dataReader.GetBoolean(0);
+            Boolean isEnabled = dataReader.GetBoolean(1);
+            Boolean read = dataReader.GetBoolean(2);
+            Boolean write = dataReader.GetBoolean(3);
+
+            userPermissions = new(isAdministrator, isEnabled, read, write);
 
             databaseConnection.Close();
             return true;

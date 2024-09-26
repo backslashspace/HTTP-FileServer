@@ -26,13 +26,29 @@ namespace Server
 
             if (requestMethode == RequestMethode.GET)
             {
-                if (pathParts.Length == 1)
+                Boolean clientIsValid = ValidateClient(header, clientIP, out String loginUsername, out Boolean reasonTokenExpired);
+
+                if (pathParts.Length == 1 && clientIsValid)
+                {
+                    if (UserDB.GetUserPermissions(loginUsername, out UserDB.UserPermissions userPermissions))
+                    {
+                        if (userPermissions.IsAdministrator) HTML.CGI.SendControlPanel(connection, loginUsername);
+                        else HTML.CGI.SendUserFilesView(connection, loginUsername);
+                        return;
+                    }
+                    else
+                    {
+                        HTML.STATIC.Send_500(connection);
+                        return;
+                    }
+                }
+                else if (pathParts.Length == 1)
                 {
                     HTML.SendLoginPage(connection);
                     return;
                 }
 
-                if (!ValidateClient(header, clientIP, out String loginUsername, out Boolean reasonTokenExpired))
+                if (!clientIsValid)
                 {
                     if (reasonTokenExpired) HTML.SendSelfRedirectLoginPageExpired(connection);
                     else HTML.RedirectLoginPage(connection);

@@ -49,6 +49,8 @@ namespace Server
             /// <summary>Request Header Fields Too Large</summary>
             HTTP_431 = 431,
 
+            /// <summary>Internal Server Error</summary>
+            HTTP_500 = 500,
             /// <summary>Not Implemented</summary>
             HTTP_501 = 501,
             /// <summary>Insufficient Storage</summary>
@@ -172,6 +174,12 @@ namespace Server
 
                 case ResponseType.HTTP_431:
                     header = "HTTP/1.1 431 Request Header Fields Too Large\r\n" +
+                        contentTypeHeader +
+                        $"Content-length: {contentLength}\r\n\r\n";
+                    break;
+
+                case ResponseType.HTTP_500:
+                    header = "HTTP/1.1 500 Internal Server Error\r\n" +
                         contentTypeHeader +
                         $"Content-length: {contentLength}\r\n\r\n";
                     break;

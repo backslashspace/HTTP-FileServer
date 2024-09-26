@@ -48,6 +48,13 @@ namespace Server
                 Worker.CloseConnection(connection);
             }
 
+            /// <summary>Internal Server Error</summary>
+            internal static void Send_500(Socket connection)
+            {
+                connection.Send(_500_response, 0, _500_response.Length, SocketFlags.None);
+                Worker.CloseConnection(connection);
+            }
+
             /// <summary>Not Implemented</summary>
             internal static void Send_501(Socket connection)
             {

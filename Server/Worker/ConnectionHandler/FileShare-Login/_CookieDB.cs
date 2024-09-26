@@ -50,7 +50,7 @@ namespace Server
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
         /// <summary>Returns base64 encoded token</summary>
-        internal static String Add(String loginUsername, IPAddress clientIP)
+        internal static String AddUser(String loginUsername, IPAddress clientIP)
         {
             if (loginUsername == null || clientIP == IPAddress.None)
             {
@@ -85,6 +85,30 @@ namespace Server
             }
 
             return tokenBase64;
+        }
+
+        internal static Boolean RemoveUser(String loginUsername)
+        {
+            Boolean success = true;
+
+            lock (_dbCleanerLock)
+            {
+                try
+                {
+                    SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _cookieDB);
+                    command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
+                    command.ExecuteNonQuery();
+
+                    Log.FastLog($"User '{loginUsername}' logged out", LogSeverity.Info, "CookieDB");
+                }
+                catch (Exception exception)
+                {
+                    Log.FastLog($"Failed to log-out user '{loginUsername}':\n{exception.Message}", LogSeverity.Error, "CookieDB");
+                    success = false;
+                }
+            }
+
+            return success;
         }
 
         /// <summary>Auto-Removes invalid entries</summary>

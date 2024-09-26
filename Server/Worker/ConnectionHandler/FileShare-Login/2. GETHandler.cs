@@ -9,7 +9,13 @@ namespace Server
         {
             switch (pathParts[1].ToLower())
             {
-                case "controlPanel":
+                case "controlpanel":
+                    HTML.CGI.SendControlPanel(connection, loginUsername);
+                    return;
+
+                case "logout":
+                    if (!CookieDB.RemoveUser(loginUsername))HTML.STATIC.Send_500(connection);
+                    else HTML.SendLoggedOutPage(connection);
                     return;
 
                 default:

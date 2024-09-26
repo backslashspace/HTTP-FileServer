@@ -55,6 +55,12 @@ namespace Server
 
                 //
 
+                bodyBuffer = Encoding.UTF8.GetBytes(_500_body);
+                headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_500, HTTP.ContentType.HTML, bodyBuffer.LongLength, null).Item1;
+                _500_response = new Byte[headerBuffer.Length + bodyBuffer.Length];
+                Buffer.BlockCopy(headerBuffer, 0, _500_response, 0, headerBuffer.Length);
+                Buffer.BlockCopy(bodyBuffer, 0, _500_response, headerBuffer.Length, bodyBuffer.Length);
+
                 bodyBuffer = Encoding.UTF8.GetBytes(_501_body);
                 headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_501, HTTP.ContentType.HTML, bodyBuffer.LongLength, null).Item1;
                 _501_response = new Byte[headerBuffer.Length + bodyBuffer.Length];
