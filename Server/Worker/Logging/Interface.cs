@@ -21,7 +21,7 @@ namespace BSS.Logging
 
             _assemblyPath = assemblyPath ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            if (!Directory.Exists($"{_assemblyPath}\\logs"))
+            if (Directory.Exists($"{_assemblyPath}\\logs"))
             {
                 DateTime now = DateTime.Now;
 
@@ -29,7 +29,7 @@ namespace BSS.Logging
                 {
                     using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt", true, Encoding.UTF8))
                     {
-                        streamWriter.WriteLine("\n");
+                        streamWriter.WriteLine();
                     }
                 }
             }

@@ -25,13 +25,13 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    Log.FastLog("Listener closed, shutting down", LogSeverity.Info, "_connectionHandler");
+                    Log.FastLog("Listener closed, shutting down", LogSeverity.Info, "ConnectionHandler");
                     Shutdown();
                     return;
                 }
                 catch (Exception ex)
                 {
-                    Log.FastLog($"Unknown socket error: {ex.Message}", LogSeverity.Critical, "_connectionHandler");
+                    Log.FastLog($"Unknown socket error: {ex.Message}", LogSeverity.Critical, "ConnectionHandler");
                     Shutdown();
                     return;
                 }

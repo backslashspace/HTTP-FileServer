@@ -18,7 +18,7 @@ namespace Server
         internal const Double LOGIN_TIME = 600.0d;
         // todo: make login time configurable?
 
-        private static readonly SQLiteConnection _cookieDB = new($"Data Source=:memory:; Version=3; Foreign Keys=true;");
+        private static readonly SQLiteConnection _cookieDB = new($"Data Source=:memory:; Version=3; Foreign Keys=true; Journal Mode=MEMORY;");
         private static readonly Timer _timer = new(LOGIN_TIME * 0.2d * 1000d);
         private static readonly Object _dbCleanerLock = new();
         private static volatile Boolean _timerIsRunning = false;

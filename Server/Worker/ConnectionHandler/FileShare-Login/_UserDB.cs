@@ -10,7 +10,7 @@ namespace Server
     {
         internal static Boolean IsInitialized { get; private set; }
 
-        private const String CONNECTION_STRING = $"Data Source=user.db; Version=3; Foreign Keys=true;";
+        private const String CONNECTION_STRING = $"Data Source=user.db; Version=3; Foreign Keys=true; Journal Mode=TRUNCATE;";
 
         static UserDB()
         {

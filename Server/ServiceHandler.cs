@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BSS.Logging;
+using System;
 using System.ServiceProcess;
 using System.Threading;
 
@@ -26,10 +27,14 @@ namespace Server
 
         internal static void ShutdownComponents()
         {
+            Log.FastLog("Received shutdown signal", LogSeverity.Info, "ServiceBase");
+
             Worker.ShutdownPending = true;
             Worker.Listener?.Close();
 
             MainThread.Join();
+
+            Log.FastLog("Successfully shut down, exiting", LogSeverity.Info, "ServiceBase");
         }
     }
 }

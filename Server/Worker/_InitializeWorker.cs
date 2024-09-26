@@ -22,19 +22,19 @@ namespace Server
             AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             Log.Initialize(AssemblyPath);
-            Log.FastLog("Initializing", LogSeverity.Info, "Init()");
+            Log.FastLog("Initializing", LogSeverity.Info, "Init");
 
             (IPAddress interfaceIP, UInt16 interfacePort, UInt16 maximumConcurrentConnections) = ValidateSettings();
 
             if (!UserDB.IsInitialized)
             {
-                Log.FastLog("Database error, shutting down", LogSeverity.Error, "Init()");
+                Log.FastLog("Database error, shutting down", LogSeverity.Error, "Init");
                 Environment.Exit(-1);
             }
 
             if (!CookieDB.IsInitialized)
             {
-                Log.FastLog("Session Cookie Database error, shutting down", LogSeverity.Error, "Init()");
+                Log.FastLog("Session Cookie Database error, shutting down", LogSeverity.Error, "Init");
                 Environment.Exit(-1);
             }
 
@@ -42,17 +42,17 @@ namespace Server
 
             if (HTML.STATIC.IsInitialized)
             {
-                Log.FastLog("Initialized static content", LogSeverity.Info, "Init()");
+                Log.FastLog("Initialized static content", LogSeverity.Info, "Init");
             }
             else
             {
-                Log.FastLog("HTTP_ERRORS not initialized", LogSeverity.Info, "Init()");
+                Log.FastLog("HTTP_ERRORS not initialized", LogSeverity.Info, "Init");
                 Environment.Exit(-1);
             }
 
             Listener = BindSocket(interfaceIP, interfacePort);
 
-            Log.FastLog("Initialization complete", LogSeverity.Info, "Init()");
+            Log.FastLog("Initialization complete", LogSeverity.Info, "Init");
 
             StartNewConnectionHandler(maximumConcurrentConnections);
         }
@@ -85,7 +85,7 @@ namespace Server
                 Environment.Exit(-1);
             }
 
-            Log.FastLog("Successfully loaded configuration", LogSeverity.Info, "Init()");
+            Log.FastLog("Successfully loaded configuration", LogSeverity.Info, "Init");
 
             return (interfaceIP, interfacePort, maximumConcurrentConnections);
         }
