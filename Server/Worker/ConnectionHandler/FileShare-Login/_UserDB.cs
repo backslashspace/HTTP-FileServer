@@ -10,12 +10,14 @@ namespace Server
     {
         internal static Boolean IsInitialized { get; private set; }
 
-        private const String CONNECTION_STRING = $"Data Source=user.db; Version=3; Foreign Keys=true; Journal Mode=TRUNCATE;";
+        private const String CONNECTION_STRING = $"data_source=user.db; version=3; foreign_keys=TRUE; journal_mode=TRUNCATE; synchronous=FULL; secure_delete=on;";
 
         static UserDB()
         {
             Log.FastLog("Verifying user database", LogSeverity.Info, "UserDB");
             SQLiteConnection databaseConnection = new(CONNECTION_STRING);
+
+            SQLiteCommand command;
 
             #region Open/Create
 
@@ -32,13 +34,17 @@ namespace Server
                     SQLiteConnection.CreateFile("user.db");
                     databaseConnection.Open();
 
-                    SQLiteCommand command = new(DATABASE_SCHEME_VERSION, databaseConnection);
+                    //
+
+                    command = databaseConnection.CreateCommand();
+                    command.CommandText = $"PRAGMA user_version={DATABASE_VERSION}";
                     command.ExecuteNonQuery();
-                    command = new($"INSERT INTO Version (Version) VALUES ({DATABASE_VERSION});", databaseConnection);
-                    command.ExecuteNonQuery(CommandBehavior.SingleResult);
 
                     command = new(DATABASE_SCHEME_USER, databaseConnection);
                     command.ExecuteNonQuery();
+
+                    //
+
                     (String encodedPassword, String encodedSalt) = Worker.CreatePassword("admin", "admin");
                     command = new($"INSERT INTO User (LoginName, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '{encodedPassword}', '{encodedSalt}', 1, 1, 1, 1);", databaseConnection);
                     command.ExecuteNonQuery(CommandBehavior.SingleResult);
@@ -54,7 +60,6 @@ namespace Server
 
             #region Verify
 
-            UInt16 goodTablesCounter = 0;
             DataTable tables = databaseConnection.GetSchema("Tables");
 
             if (tables.Rows.Count < TABLE_COUNT)
@@ -63,48 +68,41 @@ namespace Server
                 return;
             }
 
+            Boolean schemaIsValid = false;
             for (UInt16 i = 0; i < tables.Rows.Count; ++i)
             {
-                switch (tables.Rows[i].ItemArray[2])
+                if ((String)tables.Rows[i].ItemArray[2] == "User")
                 {
-                    case "User":
-                        if ((String)tables.Rows[i].ItemArray[6] == DATABASE_SCHEME_USER) ++goodTablesCounter;
+                    if ((String)tables.Rows[i].ItemArray[6] == DATABASE_SCHEME_USER)
+                    {
+                        schemaIsValid = true;
                         break;
-
-                    case "Version":
-                        if ((String)tables.Rows[i].ItemArray[6] == DATABASE_SCHEME_VERSION) ++goodTablesCounter;
-                        break;
-                }
-
-                if (goodTablesCounter == TABLE_COUNT)
-                {
-                    SQLiteCommand command = databaseConnection.CreateCommand();
-                    command.CommandText = "SELECT Version FROM Version ORDER BY Version DESC LIMIT 1";
-                    SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleRow);
-
-                    if (!dataReader.Read())
-                    {
-                        Log.FastLog($"Unable to obtain database version, table empty?", LogSeverity.Error, "UserDB-Verify");
-                        return;
-                    }
-
-                    if (DATABASE_VERSION == dataReader.GetInt32(0))
-                    {
-                        Log.FastLog("Success", LogSeverity.Info, "UserDB");
-                        databaseConnection.Close();
-                        IsInitialized = true;
-                        return;
-                    }
-                    else
-                    {
-                        Log.FastLog($"Invalid database, wrong database version", LogSeverity.Error, "UserDB-Verify");
-                        return;
                     }
                 }
             }
 
-            Log.FastLog($"Invalid database, not all required tables were found", LogSeverity.Error, "UserDB-Verify");
-            return;
+            if (!schemaIsValid) 
+            {
+                Log.FastLog($"Invalid database, not all required tables were found", LogSeverity.Error, "UserDB-Verify");
+                return;
+            }
+
+            command = databaseConnection.CreateCommand();
+            command.CommandText = "PRAGMA user_version";
+            Int64 databaseVersion = (Int64)command.ExecuteScalar(CommandBehavior.SingleResult);
+
+            if (DATABASE_VERSION == databaseVersion)
+            {
+                Log.FastLog("Success", LogSeverity.Info, "UserDB");
+                databaseConnection.Close();
+                IsInitialized = true;
+                return;
+            }
+            else
+            {
+                Log.FastLog($"Invalid database, wrong database version, found: {databaseVersion}, required: {DATABASE_VERSION}", LogSeverity.Error, "UserDB-Verify");
+                return;
+            }
 
             #endregion
         }
@@ -208,7 +206,7 @@ namespace Server
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         private const Int32 DATABASE_VERSION = 1;
-        private const UInt16 TABLE_COUNT = 2;
+        private const UInt16 TABLE_COUNT = 1;
 
         private const String DATABASE_SCHEME_USER = @"CREATE TABLE ""User"" (
 	""LoginName""	TEXT NOT NULL,
@@ -220,11 +218,6 @@ namespace Server
 	""Read""	INTEGER NOT NULL,
 	""Write""	INTEGER NOT NULL,
 	PRIMARY KEY(""LoginName"")
-)";
-
-        private const String DATABASE_SCHEME_VERSION = @"CREATE TABLE ""Version"" (
-	""Version""	INTEGER NOT NULL,
-	PRIMARY KEY(""Version"")
 )";
     }
 }

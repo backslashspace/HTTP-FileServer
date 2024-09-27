@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 
 #pragma warning disable CS8600
+#pragma warning disable CS8602
 #pragma warning disable CS8619
 
 namespace Server
@@ -28,7 +29,7 @@ namespace Server
 
         internal enum ResponseType : UInt16
         {
-            /// <summary>OK - arg[1] can be cookie name | arg2 can be cookie value for 5 min</summary>
+            /// <summary>OK - arg[1] can be cookie name | arg[2] can be cookie value | arg[0] can be time in seconds or null for 5 min</summary>
             HTTP_200 = 200,
 
             /// <summary>See Other (make client use GET on new location) - arg[3] must be location // arg[1] can be cookie name | arg[2] can be cookie value for LOGIN_TIME sec</summary>
@@ -59,10 +60,12 @@ namespace Server
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+        // todo: rewrite
         internal static ValueTuple<Byte[], Boolean> CraftHeader(ResponseType responseType, ContentType contentType, Int64 contentLength, String[] arguments)
         {
             String header = null;
             String contentTypeHeader = null;
+            Int32 argLength = arguments != null ? arguments.Length : 0;
 
             switch (contentType)
             {
@@ -73,7 +76,7 @@ namespace Server
                     contentTypeHeader = "Content-Type: image/x-icon\r\n";
                     break;
                 case ContentType.Download:
-                    if (arguments.Length > 0 && arguments[0].Length > 0 && arguments[0].Length < 210) contentTypeHeader = $"Content-Type: application/octet-stream\r\nContent-Disposition: inline; filename=\"{arguments[0]}\"\r\n";
+                    if (argLength > 0 && arguments[0].Length > 0 && arguments[0].Length < 210) contentTypeHeader = $"Content-Type: application/octet-stream\r\nContent-Disposition: inline; filename=\"{arguments[0]}\"\r\n";
                     else return (null, false);
                     break;
                 case ContentType.PainText:
@@ -88,10 +91,11 @@ namespace Server
             switch (responseType)
             {
                 case ResponseType.HTTP_200:
-                    if (arguments != null && arguments.Length > 2 && arguments[1] != null && arguments[2] != null)
+                    String time = argLength > 3 && arguments[3] != null ? arguments[3] : $"{CookieDB.LOGIN_TIME}";
+                    if (arguments != null && argLength > 2 && arguments[1] != null && arguments[2] != null)
                     {
                         header = "HTTP/1.1 200 OK\r\n" +
-                        $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={CookieDB.LOGIN_TIME}\r\n" +
+                        $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={time}\r\n" +
                         contentTypeHeader +
                         $"Content-length: {contentLength}\r\n\r\n";
                     }
@@ -104,7 +108,7 @@ namespace Server
                     break;
 
                 case ResponseType.HTTP_303:
-                    if (arguments.Length > 3 && arguments[3].Length > 0)
+                    if (argLength > 3 && arguments[3].Length > 0)
                     {
                         if (arguments[1] == null || arguments[2] == null)
                         {
@@ -123,7 +127,7 @@ namespace Server
                     else return (null, false);
 
                 case ResponseType.HTTP_307:
-                    if (arguments.Length > 3 && arguments[3].Length > 0)
+                    if (argLength > 3 && arguments[3].Length > 0)
                     {
                         if (arguments[1] == null || arguments[2] == null)
                         {

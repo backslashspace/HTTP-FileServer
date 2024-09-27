@@ -18,7 +18,7 @@ namespace Server
         internal const Double LOGIN_TIME = 600.0d;
         // todo: make login time configurable?
 
-        private static readonly SQLiteConnection _cookieDB = new($"Data Source=:memory:; Version=3; Foreign Keys=true; Journal Mode=MEMORY;");
+        private static readonly SQLiteConnection _cookieDB = new($"data_source=:memory:; version=3; foreign_keys=TRUE; journal_mode=MEMORY; synchronous=NORMAL; secure_delete=on;");
         private static readonly Timer _timer = new(LOGIN_TIME * 0.2d * 1000d);
         private static readonly Object _dbCleanerLock = new();
         private static volatile Boolean _timerIsRunning = false;
@@ -39,7 +39,7 @@ namespace Server
 	""Token""	TEXT NOT NULL,
 	PRIMARY KEY(""LoginUsername"")
 )", _cookieDB);
-            command.ExecuteNonQuery(CommandBehavior.SingleResult);
+            command.ExecuteNonQuery();
 
             _timer.Elapsed += ClearSessionData;
             _timer.AutoReset = true;
@@ -171,6 +171,7 @@ namespace Server
 
                 Stopwatch stopwatch = new();
                 stopwatch.Start();
+
                 // truncate
                 SQLiteCommand command = new("DELETE FROM Cookie", _cookieDB);
                 Int32 removedEntries = command.ExecuteNonQuery();

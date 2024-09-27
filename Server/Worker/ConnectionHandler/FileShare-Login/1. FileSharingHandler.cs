@@ -10,7 +10,6 @@ namespace Server
         private static void FileSharingHandler(Socket connection, String header, String[] pathParts)
         {
             RequestMethode requestMethode = GetRequestMethode(header);
-
             if (requestMethode == RequestMethode.Invalid)
             {
                 HTML.STATIC.Send_400(connection);
@@ -24,10 +23,13 @@ namespace Server
                 return;
             }
 
+            //
+
             if (requestMethode == RequestMethode.GET)
             {
                 Boolean clientIsValid = ValidateClient(header, clientIP, out String loginUsername, out Boolean reasonTokenExpired);
 
+                // resume or login page
                 if (pathParts.Length == 1 && clientIsValid)
                 {
                     if (UserDB.GetUserPermissions(loginUsername, out UserDB.UserPermissions userPermissions))

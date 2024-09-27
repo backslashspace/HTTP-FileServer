@@ -2,6 +2,8 @@
 using System;
 using System.Net.Sockets;
 
+#pragma warning disable CS8604
+
 namespace Server
 {
     internal static partial class Worker
@@ -13,6 +15,7 @@ namespace Server
                 if (!GetHeader(connection, out String header)) return;
 
                 String httpPath = GetHttpPath(header);
+
                 if (httpPath == null)
                 {
                     Log.FastLog($"Client send invalid http path, sending 400", LogSeverity.Info, "Worker");
@@ -42,7 +45,17 @@ namespace Server
             }
             catch (Exception exception)
             {
-                Log.FastLog($"An unknown error occurred and was caught in Serve():\n{exception.Message}", LogSeverity.Error, "Worker");
+                Log.FastLog($"An unknown error occurred and was caught in Serve():\n{exception.Message}\n\n{exception.StackTrace}", LogSeverity.Error, "Worker");
+
+                if (connection != null)
+                {
+                    try
+                    {
+                        HTML.STATIC.Send_500(connection);
+                    }
+                    catch { }
+                }
+
                 CloseConnection(connection, true);
                 return;
             }
