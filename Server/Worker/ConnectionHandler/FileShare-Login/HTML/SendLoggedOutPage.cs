@@ -10,12 +10,13 @@ namespace Server
         internal static void SendLoggedOutPage(Socket connection)
         {
             Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\loggedOut.html");
-            Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, null).Item1;
+            Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, [null, "token", "expired", "0"]).Item1;
 
             xDebug.WriteLine("fileSharing\\loggedOut.html");
 
             Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
             connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
+
             Worker.CloseConnection(connection);
         }
     }

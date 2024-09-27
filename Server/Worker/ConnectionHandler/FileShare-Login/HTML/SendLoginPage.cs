@@ -16,6 +16,7 @@ namespace Server
 
             Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
             connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
+
             Worker.CloseConnection(connection);
         }
 
@@ -26,6 +27,7 @@ namespace Server
             xDebug.WriteLine("-> fileSharing\\login.html");
 
             connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
+
             Worker.CloseConnection(connection);
         }
 
@@ -38,6 +40,7 @@ namespace Server
 
             Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
             connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
+
             Worker.CloseConnection(connection);
         }
 
@@ -50,6 +53,7 @@ namespace Server
 
             Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
             connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
+
             Worker.CloseConnection(connection);
         }
     }

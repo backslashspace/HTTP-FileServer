@@ -9,7 +9,6 @@ namespace Server
     {
         internal static partial class STATIC
         {
-
             internal static Boolean IsInitialized { get; private set; }
 
             static STATIC()

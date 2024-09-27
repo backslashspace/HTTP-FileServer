@@ -35,7 +35,8 @@ namespace Server
                     if (UserDB.GetUserPermissions(loginUsername, out UserDB.UserPermissions userPermissions))
                     {
                         if (userPermissions.IsAdministrator) HTML.CGI.SendControlPanel(connection, loginUsername);
-                        else HTML.CGI.SendUserFilesView(connection, loginUsername);
+                        //else HTML.CGI.SendUserFilesView(connection, loginUsername);
+                        else HTML.STATIC.Send_501(connection);
                         return;
                     }
                     else

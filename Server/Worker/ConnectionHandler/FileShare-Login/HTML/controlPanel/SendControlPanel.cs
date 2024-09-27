@@ -11,10 +11,10 @@ namespace Server
         {
             internal static void SendControlPanel(Socket connection, String loginUsername)
             {
-                Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\controlPanel.html");
-                Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, [null, "token", "expired", "0"]).Item1;
+                Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\controlPanel\\controlPanel.html");
+                Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, null).Item1;
 
-                xDebug.WriteLine("fileSharing\\controlPanel.html");
+                xDebug.WriteLine("fileSharing\\controlPanel\\controlPanel.html");
 
                 Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
                 connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
