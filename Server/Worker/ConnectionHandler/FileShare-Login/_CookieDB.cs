@@ -18,9 +18,9 @@ namespace Server
         internal const Double LOGIN_TIME = 600.0d;
         // todo: make login time configurable?
 
-        private static readonly SQLiteConnection _cookieDB = new($"data_source=:memory:; version=3; foreign_keys=TRUE; journal_mode=MEMORY; synchronous=NORMAL; secure_delete=on;");
+        private static readonly SQLiteConnection _memoryDatabase = new("data_source=:memory:; version=3; foreign_keys=TRUE; journal_mode=MEMORY; synchronous=NORMAL; secure_delete=on;");
+        private static readonly Object _databaseLock = new();
         private static readonly Timer _timer = new(LOGIN_TIME * 0.2d * 1000d);
-        private static readonly Object _dbCleanerLock = new();
         private static volatile Boolean _timerIsRunning = false;
         private static Int64 _youngestCookieExpiresOnAsFileTimeUTC = 0;
 
@@ -30,7 +30,7 @@ namespace Server
 
         static CookieDB()
         {
-            _cookieDB.Open();
+            _memoryDatabase.Open();
 
             SQLiteCommand command = new(@"CREATE TABLE ""Cookie"" (
 	""LoginUsername""	TEXT NOT NULL,
@@ -38,7 +38,7 @@ namespace Server
 	""ExpiresOnAsFileTimeUTC""	INTEGER NOT NULL,
 	""Token""	TEXT NOT NULL,
 	PRIMARY KEY(""LoginUsername"")
-)", _cookieDB);
+)", _memoryDatabase);
             command.ExecuteNonQuery();
 
             _timer.Elapsed += ClearSessionData;
@@ -64,9 +64,9 @@ namespace Server
 
             String tokenBase64;
 
-            lock (_dbCleanerLock)
+            lock (_databaseLock)
             {
-                SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _cookieDB);
+                SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                 command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                 command.ExecuteNonQuery();
 
@@ -74,7 +74,7 @@ namespace Server
                 Int64 expiresOnAsFileTimeUTC = DateTime.Now.AddSeconds(LOGIN_TIME).ToFileTimeUtc();
                 _youngestCookieExpiresOnAsFileTimeUTC = expiresOnAsFileTimeUTC;
 
-                command = new("INSERT INTO Cookie (LoginUsername, IPAddress, ExpiresOnAsFileTimeUTC, Token) VALUES (@loginUsername, @ipAddress, @expiresOnAsFileTimeUTC, @token)", _cookieDB);
+                command = new("INSERT INTO Cookie (LoginUsername, IPAddress, ExpiresOnAsFileTimeUTC, Token) VALUES (@loginUsername, @ipAddress, @expiresOnAsFileTimeUTC, @token)", _memoryDatabase);
                 command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                 command.Parameters.Add("@ipAddress", DbType.String).Value = Convert.ToBase64String(IPAddress.Loopback.GetAddressBytes());
                 command.Parameters.Add("@expiresOnAsFileTimeUTC", DbType.Int64).Value = expiresOnAsFileTimeUTC;
@@ -91,11 +91,11 @@ namespace Server
         {
             Boolean success = true;
 
-            lock (_dbCleanerLock)
+            lock (_databaseLock)
             {
                 try
                 {
-                    SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _cookieDB);
+                    SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                     command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                     command.ExecuteNonQuery();
 
@@ -117,9 +117,9 @@ namespace Server
             Boolean clientIsValid = true;
             loginUsername = null;
 
-            lock (_dbCleanerLock)
+            lock (_databaseLock)
             {
-                SQLiteCommand command = new("SELECT LoginUsername,IPAddress,ExpiresOnAsFileTimeUTC FROM Cookie WHERE Token = @token", _cookieDB);
+                SQLiteCommand command = new("SELECT LoginUsername,IPAddress,ExpiresOnAsFileTimeUTC FROM Cookie WHERE Token = @token", _memoryDatabase);
                 command.Parameters.Add("@token", DbType.String).Value = tokenBase64;
                 SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleRow);
 
@@ -147,7 +147,7 @@ namespace Server
 
                 if (!clientIsValid)
                 {
-                    command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _cookieDB);
+                    command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                     command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                     command.ExecuteNonQuery();
                 }
@@ -162,7 +162,7 @@ namespace Server
         {
             if (_youngestCookieExpiresOnAsFileTimeUTC > DateTime.Now.AddSeconds(-30d).ToFileTimeUtc()) return;
 
-            lock (_dbCleanerLock)
+            lock (_databaseLock)
             {
                 Log.FastLog("Starting session-cookie cleaner", LogSeverity.Info, "CookieDB");
 
@@ -173,7 +173,7 @@ namespace Server
                 stopwatch.Start();
 
                 // truncate
-                SQLiteCommand command = new("DELETE FROM Cookie", _cookieDB);
+                SQLiteCommand command = new("DELETE FROM Cookie", _memoryDatabase);
                 Int32 removedEntries = command.ExecuteNonQuery();
 
                 GC.Collect(5, GCCollectionMode.Forced, true, true);
@@ -187,8 +187,8 @@ namespace Server
         {
             try
             {
-                _cookieDB?.Close();
-                _cookieDB?.Dispose();
+                _memoryDatabase?.Close();
+                _memoryDatabase?.Dispose();
 
                 Log.FastLog("Successfully shut down memory database", LogSeverity.Info, "CookieDB");
                 return true;

@@ -10,13 +10,12 @@ namespace Server
     {
         internal static Boolean IsInitialized { get; private set; }
 
-        private const String CONNECTION_STRING = $"data_source=user.db; version=3; foreign_keys=TRUE; journal_mode=TRUNCATE; synchronous=FULL; secure_delete=on;";
+        private const String CONNECTION_STRING = $"data_source=user.db; version=3; foreign_keys=TRUE; journal_mode=TRUNCATE; synchronous=FULL; secure_delete=on; busy_timeout=2048;";
 
         static UserDB()
         {
             Log.FastLog("Verifying user database", LogSeverity.Info, "UserDB");
             SQLiteConnection databaseConnection = new(CONNECTION_STRING);
-
             SQLiteCommand command;
 
             #region Open/Create
@@ -95,6 +94,7 @@ namespace Server
             {
                 Log.FastLog("Success", LogSeverity.Info, "UserDB");
                 databaseConnection.Close();
+                databaseConnection.Dispose();
                 IsInitialized = true;
                 return;
             }
@@ -160,6 +160,8 @@ namespace Server
             if (!dataReader.Read())
             {
                 loginInfo = new();
+                databaseConnection.Close();
+                databaseConnection.Dispose();
                 return false;
             }
 
@@ -173,6 +175,7 @@ namespace Server
             loginInfo = new(hashedPassword, salt, isAdministrator, isEnabled, read, write);
 
             databaseConnection.Close();
+            databaseConnection.Dispose();
             return true;
         }
 
@@ -189,6 +192,8 @@ namespace Server
             if (!dataReader.Read())
             {
                 userPermissions = new();
+                databaseConnection.Close();
+                databaseConnection.Dispose();
                 return false;
             }
 
@@ -200,6 +205,7 @@ namespace Server
             userPermissions = new(isAdministrator, isEnabled, read, write);
 
             databaseConnection.Close();
+            databaseConnection.Dispose();
             return true;
         }
 
