@@ -6,6 +6,7 @@ using System.Reflection;
 using BSS.Logging;
 using BSS.Threading;
 
+#pragma warning disable IDE0079
 #pragma warning disable CS8618
 
 namespace Server
@@ -53,7 +54,7 @@ namespace Server
 
             Log.FastLog("Initialization complete", LogSeverity.Info, "Init");
 
-            StartNewConnectionHandler(maximumConcurrentConnections);
+            StartNewConnectionHandler();
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -120,6 +121,8 @@ namespace Server
 
             return listener;
         }
+
+#pragma warning disable IDE0051
 
         private static void SetSocketKeepAlive(Socket connection)
         {

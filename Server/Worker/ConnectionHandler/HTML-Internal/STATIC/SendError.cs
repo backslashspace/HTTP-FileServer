@@ -34,6 +34,13 @@ namespace Server
                 Worker.CloseConnection(connection);
             }
 
+            /// <summary>Conflict</summary>
+            internal static void Send_409(Socket connection)
+            {
+                connection.Send(_409_response, 0, _409_response.Length, SocketFlags.None);
+                Worker.CloseConnection(connection);
+            }
+
             /// <summary>Too Many Requests</summary>
             internal static void Send_429(Socket connection)
             {

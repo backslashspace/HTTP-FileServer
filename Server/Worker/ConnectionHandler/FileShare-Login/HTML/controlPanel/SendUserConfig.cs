@@ -18,7 +18,7 @@ namespace Server
                 fileContent = fileContent.Replace("<!-- #usernameAnchor -->", HttpUtility.HtmlEncode("user naem gere"));
 
                 Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\controlPanel\\userConfig.html");
-                Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, null).Item1;
+                HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
 
                 xDebug.WriteLine("fileSharing\\controlPanel\\userConfig.html");
 

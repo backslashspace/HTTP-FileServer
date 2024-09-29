@@ -1,35 +1,25 @@
 ﻿using System;
 using System.Net.Sockets;
-using static Server.UserDB;
 
 namespace Server
 {
     internal static partial class Worker
     {
-        private static void AuthenticatedGETHandler(Socket connection, String[] pathParts, String loginUsername)
+        private static void AuthenticatedGETHandler(Socket connection, String header, String[] pathParts, UserDB.User user)
         {
-            if (!UserDB.GetUserPermissions(loginUsername, out UserDB.UserPermissions userPermissions))
-            {
-                HTML.STATIC.Send_403(connection);
-                return;
-            }
-
-            if (!userPermissions.IsEnabled)
-            {
-                HTML.STATIC.Send_403(connection);
-                return;
-            }
-
             switch (pathParts[1].ToLower())
             {
                 case "controlpanel":
-
-                    if (userPermissions.IsAdministrator) HandleControlPanelRequests(connection, pathParts, loginUsername);
+                    if (user.IsAdministrator) HandleControlPanelRequests(connection, pathParts, user.LoginUsername);
                     else HTML.STATIC.Send_403(connection);
                     return;
 
+                case "files":
+                    HTML.CGI.SendUserFilesViewPage(connection, user);
+                    return;
+
                 case "logout":
-                    if (!CookieDB.RemoveUser(loginUsername))HTML.STATIC.Send_500(connection);
+                    if (!CookieDB.RemoveUser(user.LoginUsername)) HTML.STATIC.Send_500(connection);
                     else HTML.SendLoggedOutPage(connection);
                     return;
 

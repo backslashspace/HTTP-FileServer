@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Sockets;
 
+#pragma warning disable IDE0079
+#pragma warning disable IDE0059
 #pragma warning disable CS8600
 
 namespace Server
@@ -9,9 +11,9 @@ namespace Server
     {
         internal static void CloseConnection(Socket connection, Boolean fastClose = false)
         {
-            if (connection == null)
+            if (connection == null || !connection.Connected)
             {
-                xDebug.WriteLine("CloseConnection() => socket was null");
+                xDebug.WriteLine("CloseConnection() => socket was null or not connected");
                 return;
             }
 
@@ -26,7 +28,6 @@ namespace Server
                 catch { }
 
                 connection = null;
-
                 return;
             }
             

@@ -24,6 +24,15 @@ namespace Server
         private static volatile Boolean _timerIsRunning = false;
         private static Int64 _youngestCookieExpiresOnAsFileTimeUTC = 0;
 
+        internal enum TokenState : UInt32
+        {
+            None = 0,
+            Invalid = 1,
+            Expired = 2,
+            HostMismatch = 3,
+            OK = 4,
+        }
+
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
         internal static Boolean IsInitialized { get; private set; }
@@ -112,10 +121,9 @@ namespace Server
         }
 
         /// <summary>Auto-Removes invalid entries</summary>
-        internal static Boolean ValidateToken(String tokenBase64, IPAddress clientIP, out String loginUsername)
+        internal static TokenState ValidateToken(String tokenBase64, IPAddress clientIP, out String loginUsername)
         {
-            Boolean clientIsValid = true;
-            loginUsername = null;
+            TokenState tokenState = TokenState.None;
 
             lock (_databaseLock)
             {
@@ -125,8 +133,9 @@ namespace Server
 
                 if (!dataReader.Read())
                 {
-                    Log.FastLog("Client send invalid/expired token -> sending to login", LogSeverity.Info, "ValidateToken");
-                    return false;
+                    Log.FastLog("Client send unknown token", LogSeverity.Info, "CookieDB");
+                    loginUsername = null;
+                    return TokenState.Invalid;
                 }
 
                 loginUsername = dataReader.GetString(0);
@@ -135,17 +144,17 @@ namespace Server
 
                 if (!storedClientIP.Equals(clientIP))
                 {
-                    Log.FastLog("Authenticating clients token had an IP mismatch -> removing token from state database and sending to login", LogSeverity.Info, "ValidateToken");
-                    clientIsValid = false;
+                    Log.FastLog("Authenticating clients token had an IP mismatch -> removing token from database", LogSeverity.Warning, "CookieDB");
+                    tokenState = TokenState.HostMismatch;
                 }
 
-                if (clientIsValid && expiresOnAsFileTimeUTC < DateTime.Now.ToFileTimeUtc())
+                if (tokenState == TokenState.None && expiresOnAsFileTimeUTC < DateTime.Now.ToFileTimeUtc())
                 {
-                    Log.FastLog("Authenticating client send an expired token -> removing token from state database and sending to login", LogSeverity.Warning, "ValidateToken");
-                    clientIsValid = false;
+                    Log.FastLog("Authenticating client send expired token -> removing token from database", LogSeverity.Info, "CookieDB");
+                    tokenState = TokenState.Expired;
                 }
 
-                if (!clientIsValid)
+                if (tokenState != TokenState.None)
                 {
                     command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                     command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
@@ -153,7 +162,7 @@ namespace Server
                 }
             }
 
-            return clientIsValid;
+            return tokenState == TokenState.None ? TokenState.OK : tokenState;
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 

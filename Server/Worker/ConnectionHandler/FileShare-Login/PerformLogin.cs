@@ -4,9 +4,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Web;
 
-#pragma warning disable CS8600
-#pragma warning disable CS8625
-
 namespace Server
 {
     internal static partial class Worker
@@ -60,23 +57,36 @@ namespace Server
                 return;
             }
 
+            //
+
             Log.FastLog($"User '{loginUsername}' logged in", LogSeverity.Info, "PerformLogin()");
 
-            Byte[] responseHeader = null;
             String userToken = CookieDB.AddUser(loginUsername, clientIP);
+            if (userToken == null)
+            {
+                Log.FastLog($"Failed to add '{loginUsername}' token to database  -> sending 500", LogSeverity.Error, "CookieDB");
+                HTML.STATIC.Send_500(connection);
+                return;
+            }
+
+            //
+
+            HTTP.CookieOptions cookieOptions = new("token", userToken);
+            HTTP.RedirectOptions redirectOptions;
 
             if (loginInfo.IsAdministrator)
             {
-                responseHeader = HTTP.CraftHeader(HTTP.ResponseType.HTTP_303, HTTP.ContentType.None, 0, [null, "token", userToken, "/fileSharing/controlPanel"]).Item1;
+                redirectOptions = new HTTP.RedirectOptions(HTTP.ResponseType.HTTP_303, "/fileSharing/controlPanel");
             }
             else
             {
-                responseHeader = HTTP.CraftHeader(HTTP.ResponseType.HTTP_303, HTTP.ContentType.None, 0, [null, "token", userToken, "/fileSharing/userSpace"]).Item1;
+                redirectOptions = new HTTP.RedirectOptions(HTTP.ResponseType.HTTP_303, "/fileSharing/files");
             }
 
-            connection.Send(responseHeader, 0, responseHeader.Length, SocketFlags.None);
-            CloseConnection(connection);
+            HTTP.CraftHeader(new HTTP.HeaderOptions(redirectOptions, cookieOptions), out Byte[] rawResponse);
 
+            connection.Send(rawResponse, 0, rawResponse.Length, SocketFlags.None);
+            CloseConnection(connection);
             return;
         }
     }

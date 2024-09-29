@@ -3,6 +3,7 @@ using System.IO;
 using System.Data;
 using BSS.Logging;
 using System.Data.SQLite;
+using System.Globalization;
 
 namespace Server
 {
@@ -45,7 +46,7 @@ namespace Server
                     //
 
                     (String encodedPassword, String encodedSalt) = Worker.CreatePassword("admin", "admin");
-                    command = new($"INSERT INTO User (LoginName, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '{encodedPassword}', '{encodedSalt}', 1, 1, 1, 1);", databaseConnection);
+                    command = new($"INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '{encodedPassword}', '{encodedSalt}', 1, 1, 1, 1);", databaseConnection);
                     command.ExecuteNonQuery(CommandBehavior.SingleResult);
                 }
             }
@@ -72,7 +73,7 @@ namespace Server
             {
                 if ((String)tables.Rows[i].ItemArray[2] == "User")
                 {
-                    if ((String)tables.Rows[i].ItemArray[6] == DATABASE_SCHEME_USER)
+                    if (String.Compare(DATABASE_SCHEME_USER, (String)tables.Rows[i].ItemArray[6], CultureInfo.CurrentCulture, CompareOptions.IgnoreSymbols) == 0)
                     {
                         schemaIsValid = true;
                         break;
@@ -129,15 +130,21 @@ namespace Server
             internal readonly Boolean Write;
         }
 
-        internal readonly ref struct UserPermissions
+        internal readonly ref struct User
         {
-            internal UserPermissions(Boolean isAdministrator, Boolean isEnabled, Boolean read, Boolean write)
+            internal User(String loginUsername, String displayName, Boolean isAdministrator, Boolean isEnabled, Boolean read, Boolean write)
             {
+                LoginUsername = displayName;
+                DisplayName = displayName;
+
                 IsAdministrator = isAdministrator;
                 IsEnabled = isEnabled;
                 Read = read;
                 Write = write;
             }
+
+            internal readonly String  LoginUsername;
+            internal readonly String  DisplayName;
 
             internal readonly Boolean IsAdministrator;
             internal readonly Boolean IsEnabled;
@@ -153,8 +160,8 @@ namespace Server
             databaseConnection.Open();
 
             SQLiteCommand command = databaseConnection.CreateCommand();
-            command.CommandText = "SELECT HashedPassword,Salt,IsAdministrator,IsEnabled,Read,Write FROM User WHERE LoginName = @loginName";
-            command.Parameters.Add("@loginName", DbType.String).Value = loginUsername;
+            command.CommandText = "SELECT HashedPassword,Salt,IsAdministrator,IsEnabled,Read,Write FROM User WHERE LoginUsername = @loginUsername";
+            command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
             SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleRow);
 
             if (!dataReader.Read())
@@ -179,30 +186,31 @@ namespace Server
             return true;
         }
 
-        internal static Boolean GetUserPermissions(String loginUsername, out UserPermissions userPermissions)
+        internal static Boolean GetUserPermissions(String loginUsername, out User user)
         {
             SQLiteConnection databaseConnection = new(CONNECTION_STRING);
             databaseConnection.Open();
 
             SQLiteCommand command = databaseConnection.CreateCommand();
-            command.CommandText = "SELECT IsAdministrator,IsEnabled,Read,Write FROM User WHERE LoginName = @loginName";
-            command.Parameters.Add("@loginName", DbType.String).Value = loginUsername;
+            command.CommandText = "SELECT DisplayName,IsAdministrator,IsEnabled,Read,Write FROM User WHERE LoginUsername = @loginUsername";
+            command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
             SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleRow);
 
             if (!dataReader.Read())
             {
-                userPermissions = new();
+                user = new();
                 databaseConnection.Close();
                 databaseConnection.Dispose();
                 return false;
             }
 
-            Boolean isAdministrator = dataReader.GetBoolean(0);
-            Boolean isEnabled = dataReader.GetBoolean(1);
-            Boolean read = dataReader.GetBoolean(2);
-            Boolean write = dataReader.GetBoolean(3);
+            String displayName = dataReader.GetString(0);
+            Boolean isAdministrator = dataReader.GetBoolean(1);
+            Boolean isEnabled = dataReader.GetBoolean(2);
+            Boolean read = dataReader.GetBoolean(3);
+            Boolean write = dataReader.GetBoolean(4);
 
-            userPermissions = new(isAdministrator, isEnabled, read, write);
+            user = new(loginUsername, displayName, isAdministrator, isEnabled, read, write);
 
             databaseConnection.Close();
             databaseConnection.Dispose();
@@ -215,7 +223,7 @@ namespace Server
         private const UInt16 TABLE_COUNT = 1;
 
         private const String DATABASE_SCHEME_USER = @"CREATE TABLE ""User"" (
-	""LoginName""	TEXT NOT NULL,
+	""LoginUsername""	TEXT NOT NULL,
 	""DisplayName""	TEXT NOT NULL,
 	""HashedPassword""	TEXT NOT NULL,
 	""Salt""	TEXT NOT NULL,
@@ -223,7 +231,7 @@ namespace Server
 	""IsEnabled""	INTEGER NOT NULL,
 	""Read""	INTEGER NOT NULL,
 	""Write""	INTEGER NOT NULL,
-	PRIMARY KEY(""LoginName"")
+	PRIMARY KEY(""LoginUsername"")
 )";
     }
 }

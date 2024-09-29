@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Net.Sockets;
 
-#pragma warning disable CS8625
-
 namespace Server
 {
     internal static partial class HTML
     {
-        internal static void SendLoggedOutPage(Socket connection)
+        internal static void SendChangePasswordPage(Socket connection)
         {
             Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\loggedOut.html");
-            Byte[] headerBuffer = HTTP.CraftHeader(HTTP.ResponseType.HTTP_200, HTTP.ContentType.HTML, fileBuffer.LongLength, [null, "token", "expired", "0"]).Item1;
+            HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
 
             xDebug.WriteLine("fileSharing\\loggedOut.html");
 

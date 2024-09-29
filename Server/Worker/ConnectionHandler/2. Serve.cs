@@ -2,6 +2,7 @@
 using System;
 using System.Net.Sockets;
 
+#pragma warning disable IDE0079
 #pragma warning disable CS8604
 
 namespace Server

@@ -1,10 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 
+#pragma warning disable IDE0079
 #pragma warning disable CS8600
-#pragma warning disable CS8602
-#pragma warning disable CS8619
+#pragma warning disable CS8625
 
 namespace Server
 {
@@ -27,14 +28,14 @@ namespace Server
             None = 255,
         }
 
-        internal enum ResponseType : UInt16
+        internal enum ResponseType : UInt32
         {
             /// <summary>OK - arg[1] can be cookie name | arg[2] can be cookie value | arg[0] can be time in seconds or null for 5 min</summary>
             HTTP_200 = 200,
 
-            /// <summary>See Other (make client use GET on new location) - arg[3] must be location // arg[1] can be cookie name | arg[2] can be cookie value for LOGIN_TIME sec</summary>
+            /// <summary>See Other (make client use GET on new location)</summary>
             HTTP_303 = 303,
-            /// <summary>Temporary Redirect (don't change request) - arg[3] must be location // arg[1] can be cookie name | arg[2] can be cookie value for LOGIN_TIME sec</summary>
+            /// <summary>Temporary Redirect (don't change request)</summary>
             HTTP_307 = 307,
 
             /// <summary>Bad Request</summary>
@@ -45,6 +46,8 @@ namespace Server
             HTTP_403 = 403,
             /// <summary>Not Found</summary>
             HTTP_404 = 404,
+            /// <summary>Conflict</summary>
+            HTTP_409 = 409,
             /// <summary>Too Many Requests</summary>
             HTTP_429 = 429,
             /// <summary>Request Header Fields Too Large</summary>
@@ -58,152 +61,246 @@ namespace Server
             HTTP_507 = 507
         }
 
-        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-        // todo: rewrite
-        internal static ValueTuple<Byte[], Boolean> CraftHeader(ResponseType responseType, ContentType contentType, Int64 contentLength, String[] arguments)
+        internal readonly ref struct HeaderOptions
         {
-            String header = null;
-            String contentTypeHeader = null;
-            Int32 argLength = arguments != null ? arguments.Length : 0;
+            internal readonly Boolean IsInitialized;
 
-            switch (contentType)
+            internal HeaderOptions(ResponseType responseType, ContentOptions contentOptions, UInt64 contentLength)
             {
-                case ContentType.HTML:
-                    contentTypeHeader = "Content-Type: text/html; charset=UTF-8\r\n";
-                    break;
-                case ContentType.Icon:
-                    contentTypeHeader = "Content-Type: image/x-icon\r\n";
-                    break;
-                case ContentType.Download:
-                    if (argLength > 0 && arguments[0].Length > 0 && arguments[0].Length < 210) contentTypeHeader = $"Content-Type: application/octet-stream\r\nContent-Disposition: inline; filename=\"{arguments[0]}\"\r\n";
-                    else return (null, false);
-                    break;
-                case ContentType.PainText:
-                    contentTypeHeader = "Content-Type: text/plain; charset=UTF-8\r\n";
-                    break;
+                ResponseType = responseType;
+                ContentOptions = contentOptions;
+                ContentLength = contentLength;
 
-                default:
-                    contentTypeHeader = "Content-Type: application/octet-stream\r\n";
-                    break;
+                IsInitialized = true;
             }
 
-            switch (responseType)
+            internal HeaderOptions(ResponseType responseType, ContentOptions contentOptions, CookieOptions cookieOptions, UInt64 contentLength)
             {
-                case ResponseType.HTTP_200:
-                    String time = argLength > 3 && arguments[3] != null ? arguments[3] : $"{CookieDB.LOGIN_TIME}";
-                    if (arguments != null && argLength > 2 && arguments[1] != null && arguments[2] != null)
-                    {
-                        header = "HTTP/1.1 200 OK\r\n" +
-                        $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={time}\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    }
-                    else
-                    {
-                        header = "HTTP/1.1 200 OK\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    }
-                    break;
+                ResponseType = responseType;
+                ContentOptions = contentOptions;
+                ContentLength = contentLength;
+                CookieOptions = cookieOptions;
 
-                case ResponseType.HTTP_303:
-                    if (argLength > 3 && arguments[3].Length > 0)
-                    {
-                        if (arguments[1] == null || arguments[2] == null)
-                        {
-                            header = "HTTP/1.1 303 See Other\r\n" +
-                            $"Location: {arguments[3]}\r\n\r\n";
-                        }
-                        else
-                        {
-                            header = "HTTP/1.1 303 See Other\r\n" +
-                            $"Location: {arguments[3]}\r\n" +
-                            $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={CookieDB.LOGIN_TIME}\r\n\r\n";
-                        }
-
-                        break;
-                    }
-                    else return (null, false);
-
-                case ResponseType.HTTP_307:
-                    if (argLength > 3 && arguments[3].Length > 0)
-                    {
-                        if (arguments[1] == null || arguments[2] == null)
-                        {
-                            header = "HTTP/1.1 307 Temporary Redirect\r\n" +
-                            $"Location: {arguments[3]}\r\n\r\n";
-                        }
-                        else
-                        {
-                            header = "HTTP/1.1 307 Temporary Redirect\r\n" +
-                            $"Location: {arguments[3]}\r\n" +
-                            $"Set-Cookie: {arguments[1]}={arguments[2]}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={CookieDB.LOGIN_TIME}\r\n\r\n";
-                        }
-
-                        break;
-                    }
-                    else return (null, false);
-
-                case ResponseType.HTTP_400:
-                    header = "HTTP/1.1 400 Bad Request\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_401:
-                    header = "HTTP/1.1 401 Unauthorized\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_403:
-                    header = "HTTP/1.1 403 Forbidden\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_404:
-                    header = "HTTP/1.1 404 Not Found\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_429:
-                    header = "HTTP/1.1 429 Too Many Requests\r\n" +
-                        contentTypeHeader +
-                        "Retry-After: 300\r\n" +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_431:
-                    header = "HTTP/1.1 431 Request Header Fields Too Large\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_500:
-                    header = "HTTP/1.1 500 Internal Server Error\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_501:
-                    header = "HTTP/1.1 501 Not Implemented\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
-
-                case ResponseType.HTTP_507:
-                    header = "HTTP/1.1 507 Insufficient Storage\r\n" +
-                        contentTypeHeader +
-                        $"Content-length: {contentLength}\r\n\r\n";
-                    break;
+                IsInitialized = true;
             }
 
-            return (Encoding.UTF8.GetBytes(header), true);
+            internal HeaderOptions(RedirectOptions redirectOptions)
+            {
+                RedirectOptions = redirectOptions;
+
+                IsInitialized = true;
+            }
+
+            internal HeaderOptions(RedirectOptions redirectOptions, CookieOptions cookieOptions)
+            {
+                RedirectOptions = redirectOptions;
+                CookieOptions = cookieOptions;
+
+                IsInitialized = true;
+            }
+
+            internal readonly ResponseType ResponseType;
+            internal readonly ContentOptions ContentOptions;
+            internal readonly UInt64 ContentLength;
+
+            internal readonly CookieOptions CookieOptions;
+            internal readonly RedirectOptions RedirectOptions;
         }
 
+        //
+
+        internal readonly ref struct CookieOptions
+        {
+            internal readonly Boolean IsSet;
+
+            /// <summary>
+            /// Sets the specified client cookie value with the default MaxAge value from <see cref="CookieDB.LOGIN_TIME"/>
+            /// </summary>
+            internal CookieOptions(String name, String value)
+            {
+                Name = name;
+                Value = value;
+                MaxAge = CookieDB.LOGIN_TIME.ToString();
+
+                IsSet = true;
+            }
+
+            internal CookieOptions(String name, String value, UInt64 maxAge)
+            {
+                Name = name;
+                Value = value;
+                MaxAge = maxAge == 0 ? "0" : maxAge.ToString();
+
+                IsSet = true;
+            }
+
+            internal readonly String Name;
+            internal readonly String Value;
+
+            internal readonly String MaxAge;
+        }
+
+        internal readonly ref struct RedirectOptions
+        {
+            internal readonly Boolean IsSet;
+
+            /// <summary>
+            /// <see cref="ResponseType"/> <paramref name="method"/> must be HTTP <c>3xx</c>
+            /// </summary>
+            /// <exception cref="InvalidEnumArgumentException"></exception>
+            internal RedirectOptions(ResponseType method, String location)
+            {
+                if ((UInt32)method < 300u || ((UInt32)method) > 399u) throw new InvalidEnumArgumentException($"{method} is not a redirect");
+
+                Method = method;
+                Location = location;
+
+                IsSet = true;
+            }
+
+            internal readonly ResponseType Method;
+            internal readonly String Location;
+        }
+
+        internal readonly ref struct ContentOptions
+        {
+            internal readonly Boolean IsInitialized;
+
+            internal ContentOptions(ContentType contentType)
+            {
+                ContentType = contentType;
+
+                IsInitialized = true;
+            }
+
+            /// <summary>
+            /// Provides a file download with a given filename, uses the <see cref="ContentType.Download"/> content type.
+            /// </summary>
+            internal ContentOptions(String fileName)
+            {
+                ContentType = ContentType.Download;
+                FileName = fileName;
+
+                IsInitialized = true;
+            }
+
+            internal readonly ContentType ContentType;
+            internal readonly String FileName = "unnamed.bin";
+        }
+
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+        internal static Boolean CraftHeader(HeaderOptions headerOptions, out Byte[] header)
+        {
+            String requestLinePlusSpecificFields;
+            String contentTypeField;
+            String cookieField = null;
+
+            if (headerOptions.CookieOptions.IsSet)
+            {
+                cookieField = $"Set-Cookie: {headerOptions.CookieOptions.Name}={headerOptions.CookieOptions.Value}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={headerOptions.CookieOptions.MaxAge}\r\n";
+            }
+
+            #region Redirect
+            if (headerOptions.RedirectOptions.IsSet)
+            {
+                requestLinePlusSpecificFields = headerOptions.RedirectOptions.Method switch
+                {
+                    ResponseType.HTTP_303 => "HTTP/1.1 303 See Other\r\n" +
+                                                $"Location: {headerOptions.RedirectOptions.Location}\r\n",
+
+                    ResponseType.HTTP_307 => "HTTP/1.1 307 Temporary Redirect\r\n" +
+                                                $"Location: {headerOptions.RedirectOptions.Location}\r\n",
+
+                    _ => null,
+                };
+
+                if (requestLinePlusSpecificFields == null)
+                {
+                    header = null;
+                    return false;
+                }
+
+                if (cookieField == null)
+                {
+                    header = Encoding.UTF8.GetBytes(requestLinePlusSpecificFields + "\r\n");
+                    return true;
+                }
+                else
+                {
+                    header = Encoding.UTF8.GetBytes(requestLinePlusSpecificFields + cookieField + "\r\n");
+                    return true;
+                }
+            } 
+            #endregion
+
+            contentTypeField = headerOptions.ContentOptions.ContentType switch
+            {
+                ContentType.HTML => "Content-Type: text/html; charset=UTF-8\r\n",
+                ContentType.Download => $"Content-Type: application/octet-stream\r\nContent-Disposition: inline; filename=\"{headerOptions.ContentOptions.FileName}\"\r\n",
+                ContentType.Icon => "Content-Type: image/x-icon\r\n",
+                ContentType.PainText => "Content-Type: text/plain; charset=UTF-8\r\n",
+                _ => "Content-Type: application/octet-stream\r\n",
+            };
+
+            requestLinePlusSpecificFields = headerOptions.ResponseType switch
+            {
+                ResponseType.HTTP_200 => "HTTP/1.1 200 OK\r\n" +
+                                        $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_400 => "HTTP/1.1 400 Bad Request\r\n" +
+                                        $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_401 => "HTTP/1.1 401 Unauthorized\r\n" +
+                                        $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_403 => "HTTP/1.1 403 Forbidden\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_404 => "HTTP/1.1 404 Not Found\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_409 => "HTTP/1.1 409 Conflict\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_429 => "HTTP/1.1 429 Too Many Requests\r\n" +
+                                        "Retry-After: 150\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_431 => "HTTP/1.1 431 Request Header Fields Too Large\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_500 => "HTTP/1.1 500 Internal Server Error\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_501 => "HTTP/1.1 501 Not Implemented\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                ResponseType.HTTP_507 => "HTTP/1.1 507 Insufficient Storage\r\n" +
+                                       $"Content-length: {headerOptions.ContentLength}\r\n",
+
+                _ => null,
+            };
+
+            if (requestLinePlusSpecificFields == null)
+            {
+                header = null;
+                return false;
+            }
+
+            if (cookieField == null)
+            {
+                header = Encoding.UTF8.GetBytes(requestLinePlusSpecificFields + contentTypeField + "\r\n");
+                return true;
+            }
+            else
+            {
+                header = Encoding.UTF8.GetBytes(requestLinePlusSpecificFields + cookieField + contentTypeField + "\r\n");
+                return true;
+            }
+        }
     }
 
     internal static partial class Worker
