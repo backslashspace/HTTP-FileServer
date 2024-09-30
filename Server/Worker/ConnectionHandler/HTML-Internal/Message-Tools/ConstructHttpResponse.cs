@@ -307,15 +307,5 @@ namespace Server
     {
         internal static Byte[] ReadFileBytes(String relativePath) => File.ReadAllBytes(Worker.AssemblyPath + "\\html\\" + relativePath);
         internal static String ReadFileText(String relativePath) => File.ReadAllText(Worker.AssemblyPath + "\\html\\" + relativePath);
-
-        internal static Byte[] ConstructHttpResponse(Byte[] headerBuffer, Byte[] bodyBuffer)
-        {
-            Byte[] response = new Byte[headerBuffer.Length + bodyBuffer.Length];
-
-            Buffer.BlockCopy(headerBuffer, 0, response, 0, headerBuffer.Length);
-            Buffer.BlockCopy(bodyBuffer, 0, response, headerBuffer.Length, bodyBuffer.Length);
-
-            return response;
-        }
     }
 }

@@ -15,8 +15,8 @@ namespace Server
 
                 xDebug.WriteLine("fileSharing\\controlPanel\\controlPanel.html");
 
-                Byte[] rawLandingPage = Worker.ConstructHttpResponse(headerBuffer, fileBuffer);
-                connection.Send(rawLandingPage, 0, rawLandingPage.Length, SocketFlags.None);
+                connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
+                connection.Send(fileBuffer, 0, fileBuffer.Length, SocketFlags.None);
 
                 Worker.CloseConnection(connection);
             }

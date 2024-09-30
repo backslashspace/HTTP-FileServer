@@ -42,10 +42,6 @@ namespace Server
                     case "sessionexpired":
                         HTML.SendSelfRedirectLoginPageExpired(connection);
                         return;
-
-                    case "logout":
-                        HTML.SendLoggedOutPage(connection);
-                        return;
                 }
 
                 if (!ClientIsValid(connection, pathParts, header, clientIP, out UserDB.User user))

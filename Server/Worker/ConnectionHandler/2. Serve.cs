@@ -16,7 +16,6 @@ namespace Server
                 if (!GetHeader(connection, out String header)) return;
 
                 String httpPath = GetHttpPath(header);
-
                 if (httpPath == null)
                 {
                     Log.FastLog($"Client send invalid http path, sending 400", LogSeverity.Info, "Worker");
@@ -48,7 +47,7 @@ namespace Server
             {
                 Log.FastLog($"An unknown error occurred and was caught in Serve():\n{exception.Message}\n\n{exception.StackTrace}", LogSeverity.Error, "Worker");
 
-                if (connection != null)
+                if (connection != null && connection.Connected)
                 {
                     try
                     {
