@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<style>
+	input {
+		margin-bottom: 12px;
+		border-radius: 5px;
+		width: 350px;
+		height: 20px;
+		align-self: center;
+		background: #bbbbbb;
+	}
+</style>
+
+<html style="background-color:#202020;font-family:Helvetica;color:#fbfbfb;">
+<head>
+	<meta charset="utf-8">
+	<title>SFS Login</title>
+	<script type="text/javascript">
+		window.history.replaceState(null, document.title, "/fileSharing/login")
+	</script>
+</head>
+
+	<body>
+
+		<nav link="#0067C0" alink="aqua" vlink="coral">
+			<p align="right" style="margin-right:10em;">
+				<a href="/">Main-Page</a>
+			</p>
+		</nav>
+
+		<center>
+
+			<h1>File-Sharing Login</h1>
+
+			<hr style="margin-right:10em; margin-left:10em;" />
+
+			<p style="font-size: 18px; color: #ff9934; margin-top: 40px;">Session Expired</p>
+
+			<div style=" width: 350px; margin-top: 10px">
+				<form method="POST" action="/fileSharing/login">
+					<input type="text" name="user" placeholder="username" required />
+					<input type="password" name="password" placeholder="password" required />
+					<input type="submit" value="Enter" style="width: 120px; height:23px; font-size: 13px; margin-top: 8px" />
+				</form>
+			</div>
+
+		</center>
+
+		<div class="footer"/>
+	</body>
+</html>

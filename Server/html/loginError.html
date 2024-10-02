@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<style>
+	input {
+		margin-bottom: 12px;
+		border-radius: 5px;
+		width: 100%;
+		height: 20px;
+		align-self: center;
+		background: #bbbbbb;
+	}
+
+	.footer {
+		background: #bbbbbb;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 50px;
+	}
+</style>
+
+<html style="background-color:#202020;font-family:Helvetica;color:#fbfbfb;">
+	<head>
+		<meta charset="utf-8">
+		<title>SFS Login</title>
+	</head>
+
+	<body>
+
+		<nav link="#0067C0" alink="aqua" vlink="coral">
+			<p align="right" style="margin-right:10em;">
+				<a href="/">Main-Page</a>
+			</p>
+		</nav>
+
+		<center>
+
+			<h1>File-Sharing Login</h1>
+
+			<hr style="margin-right:10em; margin-left:10em;" />
+
+			<p style="font-size: 18px; color: #f84133; margin-top: 40px;">Username or password was incorrect</p>
+
+			<div style=" width: 350px; margin-top: 10px">
+				<form method="POST" action="/fileSharing/login">
+					<input type="text" name="user" placeholder="username" required />
+					<input type="password" name="password" placeholder="password" required />
+					<input type="submit" value="Enter" style="width: 120px; height:23px; font-size: 13px; margin-top: 8px" />
+				</form>
+			</div>
+
+		</center>
+
+		<div class="footer"/>
+	</body>
+</html>

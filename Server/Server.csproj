@@ -141,14 +141,14 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="App\shell32_241.ico" />
-    <Content Include="bin\Debug\html\fileSharing\controlPanel\createUser.html" />
-    <Content Include="bin\Debug\html\fileSharing\controlPanel\userConfig.html" />
-    <Content Include="bin\Debug\html\fileSharing\controlPanel\controlPanel.html" />
-    <None Include="bin\Debug\html\fileSharing\changePassword.html" />
-    <None Include="bin\Debug\html\fileSharing\loggedOut.html" />
-    <None Include="bin\Debug\html\fileSharing\loginExpired.html" />
-    <None Include="bin\Debug\html\fileSharing\loginError.html" />
-    <None Include="bin\Debug\html\fileSharing\login.html" />
+    <Content Include="html\changePassword.html" />
+    <Content Include="html\controlPanel\controlPanel.html" />
+    <Content Include="html\controlPanel\createUser.html" />
+    <Content Include="html\controlPanel\userConfig.html" />
+    <Content Include="html\loggedOut.html" />
+    <Content Include="html\login.html" />
+    <Content Include="html\loginError.html" />
+    <Content Include="html\loginExpired.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8.1">
@@ -163,4 +163,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy ..\..\lib\SQLite.Interop.dll SQLite.Interop.dll
+xcopy /q /y /s /e /v ..\..\html\ html\</PostBuildEvent>
+  </PropertyGroup>
 </Project>

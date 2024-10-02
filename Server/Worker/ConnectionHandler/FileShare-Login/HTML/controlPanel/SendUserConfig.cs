@@ -14,13 +14,13 @@ namespace Server
         {
             internal static void SendUserConfig(Socket connection, String loginUsername)
             {
-                String fileContent = Worker.ReadFileText("fileSharing\\controlPanel\\createUser.html");
+                String fileContent = Worker.ReadFileText("controlPanel\\createUser.html");
                 fileContent = fileContent.Replace("<!-- #usernameAnchor -->", HttpUtility.HtmlEncode("user naem gere"));
 
-                Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\controlPanel\\userConfig.html");
+                Byte[] fileBuffer = Worker.ReadFileBytes("controlPanel\\userConfig.html");
                 HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
 
-                xDebug.WriteLine("fileSharing\\controlPanel\\userConfig.html");
+                xDebug.WriteLine("controlPanel\\userConfig.html");
 
                 connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
                 connection.Send(fileBuffer, 0, fileBuffer.Length, SocketFlags.None);

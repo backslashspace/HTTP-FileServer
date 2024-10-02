@@ -13,10 +13,10 @@ namespace Server
         {
             internal static void SendCreateUser(Socket connection, String loginUsername)
             {
-                Byte[] fileBuffer = Worker.ReadFileBytes("fileSharing\\controlPanel\\createUser.html");
+                Byte[] fileBuffer = Worker.ReadFileBytes("controlPanel\\createUser.html");
                 HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
 
-                xDebug.WriteLine("fileSharing\\controlPanel\\createUser.html");
+                xDebug.WriteLine("controlPanel\\createUser.html");
 
                 connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
                 connection.Send(fileBuffer, 0, fileBuffer.Length, SocketFlags.None);

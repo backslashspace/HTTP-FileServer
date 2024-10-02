@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<style>
+	.footer {
+		background: #bbbbbb;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 50px;
+	}
+</style>
+
+<html style="background-color:#202020;font-family:Helvetica;color:#fbfbfb;">
+	<head>
+		<meta charset="utf-8">
+		<title>Control Panel</title>
+	</head>
+
+	<body>
+
+		<nav link="#0067C0" alink="aqua" vlink="coral">
+			<p align="right" style="margin-right:10em;">
+				<a href="/" style="padding:10px;">Back to Main-Page</a>
+				<a href="/fileSharing/logout">Log out</a>
+			</p>
+		</nav>
+
+		<center>
+
+			<h1>Control Panel</h1>
+			<p style="font-size: 16px; margin-top: -10px">Logged in as: admin</p>
+
+			<form method="GET" action="/fileSharing/controlPanel/createUser">
+				<button type="submit" style="width: 120px; height:23px; font-size: 13px; margin-top: 18px">Create new user</button>
+			</form>
+
+			<hr style="margin-right:10em; margin-left:10em; margin-top: 40px;" />
+
+
+
+		</center>
+
+		<div class="footer" />
+	</body>
+</html>
