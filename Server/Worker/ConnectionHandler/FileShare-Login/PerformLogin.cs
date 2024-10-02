@@ -76,11 +76,11 @@ namespace Server
 
             if (loginInfo.IsAdministrator)
             {
-                redirectOptions = new HTTP.RedirectOptions(HTTP.ResponseType.HTTP_303, "/fileSharing/controlPanel");
+                redirectOptions = new HTTP.RedirectOptions(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/controlPanel");
             }
             else
             {
-                redirectOptions = new HTTP.RedirectOptions(HTTP.ResponseType.HTTP_303, "/fileSharing/files");
+                redirectOptions = new HTTP.RedirectOptions(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/files");
             }
 
             HTTP.CraftHeader(new HTTP.HeaderOptions(redirectOptions, cookieOptions), out Byte[] rawResponse);

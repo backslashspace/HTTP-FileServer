@@ -1,6 +1,7 @@
 ﻿using BSS.Logging;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 #pragma warning disable CS0618
 #pragma warning disable CS8618
@@ -29,7 +30,7 @@ namespace BSS.Threading
 
         // ###################################################################
 
-        internal static void Initialize(UInt16 threadCount)
+        internal static void Initialize(UInt16 threadCount, Action initializationTask = null)
         {
             if (IsInitialized) return;
 
@@ -42,7 +43,8 @@ namespace BSS.Threading
             for (UInt16 i = 0; i < threadCount; i++)
             {
                 _threads[i] = new(Worker);
-                _threads[i].Start(i);
+
+                _threads[i].Start(new ValueTuple<UInt16, Action>(i, initializationTask));
                 _threads[i].Name = "PoolThread: " + i;
             }
 
@@ -51,9 +53,12 @@ namespace BSS.Threading
             Log.FastLog($"Initialized ThreadPool with {_capacity} threads", LogSeverity.Info, "ThreadPool");
         }
 
-        private static void Worker(Object indexObject)
+        private static void Worker(Object workerInfo)
         {
-            UInt16 index = (UInt16)indexObject;
+            ValueTuple<UInt16, Action> infoTuple = (ValueTuple<UInt16, Action>)workerInfo;
+            UInt16 index = infoTuple.Item1;
+            infoTuple.Item2?.Invoke();
+            infoTuple.Item2 = null;
 
             Thread.CurrentThread.Suspend();
 

@@ -200,7 +200,7 @@ namespace Server
 
             if (headerOptions.CookieOptions.IsSet)
             {
-                cookieField = $"Set-Cookie: {headerOptions.CookieOptions.Name}={headerOptions.CookieOptions.Value}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={headerOptions.CookieOptions.MaxAge}\r\n";
+                cookieField = $"Set-Cookie: {headerOptions.CookieOptions.Name}={headerOptions.CookieOptions.Value}; Secure; HttpOnly; Path=/{Worker.WEB_ROOT}; SameSite=Strict; Max-Age={headerOptions.CookieOptions.MaxAge}\r\n";
             }
 
             #region Redirect

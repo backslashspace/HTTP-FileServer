@@ -25,9 +25,9 @@ namespace Server
 
                 String[] pathParts = httpPath.ToLower().Split(['/'], 3, StringSplitOptions.RemoveEmptyEntries);
 
-                if (pathParts.Length != 0 && pathParts[0] == "filesharing")
+                if (pathParts.Length != 0 && pathParts[0] == WEB_ROOT_LOWERCAPS)
                 {
-                    FileSharingHandler(connection, header, pathParts);
+                    WebRootHandler(connection, header, pathParts);
                     return;
                 }
                 else

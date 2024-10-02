@@ -85,6 +85,7 @@
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. GETHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\2. POSTHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\HTML\controlPanel\SendControlPanel.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\HTML\controlPanel\CreateUser.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\HTML\controlPanel\SendCreateUser.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\HTML\controlPanel\SendUserConfig.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\HTML\SendUserFilesView.cs" />
@@ -95,7 +96,7 @@
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\ParseCredentials.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\HTML\SendLoggedOut.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\HTML\SendLogin.cs" />
-    <Compile Include="Worker\ConnectionHandler\FileShare-Login\1. FileSharingHandler.cs" />
+    <Compile Include="Worker\ConnectionHandler\FileShare-Login\1. WebRootHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\UserDB.cs" />
     <Compile Include="Worker\ConnectionHandler\FileShare-Login\CookieDB.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML-Internal\Message-Tools\RedirectClient.cs" />

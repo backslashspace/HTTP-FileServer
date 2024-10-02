@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
+#pragma warning disable CS0649
+#pragma warning disable CS8618
 #pragma warning disable CS8619
 #pragma warning disable CS8625
 
@@ -11,8 +13,8 @@ namespace Server
 {
     internal static partial class Worker
     {
-        [ThreadStatic] private static Byte[] _receiveBuffer = null;
-        [ThreadStatic] private static Byte[] _receiveBufferIterator = null;
+        [ThreadStatic] internal static Byte[] _receiveBuffer;
+        [ThreadStatic] internal static Byte[] _receiveBufferIterator;
 
         private static Boolean GetHeader(Socket connection, out String header)
         {
@@ -41,9 +43,6 @@ namespace Server
         // todo: verify header to long request
         private static ValueTuple<Boolean, Boolean> ReceiveRequestHeader(Socket connection, out String header)
         {
-            _receiveBuffer = new Byte[2048];
-            _receiveBufferIterator = new Byte[1];
-
             for (UInt16 i = 0; i < 2048; ++i)
             {
                 if (connection.Receive(_receiveBufferIterator, 0, 1, SocketFlags.None) == 0)

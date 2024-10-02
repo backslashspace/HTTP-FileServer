@@ -7,7 +7,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static void FileSharingHandler(Socket connection, String header, String[] pathParts)
+        private static void WebRootHandler(Socket connection, String header, String[] pathParts)
         {
             RequestMethode requestMethode = GetRequestMethode(header);
             if (requestMethode == RequestMethode.Invalid)
@@ -89,14 +89,14 @@ namespace Server
             String token = GetTokenCookieValue(header);
             if (token == null)
             {
-                RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/login"));
+                RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/login"));
                 return;
             }
 
             switch (CookieDB.ValidateToken(token, clientIP, out String loginUsername))
             {
                 case CookieDB.TokenState.Invalid:
-                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/sessionExpired"));
+                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/sessionExpired"));
                     return;
 
                 case CookieDB.TokenState.OK:
@@ -107,11 +107,11 @@ namespace Server
                     return;
 
                 case CookieDB.TokenState.Expired:
-                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/sessionExpired"));
+                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/sessionExpired"));
                     return;
 
                 default:
-                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/login"));
+                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/login"));
                     return;
             }
 
@@ -129,7 +129,7 @@ namespace Server
 
             if (user.IsAdministrator)
             {
-                RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/controlPanel"));
+                RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/controlPanel"));
                 return;
             }
 
@@ -139,7 +139,7 @@ namespace Server
                 return;
             }
 
-            RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/files"));
+            RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/files"));
         }
     }
 }

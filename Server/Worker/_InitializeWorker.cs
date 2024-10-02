@@ -13,6 +13,9 @@ namespace Server
 {
     internal static partial class Worker
     {
+        internal const String WEB_ROOT = "fileSharing";
+        internal const String WEB_ROOT_LOWERCAPS = "filesharing";
+
         internal static volatile Boolean ShutdownPending = false;
         internal static Socket Listener;
         internal static String AssemblyPath;
@@ -38,7 +41,12 @@ namespace Server
                 Environment.Exit(-1);
             }
 
-            ThreadPoolFast.Initialize(maximumConcurrentConnections);
+            ThreadPoolFast.Initialize(maximumConcurrentConnections, () =>
+            {
+                // init thread static variables
+                _receiveBuffer = new Byte[2048];
+                _receiveBufferIterator = new Byte[1];
+            });
 
             if (HTML.STATIC.IsInitialized)
             {

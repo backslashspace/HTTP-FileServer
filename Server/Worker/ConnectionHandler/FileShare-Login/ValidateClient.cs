@@ -15,14 +15,14 @@ namespace Server
             String token = GetTokenCookieValue(header);
             if (token == null)
             {
-                RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/login"));
+                RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/login"));
                 return false;
             }
 
             switch (CookieDB.ValidateToken(token, clientIP, out String loginUsername))
             {
                 case CookieDB.TokenState.Invalid:
-                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/sessionExpired"));
+                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/sessionExpired"));
                     return false;
 
                 case CookieDB.TokenState.OK:
@@ -33,11 +33,11 @@ namespace Server
                     return false;
 
                 case CookieDB.TokenState.Expired:
-                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/sessionExpired"));
+                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/sessionExpired"));
                     return false;
 
                 default:
-                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, "/fileSharing/login"));
+                    RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"/{WEB_ROOT}/login"));
                     return false;
             }
 
