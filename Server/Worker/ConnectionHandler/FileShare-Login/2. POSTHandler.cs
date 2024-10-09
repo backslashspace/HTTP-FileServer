@@ -10,7 +10,7 @@ namespace Server
             switch (pathParts[1].ToLower())
             {
                 case "controlpanel":
-                    if (pathParts[1].Length > 1) ControlPanelPOSTHandler(connection, header, pathParts, user);
+                    if (pathParts.Length > 2) ControlPanelPOSTHandler(connection, header, pathParts, user);
                     else HTML.STATIC.Send_403(connection);
                     return;
 
@@ -26,11 +26,10 @@ namespace Server
 
         private static void ControlPanelPOSTHandler(Socket connection, String header, String[] pathParts, UserDB.User user)
         {
-            switch (pathParts[1].ToLower())
+            switch (pathParts[2].ToLower())
             {
-                case "createUser?":
-                    if (pathParts[1].Length > 1) ControlPanelPOSTHandler(connection, header, pathParts, user);
-                    else HTML.STATIC.Send_403(connection);
+                case "createuser?":
+                    CreateUser(connection, header, pathParts, user);
                     return;
 
                 case "files":

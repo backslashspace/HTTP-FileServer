@@ -1,4 +1,5 @@
 ﻿using System;
+using BSS.Logging;
 using System.ServiceProcess;
 
 namespace Server
@@ -8,7 +9,7 @@ namespace Server
         private static void Main(String[] args)
         {
 #if DEBUG
-            xDebug.Initialize();
+            _ = xDebug.IsInitialized;
             Console.CancelKeyPress += (s, e) => Service.ShutdownComponents();
             Service.MainThread.Start();
 #else

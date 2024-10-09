@@ -11,6 +11,15 @@
 		padding-left: 10px;
 		padding-right: 10px;
 	}
+
+	.footer {
+		background: #bbbbbb;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 50px;
+}
 </style>
 
 <html style="background-color:#202020;font-family:Helvetica;color:#fbfbfb;">
@@ -29,14 +38,31 @@
 
 		<center>
 
-			<h1>What does this side collect</h1>
-			<p style="font-size: 18px;">And for how long</p>
+			<h1>What does this site collect</h1>
 
-			<p style="max-width: 600px;margin-top:40px;">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+			<hr style="margin-right:10em; margin-left:10em;" />
+
+			<div style="max-width: 600px; margin-top:40px;">
+
+				<h3>NGINX:</h3>
+
+				<div style="text-align: left; width: 200px; margin-left:5em;">
+					<p>- no access logs</p>
+					<p>- normal error logs</p>
+				</div>
+
+				<h3 style="margin-top:30px;">File Sharing App</h3>
+
+				<div style="text-align: left; width: 500px; margin-left:15em;">
+					<p>- no ips</p>
+					<p>- when and who logs in and out</p>
+					<p>- all session data it at least cleared when the application restarts</p>
+				</div>
+
+			</div>
 
 		</center>
 
 		<div class="footer"/>
-
 	</body>
 </html> 

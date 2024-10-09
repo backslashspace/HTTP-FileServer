@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
+#pragma warning disable IDE0079
 #pragma warning disable CS0649
 #pragma warning disable CS8618
 #pragma warning disable CS8619
@@ -13,8 +14,8 @@ namespace Server
 {
     internal static partial class Worker
     {
-        [ThreadStatic] internal static Byte[] _receiveBuffer;
-        [ThreadStatic] internal static Byte[] _receiveBufferIterator;
+        [ThreadStatic] private static Byte[] _receiveBuffer;
+        [ThreadStatic] private static Byte[] _receiveBufferIterator;
 
         private static Boolean GetHeader(Socket connection, out String header)
         {

@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using BSS.Logging;
 using BSS.Threading;
 
@@ -22,6 +23,8 @@ namespace Server
 
         internal static void Initialize()
         {
+            Console.OutputEncoding = Encoding.Unicode;
+
             AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             Log.Initialize(AssemblyPath);

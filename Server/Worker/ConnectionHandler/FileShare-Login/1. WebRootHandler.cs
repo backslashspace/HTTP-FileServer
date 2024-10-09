@@ -49,8 +49,6 @@ namespace Server
                     return;
                 }
 
-                // client 'logged in'
-
                 AuthenticatedGETHandler(connection, header, pathParts, user);
                 return;
             }
@@ -73,8 +71,6 @@ namespace Server
                 {
                     return;
                 }
-
-                // client 'logged in'
 
                 AuthenticatedPOSTHandler(connection, header, pathParts, user);
                 return;

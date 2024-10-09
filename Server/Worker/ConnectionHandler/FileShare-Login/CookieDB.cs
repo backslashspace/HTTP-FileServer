@@ -7,6 +7,7 @@ using System.Timers;
 using System.Diagnostics;
 using BSS.Logging;
 
+#pragma warning disable IDE0079
 #pragma warning disable CS8603
 #pragma warning disable CS8625
 
@@ -16,7 +17,6 @@ namespace Server
     {
         /// <summary>Time before the login cookie expires in seconds</summary>
         internal const Double LOGIN_TIME = 600.0d;
-        // todo: make login time configurable?
 
         private static readonly SQLiteConnection _memoryDatabase = new("data_source=:memory:; version=3; foreign_keys=TRUE; journal_mode=MEMORY; synchronous=NORMAL; secure_delete=on;");
         private static readonly Object _databaseLock = new();

@@ -1,16 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Server
 {
     internal static partial class Worker
     {
-        internal static void CreateUser(Socket connection, String loginUsername)
+        internal static void CreateUser(Socket connection, String header, String[] pathParts, UserDB.User user)
         {
+            if (!GetContent(header, connection, out String content))
+            {
+                return;
+            }
+
+            Console.WriteLine(content);
+            Console.WriteLine();
+            Console.WriteLine();
+
+
+
+
+
 
         }
     }

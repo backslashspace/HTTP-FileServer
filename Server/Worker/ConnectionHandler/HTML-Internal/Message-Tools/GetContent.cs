@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using BSS.Logging;
 
 #pragma warning disable CS8625
 

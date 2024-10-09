@@ -73,6 +73,10 @@
   <ItemGroup>
     <Compile Include="Entry.cs" />
     <Compile Include="App\AssemblyInfo.cs" />
+    <Compile Include="Logging\Interface.cs" />
+    <Compile Include="Logging\LogMessage.cs" />
+    <Compile Include="Logging\LogSeverity.cs" />
+    <Compile Include="Logging\xDebug.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -123,12 +127,8 @@
     <Compile Include="Worker\ConnectionHandler\HTML-Internal\Message-Tools\GetClientIP.cs" />
     <Compile Include="Worker\ConnectionHandler\HTML-Internal\Message-Tools\GetRequestMethode.cs" />
     <Compile Include="Worker\_InitializeWorker.cs" />
-    <Compile Include="Worker\Logging\Interface.cs" />
-    <Compile Include="Worker\Logging\LogMessage.cs" />
-    <Compile Include="Worker\Logging\LogSeverity.cs" />
     <Compile Include="Worker\_Shutdown.cs" />
     <Compile Include="Worker\ThreadPoolFast.cs" />
-    <Compile Include="xDebug.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

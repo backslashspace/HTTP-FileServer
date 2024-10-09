@@ -1,4 +1,5 @@
 ﻿using System;
+using BSS.Logging;
 using System.Net.Sockets;
 
 #pragma warning disable IDE0079
