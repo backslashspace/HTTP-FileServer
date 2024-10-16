@@ -7,15 +7,20 @@ namespace Server
     {
         private static void AuthenticatedPOSTHandler(Socket connection, String header, String[] pathParts, UserDB.User user)
         {
+            // see paths.png
             switch (pathParts[1].ToLower())
             {
                 case "controlpanel":
-                    if (pathParts.Length > 2) ControlPanelPOSTHandler(connection, header, pathParts, user);
+                    if (user.IsAdministrator && pathParts.Length > 2) ControlPanelPOSTHandler(connection, header, pathParts, user);
                     else HTML.STATIC.Send_403(connection);
                     return;
 
-                case "files":
+                case "files?":
                     FilesPOSTHandler(connection, header, pathParts, user);
+                    return;
+
+                case "changepassword?":
+                    HTML.STATIC.Send_501(connection);
                     return;
 
                 default:
@@ -32,17 +37,18 @@ namespace Server
                     CreateUser(connection, header, pathParts, user);
                     return;
 
-                case "files":
-                    FilesPOSTHandler(connection, header, pathParts, user);
+                case "config?":
+                    HTML.STATIC.Send_501(connection);
+                    return;
+
+                case "userfiles?":
+                    HTML.STATIC.Send_501(connection);
                     return;
 
                 default:
                     HTML.STATIC.Send_404(connection);
                     return;
             }
-
-
-
         }
 
         private static void FilesPOSTHandler(Socket connection, String header, String[] pathParts, UserDB.User user)

@@ -66,6 +66,8 @@ namespace Server
             Log.FastLog("Initialization complete", LogSeverity.Info, "Init");
 
             StartNewConnectionHandler();
+
+            // main worker thread will end here
         }
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

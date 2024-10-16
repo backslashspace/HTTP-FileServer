@@ -80,7 +80,7 @@ namespace BSS.Threading
 
         internal static Boolean Execute(Action task)
         {
-            if (!IsInitialized) throw new MethodAccessException("FastThreadPool not initialized");
+            if (!IsInitialized) throw new MethodAccessException("ThreadPool not initialized");
 
             Monitor.Enter(_lock);
 

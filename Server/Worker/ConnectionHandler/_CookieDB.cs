@@ -188,7 +188,7 @@ namespace Server
                 GC.Collect(5, GCCollectionMode.Forced, true, true);
                 stopwatch.Stop();
 
-                Log.FastLog($"Successfully truncated login-token database (removed {removedEntries}) and ran full GC in {stopwatch.ElapsedMilliseconds}ms", LogSeverity.Info, "CookieDB");
+                Log.FastLog($"Successfully truncated login-token database (removed {removedEntries}) and ran full GC in {stopwatch.Elapsed.Ticks * 0.1}µs", LogSeverity.Info, "CookieDB");
             }
         }
 

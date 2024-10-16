@@ -8,7 +8,7 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendUserFilesViewPage(Socket connection, UserDB.User user)
+            internal static void SendUserFilesView(Socket connection, UserDB.User user)
             {
                 Byte[] fileBuffer = Worker.ReadFileBytes("loggedOut.html");
                 HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);

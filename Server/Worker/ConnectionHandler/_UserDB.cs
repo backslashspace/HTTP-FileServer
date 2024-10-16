@@ -4,6 +4,7 @@ using System.Data;
 using BSS.Logging;
 using System.Data.SQLite;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Server
 {
@@ -152,6 +153,24 @@ namespace Server
             internal readonly Boolean Write;
         }
 
+        internal readonly struct ControlPanelUserInfo
+        {
+            internal ControlPanelUserInfo(String loginUsername, String displayName, Boolean isAdministrator, Boolean isEnabled)
+            {
+                LoginUsername = displayName;
+                DisplayName = displayName;
+
+                IsAdministrator = isAdministrator;
+                IsEnabled = isEnabled;
+            }
+
+            internal readonly String LoginUsername;
+            internal readonly String DisplayName;
+
+            internal readonly Boolean IsAdministrator;
+            internal readonly Boolean IsEnabled;
+        }
+
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         internal static Boolean GetLoginInfo(String loginUsername, out LoginInfo loginInfo)
@@ -214,6 +233,20 @@ namespace Server
 
             databaseConnection.Close();
             databaseConnection.Dispose();
+            return true;
+        }
+
+        internal static Boolean GetDatabaseConnection(out SQLiteConnection databaseConnection)
+        {
+            if (!IsInitialized)
+            {
+                databaseConnection = null;
+                return false;
+            }
+
+            databaseConnection = new(CONNECTION_STRING);
+            databaseConnection.Open();
+
             return true;
         }
 

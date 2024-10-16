@@ -6,7 +6,7 @@ namespace Server
 {
     internal static partial class HTML
     {
-        internal static void SendLoggedOutPage(Socket connection)
+        internal static void SendLoggedOutView(Socket connection)
         {
             Byte[] fileBuffer = Worker.ReadFileBytes("loggedOut.html");
 

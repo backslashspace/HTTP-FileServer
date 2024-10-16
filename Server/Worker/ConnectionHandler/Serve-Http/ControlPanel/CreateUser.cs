@@ -1,17 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using BSS.Logging;
+﻿using BSS.Logging;
+using System;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Server
 {
+    internal static partial class Worker
+    {
+        internal static void CreateUser(Socket connection, String header, String[] pathParts, UserDB.User user)
+        {
+            if (!GetContent(header, connection, out String content))
+            {
+                return;
+            }
+
+            Console.WriteLine(content);
+            Console.WriteLine();
+            Console.WriteLine();
+
+
+
+
+
+
+        }
+    }
+
     internal static partial class HTML
     {
         internal static partial class CGI
         {
-            internal static void SendCreateUser(Socket connection, String loginUsername)
+            internal static void SendCreateUserView(Socket connection)
             {
                 Byte[] fileBuffer = Worker.ReadFileBytes("controlPanel\\createUser.html");
                 HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
