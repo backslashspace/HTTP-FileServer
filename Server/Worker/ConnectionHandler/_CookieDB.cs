@@ -78,6 +78,7 @@ namespace Server
                 SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                 command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                 command.ExecuteNonQuery();
+                command.Dispose();
 
                 tokenBase64 = Convert.ToBase64String(token);
                 Int64 expiresOnAsFileTimeUTC = DateTime.Now.AddSeconds(LOGIN_TIME).ToFileTimeUtc();
@@ -89,6 +90,7 @@ namespace Server
                 command.Parameters.Add("@expiresOnAsFileTimeUTC", DbType.Int64).Value = expiresOnAsFileTimeUTC;
                 command.Parameters.Add("@token", DbType.String).Value = tokenBase64;
                 command.ExecuteNonQuery();
+                command.Dispose();
 
                 if (!_timerIsRunning) _timer.Start();
             }
@@ -107,6 +109,7 @@ namespace Server
                     SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                     command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                     command.ExecuteNonQuery();
+                    command.Dispose();
 
                     Log.FastLog($"User '{loginUsername}' logged out", LogSeverity.Info, "CookieDB");
                 }
@@ -134,6 +137,7 @@ namespace Server
                 if (!dataReader.Read())
                 {
                     Log.FastLog("Client send unknown token", LogSeverity.Info, "CookieDB");
+                    command.Dispose();
                     loginUsername = null;
                     return TokenState.Invalid;
                 }
@@ -156,9 +160,11 @@ namespace Server
 
                 if (tokenState != TokenState.None)
                 {
+                    command.Dispose();
                     command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                     command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                     command.ExecuteNonQuery();
+                    command.Dispose();
                 }
             }
 
@@ -184,6 +190,7 @@ namespace Server
                 // truncate
                 SQLiteCommand command = new("DELETE FROM Cookie", _memoryDatabase);
                 Int32 removedEntries = command.ExecuteNonQuery();
+                command.Dispose();
 
                 GC.Collect(5, GCCollectionMode.Forced, true, true);
                 stopwatch.Stop();

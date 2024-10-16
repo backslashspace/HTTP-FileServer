@@ -1,27 +1,59 @@
 ﻿using BSS.Logging;
+using BSS.Threading;
 using System;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.Data.SQLite;
+using System.Data;
 
 namespace Server
 {
     internal static partial class Worker
     {
-        internal static void CreateUser(Socket connection, String header, String[] pathParts, UserDB.User user)
+        internal unsafe static void CreateUser(Socket connection, String header, String[] pathParts, UserDB.User user)
         {
-            if (!GetContent(header, connection, out String content))
+            if (!GetContent(header, connection, out String content)) return;
+
+            if (!ParseUserConfiguration(content, out UserConfiguration userConfiguration))
             {
+                HTML.STATIC.Send_400(connection);
                 return;
             }
 
-            Console.WriteLine(content);
-            Console.WriteLine();
-            Console.WriteLine();
+            if (UserDB.UserExists(userConfiguration.LoginUsername))
+            {
+                HTML.CGI.SendCreateUserView(connection, user.LoginUsername, true);
+                return;
+            }
 
+            // # # # # # # # # # # # # # # #
 
+            if (!UserDB.GetDatabaseConnection(out SQLiteConnection databaseConnection))
+            {
+                HTML.STATIC.Send_500(connection);
+                return;
+            }
 
+            (String encodedPassword, String encodedSalt) = CreatePassword(userConfiguration.LoginUsername, userConfiguration.Password);
 
+            SQLiteCommand command = new($"INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES (@loginUsername, @displayUsername, @encodedPassword, @encodedSalt, 0, {*(Byte*)&userConfiguration.IsEnabled}, {*(Byte*)&userConfiguration.Read}, {*(Byte*)&userConfiguration.Write});", databaseConnection);
+            command.Parameters.Add("@loginUsername", DbType.String).Value = userConfiguration.LoginUsername;
+            command.Parameters.Add("@displayUsername", DbType.String).Value = userConfiguration.DisplayUsername;
+            command.Parameters.Add("@encodedPassword", DbType.String).Value = encodedPassword;
+            command.Parameters.Add("@encodedSalt", DbType.String).Value = encodedSalt;
 
+            if (command.ExecuteNonQuery(CommandBehavior.SingleResult) == 0)
+            {
+                Log.FastLog($"'{user.LoginUsername}' failed to created user '{userConfiguration.LoginUsername}'", LogSeverity.Error, "CreateUser");
+                HTML.STATIC.Send_500(connection);
+                command.Dispose();
+                return;
+            }
 
+            command.Dispose();
+            Log.FastLog($"'{user.LoginUsername}' successfully created user '{userConfiguration.LoginUsername}'", LogSeverity.Info, "CreateUser");
+            HTML.CGI.SendControlPanel(connection, user, "<span style=\"color: green; font-weight: bold\">User created successfully</span>");
         }
     }
 
@@ -29,15 +61,26 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendCreateUserView(Socket connection)
+            internal static void SendCreateUserView(Socket connection, String loginUsername, Boolean insertUserExists = false)
             {
-                Byte[] fileBuffer = Worker.ReadFileBytes("controlPanel\\createUser.html");
-                HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
+                String fileContent = Worker.ReadFileText("controlPanel\\createUser.html");
 
                 xDebug.WriteLine("controlPanel\\createUser.html");
 
+                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", loginUsername);
+                fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
+
+                if (insertUserExists)
+                {
+                    fileContent = Regex.Replace(fileContent, "<!-- #INFO#ANCHOR# -->", "<span style=\"color: red; font-weight: bold\">User already exists</span>");
+                }
+
+                Byte[] buffer = Encoding.UTF8.GetBytes(fileContent);
+
+                HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)buffer.LongLength), out Byte[] headerBuffer);
+
                 connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
-                connection.Send(fileBuffer, 0, fileBuffer.Length, SocketFlags.None);
+                connection.Send(buffer, 0, buffer.Length, SocketFlags.None);
 
                 Worker.CloseConnection(connection);
             }

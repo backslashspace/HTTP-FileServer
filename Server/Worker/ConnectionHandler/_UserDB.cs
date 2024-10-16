@@ -4,7 +4,7 @@ using System.Data;
 using BSS.Logging;
 using System.Data.SQLite;
 using System.Globalization;
-using System.Text.RegularExpressions;
+using static Server.UserDB;
 
 namespace Server
 {
@@ -175,6 +175,12 @@ namespace Server
 
         internal static Boolean GetLoginInfo(String loginUsername, out LoginInfo loginInfo)
         {
+            if (!IsInitialized)
+            {
+                loginInfo = new();
+                return false;
+            }
+
             SQLiteConnection databaseConnection = new(CONNECTION_STRING);
             databaseConnection.Open();
 
@@ -186,6 +192,7 @@ namespace Server
             if (!dataReader.Read())
             {
                 loginInfo = new();
+                command.Dispose();
                 databaseConnection.Close();
                 databaseConnection.Dispose();
                 return false;
@@ -200,6 +207,7 @@ namespace Server
 
             loginInfo = new(hashedPassword, salt, isAdministrator, isEnabled, read, write);
 
+            command.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();
             return true;
@@ -207,6 +215,12 @@ namespace Server
 
         internal static Boolean GetUserPermissions(String loginUsername, out User user)
         {
+            if (!IsInitialized)
+            {
+                user = new();
+                return false;
+            }
+
             SQLiteConnection databaseConnection = new(CONNECTION_STRING);
             databaseConnection.Open();
 
@@ -218,6 +232,7 @@ namespace Server
             if (!dataReader.Read())
             {
                 user = new();
+                command.Dispose();
                 databaseConnection.Close();
                 databaseConnection.Dispose();
                 return false;
@@ -231,9 +246,34 @@ namespace Server
 
             user = new(loginUsername, displayName, isAdministrator, isEnabled, read, write);
 
+            command.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();
             return true;
+        }
+
+        internal static Boolean UserExists(String loginUsername)
+        {
+            if (!IsInitialized)
+            {
+                return false;
+            }
+
+            SQLiteConnection databaseConnection = new(CONNECTION_STRING);
+            databaseConnection.Open();
+
+            SQLiteCommand command = databaseConnection.CreateCommand();
+            command.CommandText = "SELECT IsEnabled FROM User WHERE LoginUsername = @loginUsername COLLATE NOCASE";
+            command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
+            SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleResult);
+
+            Boolean userExists = dataReader.Read();
+
+            command.Dispose();
+            databaseConnection.Close();
+            databaseConnection.Dispose();
+
+            return userExists;
         }
 
         internal static Boolean GetDatabaseConnection(out SQLiteConnection databaseConnection)

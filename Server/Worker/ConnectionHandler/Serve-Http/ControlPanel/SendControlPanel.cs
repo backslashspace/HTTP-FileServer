@@ -12,17 +12,22 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendControlPanel(Socket connection, UserDB.User user)
+            internal static void SendControlPanel(Socket connection, UserDB.User user, String insertInfoString = null)
             {
-                String html = Worker.ReadFileText("controlPanel\\controlPanel.html");
+                String fileContent = Worker.ReadFileText("controlPanel\\controlPanel.html");
                 xDebug.WriteLine("controlPanel\\controlPanel.html");
 
-                ControlPanelInsertUsers(ref html);
+                ControlPanelInsertUsers(ref fileContent);
 
-                Regex.Replace(html, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", user.DisplayName);
-                Regex.Replace(html, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
+                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", user.DisplayName);
+                fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
 
-                Byte[] buffer = Encoding.UTF8.GetBytes(html);
+                if (insertInfoString != null)
+                {
+                    fileContent = Regex.Replace(fileContent, "<!-- #INFO#ANCHOR# -->", insertInfoString);
+                }
+
+                Byte[] buffer = Encoding.UTF8.GetBytes(fileContent);
 
                 HTTP.ContentOptions contentOptions = new(HTTP.ContentType.HTML);
                 HTTP.HeaderOptions headerOptions = new(HTTP.ResponseType.HTTP_200, contentOptions, (UInt64)buffer.LongLength);

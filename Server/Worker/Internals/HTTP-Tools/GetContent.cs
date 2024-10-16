@@ -14,13 +14,13 @@ namespace Server
             if (!GetContentLength(header, out Int64 contentLength))
             {
                 HTML.STATIC.Send_400(connection);
-
                 content = null;
                 return false;
             }
 
             if (contentLength > 1048576)
             {
+                HTML.STATIC.Send_400(connection);
                 content = null;
                 return false;
             }

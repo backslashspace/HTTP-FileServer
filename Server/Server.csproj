@@ -40,7 +40,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -51,6 +51,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Server.EntryPoint</StartupObject>
@@ -88,6 +89,7 @@
     <Compile Include="Worker\ConnectionHandler\3. CloseConnection.cs" />
     <Compile Include="Worker\ConnectionHandler\1. AcceptConnection - Main Worker Loop.cs" />
     <Compile Include="Worker\ConnectionHandler\2. Serve.cs" />
+    <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\ParseUserConfiguration.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\CreateUser.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\SendControlPanel.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\SendUserConfig.cs" />

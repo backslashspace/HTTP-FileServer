@@ -53,7 +53,7 @@ namespace Server
                     return;
 
                 case "createuser?":
-                    HTML.CGI.SendCreateUserView(connection);
+                    HTML.CGI.SendCreateUserView(connection, user.LoginUsername);
                     return;
 
                 default:

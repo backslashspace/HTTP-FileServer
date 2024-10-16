@@ -60,10 +60,6 @@
 
 					<div style="width: 300px;">
 						<div style="text-align: left">
-							<div title="Lets users have access to administrative tools.">
-								<input type="checkbox" name="isAdmin" id="IsAdmin" unchecked />
-								<label for="IsAdmin">Administrator</label>
-							</div>
 							<div title="Blocks users from logging">
 								<input type="checkbox" name="isEnabled" id="IsEnabled" checked />
 								<label for="IsEnabled">Enabled</label>
@@ -73,7 +69,7 @@
 								<label for="Read">Read</label>
 							</div>
 							<div title="Allows users to delete and upload files.">
-								<input type="checkbox" name="write" id="Write" checked />
+								<input type="checkbox" name="write" id="Write" unchecked />
 								<label for="Write">Write</label>
 							</div>
 						</div>
@@ -85,6 +81,10 @@
 
 		</center>
 
-		<div class="footer"/>
+		<div class="footer" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0px; font-size: 0.8vw;">
+			<p style="text-align: left; margin-left: 2em;">Logged in as: <!-- #DISPLAY#USERNAME#ANCHOR# --></p>
+			<p style="text-align: center"><!-- #INFO#ANCHOR# --></p>
+			<p style="text-align: right; margin-right: 2em;">Threadpool Threads: <!-- #THREADPOOL#ANCHOR# --></p>
+		</div>
 	</body>
 </html>
