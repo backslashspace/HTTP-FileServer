@@ -97,6 +97,7 @@
     <Compile Include="Worker\ConnectionHandler\Serve-Http\Log-in-out\SendLogin.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\SendChangePassword.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\SendUserFilesView.cs" />
+    <Compile Include="Worker\ConnectionHandler\Serve-Http\_tools\FileTools.cs" />
     <Compile Include="Worker\ConnectionHandler\_CookieDB.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\.WebRootHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\_GETHandler.cs" />
