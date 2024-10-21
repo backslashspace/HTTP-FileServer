@@ -135,7 +135,7 @@ namespace Server
         {
             internal User(String loginUsername, String displayName, Boolean isAdministrator, Boolean isEnabled, Boolean read, Boolean write)
             {
-                LoginUsername = displayName;
+                LoginUsername = loginUsername;
                 DisplayName = displayName;
 
                 IsAdministrator = isAdministrator;

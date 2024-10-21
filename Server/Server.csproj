@@ -93,6 +93,7 @@
     <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\CreateUser.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\SendControlPanel.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\SendUserConfig.cs" />
+    <Compile Include="Worker\ConnectionHandler\Serve-Http\ControlPanel\UpdateUser.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\Log-in-out\SendLoggedOut.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\Log-in-out\SendLogin.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\SendChangePassword.cs" />

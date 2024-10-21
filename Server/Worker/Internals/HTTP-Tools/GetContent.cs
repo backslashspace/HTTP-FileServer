@@ -9,7 +9,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Boolean GetContent(String header, Socket connection, out String content)
+        internal static Boolean GetContent(String header, Socket connection, out String content)
         {
             if (!GetContentLength(header, out Int64 contentLength))
             {

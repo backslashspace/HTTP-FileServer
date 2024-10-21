@@ -27,9 +27,9 @@ namespace Server
             internal readonly Boolean Write;
         }
 
-        private static Boolean ParseUserConfiguration(String content, out UserConfiguration userConfiguration)
+        private static Boolean ParseUserConfiguration(String urlEncodedContent, out UserConfiguration userConfiguration, Boolean updateMode = false)
         {
-            Int32 contentLength = content.Length;
+            Int32 contentLength = urlEncodedContent.Length;
 
             if (contentLength < 44 && contentLength > 1024)
             {
@@ -59,26 +59,26 @@ namespace Server
             {
                 if (loginUsernameLength == 0 && i + 14 <= contentLength)
                 {
-                    if (content[i] == 'l'
-                        && content[i + 1] == 'o'
-                        && content[i + 2] == 'g'
-                        && content[i + 3] == 'i'
-                        && content[i + 4] == 'n'
-                        && content[i + 5] == 'U'
-                        && content[i + 6] == 's'
-                        && content[i + 7] == 'e'
-                        && content[i + 8] == 'r'
-                        && content[i + 9] == 'n'
-                        && content[i + 10] == 'a'
-                        && content[i + 11] == 'm'
-                        && content[i + 12] == 'e'
-                        && content[i + 13] == '=')
+                    if (urlEncodedContent[i] == 'l'
+                        && urlEncodedContent[i + 1] == 'o'
+                        && urlEncodedContent[i + 2] == 'g'
+                        && urlEncodedContent[i + 3] == 'i'
+                        && urlEncodedContent[i + 4] == 'n'
+                        && urlEncodedContent[i + 5] == 'U'
+                        && urlEncodedContent[i + 6] == 's'
+                        && urlEncodedContent[i + 7] == 'e'
+                        && urlEncodedContent[i + 8] == 'r'
+                        && urlEncodedContent[i + 9] == 'n'
+                        && urlEncodedContent[i + 10] == 'a'
+                        && urlEncodedContent[i + 11] == 'm'
+                        && urlEncodedContent[i + 12] == 'e'
+                        && urlEncodedContent[i + 13] == '=')
                     {
                         loginUsernameStartIndex = i + 14;
 
                         for (Int32 j = loginUsernameStartIndex; i < contentLength; ++j)
                         {
-                            if (contentLength == j || content[j] == '&')
+                            if (contentLength == j || urlEncodedContent[j] == '&')
                             {
                                 loginUsernameLength = j - loginUsernameStartIndex;
                                 i = j;
@@ -90,28 +90,28 @@ namespace Server
 
                 if (displayUsernameLength == 0 && i + 16 <= contentLength)
                 {
-                    if (content[i] == 'd'
-                        && content[i + 1] == 'i'
-                        && content[i + 2] == 's'
-                        && content[i + 3] == 'p'
-                        && content[i + 4] == 'l'
-                        && content[i + 5] == 'a'
-                        && content[i + 6] == 'y'
-                        && content[i + 7] == 'U'
-                        && content[i + 8] == 's'
-                        && content[i + 9] == 'e'
-                        && content[i + 10] == 'r'
-                        && content[i + 11] == 'n'
-                        && content[i + 12] == 'a'
-                        && content[i + 13] == 'm'
-                        && content[i + 14] == 'e'
-                        && content[i + 15] == '=')
+                    if (urlEncodedContent[i] == 'd'
+                        && urlEncodedContent[i + 1] == 'i'
+                        && urlEncodedContent[i + 2] == 's'
+                        && urlEncodedContent[i + 3] == 'p'
+                        && urlEncodedContent[i + 4] == 'l'
+                        && urlEncodedContent[i + 5] == 'a'
+                        && urlEncodedContent[i + 6] == 'y'
+                        && urlEncodedContent[i + 7] == 'U'
+                        && urlEncodedContent[i + 8] == 's'
+                        && urlEncodedContent[i + 9] == 'e'
+                        && urlEncodedContent[i + 10] == 'r'
+                        && urlEncodedContent[i + 11] == 'n'
+                        && urlEncodedContent[i + 12] == 'a'
+                        && urlEncodedContent[i + 13] == 'm'
+                        && urlEncodedContent[i + 14] == 'e'
+                        && urlEncodedContent[i + 15] == '=')
                     {
                         displayUsernameStartIndex = i + 16;
 
                         for (Int32 j = displayUsernameStartIndex; i < contentLength; ++j)
                         {
-                            if (contentLength == j || content[j] == '&')
+                            if (contentLength == j || urlEncodedContent[j] == '&')
                             {
                                 displayUsernameLength = j - displayUsernameStartIndex;
                                 i = j;
@@ -123,21 +123,21 @@ namespace Server
 
                 if (passwordLength == 0 && i + 9 <= contentLength)
                 {
-                    if (content[i] == 'p'
-                        && content[i + 1] == 'a'
-                        && content[i + 2] == 's'
-                        && content[i + 3] == 's'
-                        && content[i + 4] == 'w'
-                        && content[i + 5] == 'o'
-                        && content[i + 6] == 'r'
-                        && content[i + 7] == 'd'
-                        && content[i + 8] == '=')
+                    if (urlEncodedContent[i] == 'p'
+                        && urlEncodedContent[i + 1] == 'a'
+                        && urlEncodedContent[i + 2] == 's'
+                        && urlEncodedContent[i + 3] == 's'
+                        && urlEncodedContent[i + 4] == 'w'
+                        && urlEncodedContent[i + 5] == 'o'
+                        && urlEncodedContent[i + 6] == 'r'
+                        && urlEncodedContent[i + 7] == 'd'
+                        && urlEncodedContent[i + 8] == '=')
                     {
                         passwordStartIndex = i + 9;
 
                         for (Int32 j = passwordStartIndex; i < contentLength; ++j)
                         {
-                            if (contentLength == j || content[j] == '&')
+                            if (contentLength == j || urlEncodedContent[j] == '&')
                             {
                                 passwordLength = j - passwordStartIndex;
                                 i = j;
@@ -151,22 +151,22 @@ namespace Server
 
                 if (isEnabledLength == 0 && i + 10 <= contentLength)
                 {
-                    if (content[i] == 'i'
-                        && content[i + 1] == 's'
-                        && content[i + 2] == 'E'
-                        && content[i + 3] == 'n'
-                        && content[i + 4] == 'a'
-                        && content[i + 5] == 'b'
-                        && content[i + 6] == 'l'
-                        && content[i + 7] == 'e'
-                        && content[i + 8] == 'd'
-                        && content[i + 9] == '=')
+                    if (urlEncodedContent[i] == 'i'
+                        && urlEncodedContent[i + 1] == 's'
+                        && urlEncodedContent[i + 2] == 'E'
+                        && urlEncodedContent[i + 3] == 'n'
+                        && urlEncodedContent[i + 4] == 'a'
+                        && urlEncodedContent[i + 5] == 'b'
+                        && urlEncodedContent[i + 6] == 'l'
+                        && urlEncodedContent[i + 7] == 'e'
+                        && urlEncodedContent[i + 8] == 'd'
+                        && urlEncodedContent[i + 9] == '=')
                     {
                         isEnabledStartIndex = i + 10;
 
                         for (Int32 j = isEnabledStartIndex; i < contentLength; ++j)
                         {
-                            if (contentLength == j || content[j] == '&')
+                            if (contentLength == j || urlEncodedContent[j] == '&')
                             {
                                 isEnabledLength = j - isEnabledStartIndex;
                                 i = j;
@@ -178,18 +178,18 @@ namespace Server
 
                 if (writeLength == 0 && i + 6 <= contentLength)
                 {
-                    if (content[i] == 'w'
-                        && content[i + 1] == 'r'
-                        && content[i + 2] == 'i'
-                        && content[i + 3] == 't'
-                        && content[i + 4] == 'e'
-                        && content[i + 5] == '=')
+                    if (urlEncodedContent[i] == 'w'
+                        && urlEncodedContent[i + 1] == 'r'
+                        && urlEncodedContent[i + 2] == 'i'
+                        && urlEncodedContent[i + 3] == 't'
+                        && urlEncodedContent[i + 4] == 'e'
+                        && urlEncodedContent[i + 5] == '=')
                     {
                         writeStartIndex = i + 6;
 
                         for (Int32 j = writeStartIndex; i < contentLength; ++j)
                         {
-                            if (contentLength == j || content[j] == '&')
+                            if (contentLength == j || urlEncodedContent[j] == '&')
                             {
                                 writeLength = j - writeStartIndex;
                                 i = j;
@@ -201,17 +201,17 @@ namespace Server
 
                 if (readLength == 0 && i + 5 <= contentLength)
                 {
-                    if (content[i] == 'r'
-                        && content[i + 1] == 'e'
-                        && content[i + 2] == 'a'
-                        && content[i + 3] == 'd'
-                        && content[i + 4] == '=')
+                    if (urlEncodedContent[i] == 'r'
+                        && urlEncodedContent[i + 1] == 'e'
+                        && urlEncodedContent[i + 2] == 'a'
+                        && urlEncodedContent[i + 3] == 'd'
+                        && urlEncodedContent[i + 4] == '=')
                     {
                         readStartIndex = i + 5;
 
                         for (Int32 j = readStartIndex; i < contentLength; ++j)
                         {
-                            if (contentLength == j || content[j] == '&')
+                            if (contentLength == j || urlEncodedContent[j] == '&')
                             {
                                 readLength = j - readStartIndex;
                                 i = j;
@@ -226,15 +226,38 @@ namespace Server
 
             // ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 
-            if (loginUsernameLength == 0 || displayUsernameLength == 0 || passwordLength == 0)
-            {
-                userConfiguration = new();
-                return false;
-            }
+            String loginUsername;
+            String displayUsername;
+            String password;
 
-            String loginUsername = content.Substring(loginUsernameStartIndex, loginUsernameLength);
-            String displayUsername = content.Substring(displayUsernameStartIndex, displayUsernameLength);
-            String password = content.Substring(passwordStartIndex, passwordLength);
+            if (!updateMode)
+            {
+                if (loginUsernameLength == 0 || displayUsernameLength == 0 || passwordLength == 0)
+                {
+                    userConfiguration = new();
+                    return false;
+                }
+
+                loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
+                displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
+                password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
+            }
+            else
+            {
+                if (loginUsernameLength == 0)
+                {
+                    userConfiguration = new();
+                    return false;
+                }
+
+                loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
+
+                if (displayUsernameLength != 0) displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
+                else displayUsername = null;
+
+                if (passwordLength != 0) password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
+                else password = null;
+            }
 
             Boolean isEnabled = false;
             Boolean read = false;
@@ -242,7 +265,7 @@ namespace Server
 
             if (isEnabledLength != 0)
             {
-                if (content[isEnabledStartIndex] == 'o' && content[isEnabledStartIndex + 1] == 'n')
+                if (urlEncodedContent[isEnabledStartIndex] == 'o' && urlEncodedContent[isEnabledStartIndex + 1] == 'n')
                 {
                     isEnabled = true;
                 }
@@ -250,7 +273,7 @@ namespace Server
 
             if (readLength != 0)
             {
-                if (content[readStartIndex] == 'o' && content[readStartIndex + 1] == 'n')
+                if (urlEncodedContent[readStartIndex] == 'o' && urlEncodedContent[readStartIndex + 1] == 'n')
                 {
                     read = true;
                 }
@@ -258,7 +281,7 @@ namespace Server
 
             if (writeLength != 0)
             {
-                if (content[writeStartIndex] == 'o' && content[writeStartIndex + 1] == 'n')
+                if (urlEncodedContent[writeStartIndex] == 'o' && urlEncodedContent[writeStartIndex + 1] == 'n')
                 {
                     write = true;
                 }

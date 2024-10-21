@@ -23,7 +23,7 @@ namespace Server
                     return;
                 }
 
-                String[] pathParts = httpPath.ToLower().Split(['/'], 3, StringSplitOptions.RemoveEmptyEntries);
+                String[] pathParts = httpPath.ToLower().Split(['/'], 4, StringSplitOptions.RemoveEmptyEntries);
 
                 if (pathParts.Length != 0 && pathParts[0] == WEB_ROOT_LOWERCAPS)
                 {

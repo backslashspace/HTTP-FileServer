@@ -11,7 +11,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        internal unsafe static void CreateUser(Socket connection, String header, String[] pathParts, UserDB.User user)
+        internal unsafe static void CreateUser(Socket connection, String header, String[] pathParts, ref UserDB.User user)
         {
             if (!GetContent(header, connection, out String content)) return;
 
@@ -53,7 +53,7 @@ namespace Server
 
             command.Dispose();
             Log.FastLog($"'{user.LoginUsername}' successfully created user '{userConfiguration.LoginUsername}'", LogSeverity.Info, "CreateUser");
-            HTML.CGI.SendControlPanel(connection, user, "<span style=\"color: green; font-weight: bold\">User created successfully</span>");
+            HTML.CGI.SendControlPanel(connection, user, "<span style=\"color: green; font-weight: bold\">User created successfully</span>", true);
         }
     }
 
