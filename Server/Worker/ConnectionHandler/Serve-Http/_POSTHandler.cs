@@ -1,13 +1,12 @@
 ﻿using BSS.Logging;
 using System;
 using System.Net.Sockets;
-using System.Web;
 
 namespace Server
 {
     internal static partial class Worker
     {
-        private static void AuthenticatedPOSTHandler(Socket connection, String header, String[] pathParts, UserDB.User user)
+        private static void AuthenticatedPOSTHandler(Socket connection, String header, String[] pathParts, ref UserDB.User user)
         {
             // see paths.png
             switch (pathParts[1].ToLower())
@@ -18,11 +17,16 @@ namespace Server
                     return;
 
                 case "files?":
-                    FilesPOSTHandler(connection, header, pathParts, user);
+                    FilesPOSTHandler(connection, header, pathParts, ref user);
                     return;
 
-                case "changepassword?":
-                    HTML.STATIC.Send_501(connection);
+                case "changepassword":
+                    if (user.IsAdministrator || user.Write) UpdatePassword(connection, header, ref user);
+                    else
+                    {
+                        Log.FastLog($"User '{user.LoginUsername}' attempted to change their password, but does not have the write permission -> sending 403", LogSeverity.Warning, "POST");
+                        HTML.STATIC.Send_403(connection);
+                    }
                     return;
 
                 default:
@@ -54,7 +58,7 @@ namespace Server
             }
         }
 
-        private static void FilesPOSTHandler(Socket connection, String header, String[] pathParts, UserDB.User user)
+        private static void FilesPOSTHandler(Socket connection, String header, String[] pathParts, ref readonly UserDB.User user)
         {
             HTML.STATIC.Send_501(connection);
         }

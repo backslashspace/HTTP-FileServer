@@ -49,7 +49,7 @@ namespace Server
                     return;
                 }
 
-                AuthenticatedGETHandler(connection, header, pathParts, user);
+                AuthenticatedGETHandler(connection, header, pathParts, ref user);
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace Server
                     return;
                 }
 
-                AuthenticatedPOSTHandler(connection, header, pathParts, user);
+                AuthenticatedPOSTHandler(connection, header, pathParts, ref user);
                 return;
             }
 

@@ -13,7 +13,7 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendControlPanel(Socket connection, UserDB.User user, String insertInfoString = null, Boolean setSelfURL = false)
+            internal static void SendControlPanel(Socket connection, ref  readonly UserDB.User user, String insertInfoString = null, Boolean setSelfURL = false)
             {
                 xDebug.WriteLine("controlPanel\\controlPanel.html");
 

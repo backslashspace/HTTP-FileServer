@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Data.SQLite;
 using System.Data;
+using System.Web;
 
 namespace Server
 {
@@ -67,7 +68,7 @@ namespace Server
 
                 xDebug.WriteLine("controlPanel\\createUser.html");
 
-                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", loginUsername);
+                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", HttpUtility.HtmlEncode(loginUsername));
                 fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
 
                 if (insertUserExists)
