@@ -4,7 +4,6 @@ using System.Data;
 using BSS.Logging;
 using System.Data.SQLite;
 using System.Globalization;
-using static Server.UserDB;
 
 namespace Server
 {

@@ -3,8 +3,8 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
 using BSS.Logging;
+using BSS.Random;
 using BSS.Threading;
 
 #pragma warning disable IDE0079
@@ -23,12 +23,16 @@ namespace Server
 
         internal static void Initialize()
         {
-            Console.OutputEncoding = Encoding.Unicode;
-
             AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             Log.Initialize(AssemblyPath);
             Log.FastLog("Initializing", LogSeverity.Info, "Init");
+
+            if (!HWRandom.HardwareRandomIsPresent())
+            {
+                Log.FastLog("CPU not compatible! RDSEED and or RDRAND instruction not found!\nShutting down..", LogSeverity.Critical, "CPU");
+                Environment.Exit(-1);
+            }
 
             (IPAddress interfaceIP, UInt16 interfacePort, UInt16 maximumConcurrentConnections) = ValidateSettings();
 

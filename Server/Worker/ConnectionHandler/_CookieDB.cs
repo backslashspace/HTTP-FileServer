@@ -2,10 +2,10 @@
 using System.Net;
 using System.Data;
 using System.Data.SQLite;
-using System.Security.Cryptography;
 using System.Timers;
 using System.Diagnostics;
 using BSS.Logging;
+using BSS.Random;
 
 #pragma warning disable IDE0079
 #pragma warning disable CS8603
@@ -67,9 +67,7 @@ namespace Server
             }
 
             Byte[] token = new Byte[64];
-            RNGCryptoServiceProvider sRandom = new();
-            sRandom.GetBytes(token);
-            sRandom.Dispose();
+            HWRandom.NextBytes(token);
 
             String tokenBase64;
 

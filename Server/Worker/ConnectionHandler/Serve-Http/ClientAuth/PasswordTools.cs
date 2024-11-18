@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
+using BSS.Logging;
+using BSS.Random;
 
 #pragma warning disable CS8600
 #pragma warning disable CS8602
@@ -36,7 +37,7 @@ namespace Server
 
             Byte[] digestedPepperedPassword = digestedPassword;
 
-            for (UInt16 i = 384; i < 1025; ++i)
+            for (UInt16 i = 0; i < 511; ++i)
             {
                 for (UInt16 j = 0; j < i; ++j)
                 {
@@ -47,6 +48,8 @@ namespace Server
                 {
                     if (digestedPepperedPassword[k] != correctPasswordHash[k]) goto FAIL;
                 }
+
+                xDebug.WriteLine($"pepper n = " + i);
 
                 return true;
 
@@ -61,10 +64,10 @@ namespace Server
         {
             Byte[] randomData = new Byte[384];
 
-            RNGCryptoServiceProvider sRandom = new();
-            sRandom.GetBytes(randomData);
-            sRandom.Dispose();
-            sRandom = null;
+            if (!HWRandom.SeedNextBytes(randomData, 0, (UInt64)randomData.LongLength))
+            {
+                throw new SystemException("RDSEED instruction failed 128 times in a row");
+            }
 
             String randomUtfStringPlusUsername = Encoding.UTF8.GetString(randomData) + username;
             Byte[] randomPlusUsername = Encoding.UTF8.GetBytes(randomUtfStringPlusUsername);
@@ -98,14 +101,15 @@ namespace Server
 
             // pepper
 
-            Random random = new();
-            Thread.Sleep(random.Next(0, 2));
-            random = new(random.Next());
+            Byte random = 0;
+            Int16 pepperIterations = 0;
 
-            Int32 pepperIterations = random.Next(384, 1025);
-            random = null;
+            HWRandom.ReadSeed8(random);
+            pepperIterations = random; // 0-255
+            HWRandom.ReadSeed8(random);
+            pepperIterations += random; // 0-510
 
-            for (Int32 i = 0; i < pepperIterations; ++i)
+            for (Int16 i = 0; i < pepperIterations; ++i)
             {
                 digestedPassword = sha384.ComputeHash(digestedPassword, 0, digestedPassword.Length);
             }

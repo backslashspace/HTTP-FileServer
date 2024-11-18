@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HWRand.Net</name>
+    </assembly>
+    <members>
+        <member name="T:BSS.Random.HWRandom">
+            <summary>
+            Allows you to directly call the RDSEED and RDRAND instruction from C# 
+            </summary>
+        </member>
+        <member name="M:BSS.Random.HWRandom.HardwareRandomIsPresent">
+            <summary>
+            Executes the CPUID instruction and checks if RDRAND and RDSEED are implemented.
+            </summary>
+            <remarks><see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-undefined">Determining Processor Support for RDRAND and RDSEED - Intel.com</see></remarks>
+            <returns>returns <see langword="bool"/> => implemented = true, not present = false</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.NextBytes(System.Byte[])">
+            <summary>
+            Fills the in-buffer with RDRAND
+            </summary>
+            <remarks>Calls <see cref="M:BSS.Random.HWRandom.NextBytes(System.Byte[],System.UInt64,System.UInt64)"/><br/><br/>Uses random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.NextBytes(System.Byte[],System.UInt64,System.UInt64)">
+            <summary>
+            Fills the in-buffer with RDRAND
+            </summary>
+            <remarks>Uses random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <param name="offset">offset</param>
+            <param name="count">count</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.NextBytes(System.Span{System.Byte})">
+            <summary>
+            Fills the in-buffer with RDRAND
+            </summary>
+            <remarks>Calls <see cref="M:BSS.Random.HWRandom.NextBytes(System.Span{System.Byte},System.Int32,System.Int32)"/><br/><br/>Uses random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.NextBytes(System.Span{System.Byte},System.Int32,System.Int32)">
+            <summary>
+            Fills the in-buffer with RDRAND
+            </summary>
+            <remarks>Uses random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <param name="offset">offset</param>
+            <param name="count">count</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.SeedNextBytes(System.Byte[])">
+            <summary>
+            Fills the in-buffer with RDSEED
+            </summary>
+            <remarks>Calls <see cref="M:BSS.Random.HWRandom.SeedNextBytes(System.Byte[],System.UInt64,System.UInt64)"/><br/><br/>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.SeedNextBytes(System.Byte[],System.UInt64,System.UInt64)">
+            <summary>
+            Fills the in-buffer with RDSEED
+            </summary>
+            <remarks>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <param name="offset">offset</param>
+            <param name="count">count</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.SeedNextBytes(System.Span{System.Byte})">
+            <summary>
+            Fills the in-buffer with RDSEED
+            </summary>
+            <remarks>Calls <see cref="M:BSS.Random.HWRandom.SeedNextBytes(System.Span{System.Byte},System.Int32,System.Int32)"/><br/><br/>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.SeedNextBytes(System.Span{System.Byte},System.Int32,System.Int32)">
+            <summary>
+            Fills the in-buffer with RDSEED
+            </summary>
+            <remarks>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="buffer">array to operate on</param>
+            <param name="offset">offset</param>
+            <param name="count">count</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if instruction fails 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadRandom64(System.UInt64@)">
+            <summary>
+            Calls the RDRAND instruction on a 64 bit register
+            </summary>
+            <remarks>Returns random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadRandom32(System.UInt32@)">
+            <summary>
+            Calls the RDRAND instruction on a 32 bit register
+            </summary>
+            <remarks>Returns random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadRandom16(System.UInt16@)">
+            <summary>
+            Calls the RDRAND instruction on a 16 bit register
+            </summary>
+            <remarks>Returns random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadRandom8(System.Byte@)">
+            <summary>
+            Calls the RDRAND instruction on a 16 bit register, and returns it as a 8 bit value
+            </summary>
+            <remarks>Returns random bits from the pool, which is seeded by the conditioner. An upper bound of 511 128-bit samples will be generated per seed. That is, no more than 511*2=1022 sequential DRNG random numbers will be generated from the same seed value. - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-3-3">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadSeed64(System.UInt64@)">
+            <summary>
+            Calls the RDSEED instruction on a 64 bit register
+            </summary>
+            <remarks>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadSeed32(System.UInt32@)">
+            <summary>
+            Calls the RDSEED instruction on a 32 bit register
+            </summary>
+            <remarks>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadSeed16(System.UInt16@)">
+            <summary>
+            Calls the RDSEED instruction on a 16 bit register
+            </summary>
+            <remarks>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+        <member name="M:BSS.Random.HWRandom.ReadSeed8(System.Byte@)">
+            <summary>
+            Calls the RDSEED instruction on a 16 bit register, and returns it as a 8 bit value
+            </summary>
+            <remarks>The seed values come directly from the entropy conditioner - <see href="https://www.intel.com/content/www/us/en/developer/articles/guide/intel-digital-random-number-generator-drng-software-implementation-guide.html#inpage-nav-5-8">intel.com</see></remarks>
+            <param name="random">value output variable</param>
+            <returns>Indicated whether the operation succeeded or not (<see langword="bool"></see> success = <see langword="true"></see>) | will only return false if generation failed 128 times in a row</returns>
+        </member>
+    </members>
+</doc>
