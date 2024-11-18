@@ -33,7 +33,7 @@ namespace Server
             OK = 4,
         }
 
-        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+        // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         internal static Boolean IsInitialized { get; private set; }
 
@@ -67,7 +67,11 @@ namespace Server
             }
 
             Byte[] token = new Byte[64];
-            HWRandom.NextBytes(token);
+
+            if (!HWRandom.NextBytes(token))
+            {
+                throw new SystemException("RDSEED instruction failed 128 times in a row");
+            }
 
             String tokenBase64;
 

@@ -8,7 +8,7 @@ namespace Server
     {
         internal static void SendLoggedOutView(Socket connection)
         {
-            xDebug.WriteLine("CGI -> loggedOut.html");
+            Log.Debug("loggedOut.html", "SendFile()");
             
             Byte[] fileBuffer = Worker.ReadFileBytes("loggedOut.html");
 

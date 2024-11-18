@@ -29,7 +29,8 @@ namespace Server
             connection.Receive(buffer, 0, (Int32)contentLength, SocketFlags.None);
 
             content = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            xDebug.WriteLine(content);
+
+            Log.Debug(content, "GetContent()");
 
             return true;
         }

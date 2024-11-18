@@ -36,7 +36,7 @@ namespace Server
                 return false;
             }
 
-            xDebug.WriteLine($"{Thread.CurrentThread.Name} => {header.Split('\r')[0]}");
+            Log.Debug(header.Split('\r')[0], Thread.CurrentThread.Name);
 
             return true;
         }

@@ -4,7 +4,6 @@ using System.Threading;
 
 #pragma warning disable IDE0079
 #pragma warning disable IDE0032
-#pragma warning disable CS0618
 #pragma warning disable CS8618
 #pragma warning disable CS8625
 

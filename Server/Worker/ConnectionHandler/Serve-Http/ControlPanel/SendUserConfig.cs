@@ -34,7 +34,7 @@ namespace Server
 
                 if (!UserDB.GetUserPermissions(loginUsername, out UserDB.User configUser))
                 {
-                    SendControlPanel(connection, user, "<span style=\"color: red; font-weight: bold\">User not found</span>", true);
+                    SendControlPanel(connection, in user, "<span style=\"color: red; font-weight: bold\">User not found</span>", true);
                     return;
                 }
 
@@ -43,7 +43,7 @@ namespace Server
 
             private static void SendUserConfig(Socket connection, UserDB.User user)
             {
-                xDebug.WriteLine("CGI -> controlPanel\\userConfig.html");
+                Log.Debug("controlPanel\\userConfig.html", "SendFile()");
 
                 String fileContent = Worker.ReadFileText("controlPanel\\userConfig.html");
                 fileContent = fileContent.Replace("<!-- #LOGIN#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(user.LoginUsername));

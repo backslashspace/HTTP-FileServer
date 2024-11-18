@@ -8,7 +8,7 @@ namespace Server
     {
         internal static void SendLoginPage(Socket connection)
         {
-            xDebug.WriteLine("login.html");
+            Log.Debug("login.html", "SendFile()");
 
             Byte[] fileBuffer = Worker.ReadFileBytes("login.html");
             HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
@@ -21,7 +21,7 @@ namespace Server
 
         internal static void SendLoginPageError(Socket connection)
         {
-            xDebug.WriteLine("loginError.html");
+            Log.Debug("loginError.html", "SendFile()");
 
             Byte[] fileBuffer = Worker.ReadFileBytes("loginError.html");
             HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)fileBuffer.LongLength), out Byte[] headerBuffer);
@@ -34,7 +34,7 @@ namespace Server
 
         internal static void SendSelfRedirectLoginPageExpired(Socket connection)
         {
-            xDebug.WriteLine("loginExpired.html");
+            Log.Debug("loginExpired.html", "SendFile()");
 
             Byte[] fileBuffer = Worker.ReadFileBytes("loginExpired.html");
 

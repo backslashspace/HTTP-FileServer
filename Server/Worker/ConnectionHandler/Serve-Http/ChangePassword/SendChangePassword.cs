@@ -13,7 +13,7 @@ namespace Server
         {
             internal static void SendChangePasswordView(Socket connection, ref readonly UserDB.User user)
             {
-                xDebug.WriteLine("changePassword.html");
+                Log.Debug("changePassword.html", "SendFile()");
 
                 String fileContent = Worker.ReadFileText("changePassword.html");
 

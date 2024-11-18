@@ -144,6 +144,20 @@ namespace BSS.Logging
             WriteFile(ref logMessage, ref now);
         }
 
+        [Obsolete("Will be omitted in RELEASE builds", false)]
+        [Conditional("DEBUG")]
+        internal static void Debug(String message, String source)
+        {
+            DateTime now = DateTime.Now;
+
+            LogMessage logMessage;
+            logMessage.Message = message;
+            logMessage.Severity = LogSeverity.Debug;
+            logMessage.Source = source;
+
+            WriteFile(ref logMessage, ref now);
+        }
+
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         internal static void WriteFile(ref readonly LogMessage formattedLogMessage, ref readonly DateTime timeStamp)

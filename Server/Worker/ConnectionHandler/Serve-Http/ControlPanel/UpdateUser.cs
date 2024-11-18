@@ -52,7 +52,7 @@ namespace Server
             }
             else // (userConfiguration.Password != null && userConfiguration.DisplayUsername != null) 
             {
-                (encodedPassword, encodedSalt) = CreatePassword(userConfiguration.LoginUsername, userConfiguration.Password);
+                (encodedPassword, encodedSalt) = CreatePassword(userConfiguration.LoginUsername!, userConfiguration.Password!);
 
                 command.CommandText = $"UPDATE User SET DisplayName = @displayName, HashedPassword = @password, Salt = @salt, IsEnabled = {*(Byte*)&userConfiguration.IsEnabled}, Read = {*(Byte*)&userConfiguration.Read}, Write = {*(Byte*)&userConfiguration.Write} WHERE LoginUsername = @loginUsername";
                 command.Parameters.Add("@loginUsername", DbType.String).Value = userConfiguration.LoginUsername;
@@ -66,12 +66,12 @@ namespace Server
             if (command.ExecuteNonQuery(CommandBehavior.SingleResult) == 0)
             {
                 Log.FastLog($"'{user.LoginUsername}': no database entries were updated for user '{userConfiguration.LoginUsername}'", LogSeverity.Info, "UpdateUser");
-                HTML.CGI.SendControlPanel(connection, user, "<span style=\"color: orangered; font-weight: bold\">No database entries were updated</span>", true);
+                HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: orangered; font-weight: bold\">No database entries were updated</span>", true);
             }
             else
             {
                 Log.FastLog($"'{user.LoginUsername}'updated user '{userConfiguration.LoginUsername}' successfully", LogSeverity.Info, "UpdateUser");
-                HTML.CGI.SendControlPanel(connection, user, "<span style=\"color: green; font-weight: bold\">Updated user successfully</span>", true);
+                HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: green; font-weight: bold\">Updated user successfully</span>", true);
             }
 
             command.Dispose();

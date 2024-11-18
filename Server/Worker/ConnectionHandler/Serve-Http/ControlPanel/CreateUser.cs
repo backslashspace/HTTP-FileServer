@@ -54,7 +54,7 @@ namespace Server
 
             command.Dispose();
             Log.FastLog($"'{user.LoginUsername}' successfully created user '{userConfiguration.LoginUsername}'", LogSeverity.Info, "CreateUser");
-            HTML.CGI.SendControlPanel(connection, user, "<span style=\"color: green; font-weight: bold\">User created successfully</span>", true);
+            HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: green; font-weight: bold\">User created successfully</span>", true);
         }
     }
 
@@ -64,9 +64,9 @@ namespace Server
         {
             internal static void SendCreateUserView(Socket connection, String loginUsername, Boolean insertUserExists = false)
             {
-                String fileContent = Worker.ReadFileText("controlPanel\\createUser.html");
+                Log.Debug("controlPanel\\createUser.html", "SendFile()");
 
-                xDebug.WriteLine("controlPanel\\createUser.html");
+                String fileContent = Worker.ReadFileText("controlPanel\\createUser.html");
 
                 fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", HttpUtility.HtmlEncode(loginUsername));
                 fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");

@@ -9,8 +9,8 @@ namespace Server
     {
         private static void WebRootHandler(Socket connection, String header, String[] pathParts)
         {
-            RequestMethode requestMethode = GetRequestMethode(header);
-            if (requestMethode == RequestMethode.Invalid)
+            RequestMethod requestMethode = GetRequestMethod(header);
+            if (requestMethode == RequestMethod.Invalid)
             {
                 HTML.STATIC.Send_400(connection);
                 return;
@@ -25,7 +25,7 @@ namespace Server
 
             //
 
-            if (requestMethode == RequestMethode.GET)
+            if (requestMethode == RequestMethod.GET)
             {
                 if (pathParts.Length == 1)
                 {
@@ -53,7 +53,7 @@ namespace Server
                 return;
             }
 
-            if (requestMethode == RequestMethode.POST)
+            if (requestMethode == RequestMethod.POST)
             {
                 if (pathParts.Length == 1)
                 {

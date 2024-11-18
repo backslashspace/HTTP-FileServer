@@ -14,7 +14,7 @@ namespace Server
         {
             if (connection == null || !connection.Connected)
             {
-                xDebug.WriteLine("CloseConnection() => socket was null or not connected");
+                Log.Debug("socket was null or not connected", "CloseConnection()");
                 return;
             }
 

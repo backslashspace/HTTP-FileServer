@@ -14,6 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+	  <NoWarn>CS0618</NoWarn>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -133,7 +134,7 @@
     <Compile Include="Worker\Internals\HTTP-Tools\GetContentLength.cs" />
     <Compile Include="Worker\Internals\HTTP-Tools\GetHeader.cs" />
     <Compile Include="Worker\Internals\HTTP-Tools\GetHttpPath.cs" />
-    <Compile Include="Worker\Internals\HTTP-Tools\GetRequestMethode.cs" />
+    <Compile Include="Worker\Internals\HTTP-Tools\GetRequestMethod.cs" />
     <Compile Include="Worker\Internals\HTTP-Tools\GetTokenCookie.cs" />
     <Compile Include="Worker\Internals\HTTP-Tools\RedirectClient.cs" />
     <Compile Include="Worker\Internals\STATIC\400.cs" />

@@ -60,6 +60,18 @@ namespace Server
 
             #region Verify
 
+            command = databaseConnection.CreateCommand();
+            command.CommandText = "PRAGMA user_version";
+            Int64 databaseVersion = (Int64)command.ExecuteScalar(CommandBehavior.SingleResult);
+
+            if (DATABASE_VERSION != databaseVersion)
+            {
+                Log.FastLog($"Invalid database, wrong database version, found: {databaseVersion}, required: {DATABASE_VERSION}", LogSeverity.Error, "UserDB-Verify");
+                return;
+            }
+
+            //
+
             DataTable tables = databaseConnection.GetSchema("Tables");
 
             if (tables.Rows.Count < TABLE_COUNT)
@@ -81,29 +93,19 @@ namespace Server
                 }
             }
 
+            //
+
             if (!schemaIsValid) 
             {
                 Log.FastLog($"Invalid database, not all required tables were found", LogSeverity.Error, "UserDB-Verify");
                 return;
             }
 
-            command = databaseConnection.CreateCommand();
-            command.CommandText = "PRAGMA user_version";
-            Int64 databaseVersion = (Int64)command.ExecuteScalar(CommandBehavior.SingleResult);
-
-            if (DATABASE_VERSION == databaseVersion)
-            {
-                Log.FastLog("Success", LogSeverity.Info, "UserDB");
-                databaseConnection.Close();
-                databaseConnection.Dispose();
-                IsInitialized = true;
-                return;
-            }
-            else
-            {
-                Log.FastLog($"Invalid database, wrong database version, found: {databaseVersion}, required: {DATABASE_VERSION}", LogSeverity.Error, "UserDB-Verify");
-                return;
-            }
+            Log.FastLog("Success", LogSeverity.Info, "UserDB");
+            databaseConnection.Close();
+            databaseConnection.Dispose();
+            IsInitialized = true;
+            return;
 
             #endregion
         }

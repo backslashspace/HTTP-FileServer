@@ -49,7 +49,7 @@ namespace Server
                     if (digestedPepperedPassword[k] != correctPasswordHash[k]) goto FAIL;
                 }
 
-                xDebug.WriteLine($"pepper n = " + i);
+                Log.Debug($"pepper i = " + i, "ValidatePassword()");
 
                 return true;
 

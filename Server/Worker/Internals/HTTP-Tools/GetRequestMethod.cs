@@ -4,27 +4,27 @@ namespace Server
 {
     internal static partial class Worker
     {
-        public enum RequestMethode : UInt16
+        public enum RequestMethod : UInt16
         {
             Invalid = 0,
             GET = 1,
             POST = 2
         }
 
-        private static RequestMethode GetRequestMethode(String header)
+        private static RequestMethod GetRequestMethod(String header)
         {
-            if (header == null || header.Length < 8) return RequestMethode.Invalid;
+            if (header == null || header.Length < 8) return RequestMethod.Invalid;
 
             if (header[0] == 'G' || header[0] == 'g')
             {
-                return RequestMethode.GET;
+                return RequestMethod.GET;
             }
             if ((header[0] == 'P' || header[0] == 'p') && (header[1] == 'O' || header[1] == 'o'))
             {
-                return RequestMethode.POST;
+                return RequestMethod.POST;
             }
 
-            return RequestMethode.Invalid;
+            return RequestMethod.Invalid;
         }
     }
 }

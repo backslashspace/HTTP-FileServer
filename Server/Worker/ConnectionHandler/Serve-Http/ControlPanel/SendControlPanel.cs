@@ -13,9 +13,9 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendControlPanel(Socket connection, ref  readonly UserDB.User user, String insertInfoString = null, Boolean setSelfURL = false)
+            internal static void SendControlPanel(Socket connection, ref readonly UserDB.User user, String insertInfoString = null, Boolean setSelfURL = false)
             {
-                xDebug.WriteLine("controlPanel\\controlPanel.html");
+                Log.Debug("controlPanel\\controlPanel.html", "SendFile()");
 
                 String fileContent = Worker.ReadFileText("controlPanel\\controlPanel.html");
 

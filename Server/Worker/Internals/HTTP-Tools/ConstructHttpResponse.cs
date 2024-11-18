@@ -306,6 +306,7 @@ namespace Server
     internal static partial class Worker
     {
         internal static Byte[] ReadFileBytes(String relativePath) => File.ReadAllBytes(Worker.AssemblyPath + "\\html\\" + relativePath);
+
         internal static String ReadFileText(String relativePath) => File.ReadAllText(Worker.AssemblyPath + "\\html\\" + relativePath);
     }
 }
