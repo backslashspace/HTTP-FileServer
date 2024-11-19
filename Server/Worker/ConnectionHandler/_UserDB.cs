@@ -29,7 +29,7 @@ namespace Server
                 }
                 else
                 {
-                    Log.FastLog($"Unable to find database file, creating default instance (user='admin', password='admin')", LogSeverity.Error, "DB-Init");
+                    Log.FastLog($"Unable to find database file, creating default instance (user='admin', password='admin')", LogSeverity.Critical, "DB-Init");
 
                     SQLiteConnection.CreateFile("user.db");
                     databaseConnection.Open();

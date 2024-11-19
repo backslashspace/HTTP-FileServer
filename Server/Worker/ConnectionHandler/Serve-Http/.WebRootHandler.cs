@@ -9,8 +9,8 @@ namespace Server
     {
         private static void WebRootHandler(Socket connection, String header, String[] pathParts)
         {
-            RequestMethod requestMethode = GetRequestMethod(header);
-            if (requestMethode == RequestMethod.Invalid)
+            RequestMethod requestMethod = GetRequestMethod(header);
+            if (requestMethod == RequestMethod.Invalid)
             {
                 HTML.STATIC.Send_400(connection);
                 return;
@@ -19,13 +19,13 @@ namespace Server
             IPAddress clientIP = GetClientIP(header);
             if (clientIP == null)
             {
-                HTML.STATIC.Send_400(connection);
-                return;
+                Log.FastLog("X-Client-IP header not found, using remote socket endpoint, consider using a secure proxy", LogSeverity.Warning, "RootHandler");
+                clientIP = ((IPEndPoint)connection.RemoteEndPoint).Address;
             }
 
             //
 
-            if (requestMethode == RequestMethod.GET)
+            if (requestMethod == RequestMethod.GET)
             {
                 if (pathParts.Length == 1)
                 {
@@ -53,7 +53,7 @@ namespace Server
                 return;
             }
 
-            if (requestMethode == RequestMethod.POST)
+            if (requestMethod == RequestMethod.POST)
             {
                 if (pathParts.Length == 1)
                 {
@@ -76,7 +76,7 @@ namespace Server
                 return;
             }
 
-            Log.FastLog("This section should not be reachable, please update 'GetRequestMethode()'", LogSeverity.Error, "FileSharingHandler()");
+            Log.FastLog("This section should not be reachable, please update 'GetRequestMethod()'", LogSeverity.Error, "FileSharingHandler()");
             HTML.STATIC.Send_501(connection);
         }
     

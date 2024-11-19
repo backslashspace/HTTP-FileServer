@@ -21,6 +21,8 @@ namespace BSS.Logging
         private static readonly Object _fileLock = new();
 
         private const Int32 DEFAULT_PADDING_WIDTH = 52;
+        private const String FILENAME_FORMAT = "yyyy.MM.dd";
+        private const String TIME_FORMAT = "dd.MM.yyyy HH:mm:ss";
 
         private static Int32 _padding;
 
@@ -39,9 +41,9 @@ namespace BSS.Logging
             {
                 DateTime now = DateTime.Now;
 
-                if (File.Exists($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt"))
+                if (File.Exists($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt"))
                 {
-                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt", true, Encoding.UTF8))
+                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt", true, Encoding.UTF8))
                     {
                         streamWriter.WriteLine();
                     }
@@ -65,9 +67,9 @@ namespace BSS.Logging
             {
                 DateTime now = DateTime.Now;
 
-                if (File.Exists($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt"))
+                if (File.Exists($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt"))
                 {
-                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt", true, Encoding.UTF8))
+                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt", true, Encoding.UTF8))
                     {
                         streamWriter.WriteLine();
                     }
@@ -91,9 +93,9 @@ namespace BSS.Logging
             {
                 DateTime now = DateTime.Now;
 
-                if (File.Exists($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt"))
+                if (File.Exists($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt"))
                 {
-                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt", true, Encoding.UTF8))
+                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt", true, Encoding.UTF8))
                     {
                         streamWriter.WriteLine();
                     }
@@ -117,9 +119,9 @@ namespace BSS.Logging
             {
                 DateTime now = DateTime.Now;
 
-                if (File.Exists($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt"))
+                if (File.Exists($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt"))
                 {
-                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now:dd.MM.yyyy}.txt", true, Encoding.UTF8))
+                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{now.ToString(FILENAME_FORMAT)}.txt", true, Encoding.UTF8))
                     {
                         streamWriter.WriteLine();
                     }
@@ -127,7 +129,7 @@ namespace BSS.Logging
             }
 
             _isInitialized = true;
-        } 
+        }
         #endregion
 
         // #######################################################################################
@@ -144,8 +146,8 @@ namespace BSS.Logging
             WriteFile(ref logMessage, ref now);
         }
 
-        [Obsolete("Will be omitted in RELEASE builds", false)]
         [Conditional("DEBUG")]
+        [Obsolete("Will be omitted in RELEASE builds", false)]
         internal static void Debug(String message, String source)
         {
             DateTime now = DateTime.Now;
@@ -170,7 +172,7 @@ namespace BSS.Logging
             Int32 lineLength = 27 + formattedLogMessage.Source.Length;
 
             String source = $"]-[{formattedLogMessage.Source}]";
-            String timeStampString = $"[{timeStamp:dd.MM.yyyy HH:mm:ss}] [";
+            String timeStampString = $"[{timeStamp.ToString(TIME_FORMAT)}] [";
 
             String severityString = null;
             switch (formattedLogMessage.Severity)
@@ -216,14 +218,14 @@ namespace BSS.Logging
             }
 
             String logLine = timeStampString + severityString + source + padding + formattedLogMessage.Message;
-      
+
             try
             {
                 lock (_fileLock)
                 {
                     ColoredDebugPrint(timeStampString, formattedLogMessage.Severity, severityString!, source, padding, formattedLogMessage.Message);
 
-                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{timeStamp:dd.MM.yyyy}.txt", true, Encoding.UTF8))
+                    using (StreamWriter streamWriter = new($"{_assemblyPath}\\logs\\{timeStamp.ToString(FILENAME_FORMAT)}.txt", true, Encoding.UTF8))
                     {
                         streamWriter.WriteLine(logLine);
                     }
@@ -231,7 +233,7 @@ namespace BSS.Logging
             }
             catch (Exception ex)
             {
-                throw new FieldAccessException($"Unable to write log file to:\n{_assemblyPath}\\logs\\{timeStamp:dd.MM.yyyy}.txt\n\nError: {ex.Message}");
+                throw new FieldAccessException($"Unable to write log file to:\n{_assemblyPath}\\logs\\{timeStamp.ToString(FILENAME_FORMAT)}.txt\n\nError: {ex.Message}");
             }
         }
 

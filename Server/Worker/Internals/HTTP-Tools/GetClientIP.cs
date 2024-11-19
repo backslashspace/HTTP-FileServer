@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BSS.Logging;
+using System;
 using System.Net;
 
 #pragma warning disable CS8603
@@ -48,6 +49,8 @@ namespace Server
             }
 
             if (ipEndIndex == 0) return null;
+
+            Log.Debug("X-Client-IP: " + header.Substring(ipStartIndex, ipEndIndex - ipStartIndex), "GetClientIP");
 
             return IPAddress.Parse(header.Substring(ipStartIndex, ipEndIndex - ipStartIndex));
         }
