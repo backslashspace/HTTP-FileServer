@@ -48,6 +48,12 @@ namespace Server
                 Environment.Exit(-1);
             }
 
+            if (!CookieDB.IsInitialized)
+            {
+                Log.FastLog("Session Cookie Database error, shutting down", LogSeverity.Error, "Init");
+                Environment.Exit(-1);
+            }
+
             ThreadPoolFast.Initialize(maximumConcurrentConnections, () =>
             {
                 // init thread static variables
@@ -69,7 +75,7 @@ namespace Server
 
             Log.FastLog("Initialization complete", LogSeverity.Info, "Init");
 
-            StartNewConnectionHandler();
+            ConnectionHandler();
 
             // main worker thread will end here
         }

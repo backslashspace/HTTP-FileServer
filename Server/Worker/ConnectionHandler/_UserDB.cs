@@ -26,9 +26,19 @@ namespace Server
                 if (File.Exists("user.db"))
                 {
                     databaseConnection.Open();
+
+                    if (!Authentication.GetSecret())
+                    {
+                        return;
+                    }
                 }
                 else
                 {
+                    if (!Authentication.PutSecret())
+                    {
+                        return;
+                    }
+
                     Log.FastLog($"Unable to find database file, creating default instance (user='admin', password='admin')", LogSeverity.Critical, "DB-Init");
 
                     SQLiteConnection.CreateFile("user.db");
@@ -45,7 +55,10 @@ namespace Server
 
                     //
 
-                    (String encodedPassword, String encodedSalt) = Worker.CreatePassword("admin", "admin");
+                    (Byte[] password, Byte[] salt) = Authentication.CreateHash("admin", "admin");
+                    String encodedPassword = Convert.ToBase64String(password);
+                    String encodedSalt = Convert.ToBase64String(salt);
+
                     command = new($"INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '{encodedPassword}', '{encodedSalt}', 1, 1, 1, 1);", databaseConnection);
                     command.ExecuteNonQuery(CommandBehavior.SingleResult);
                 }
@@ -101,10 +114,13 @@ namespace Server
                 return;
             }
 
-            Log.FastLog("Success", LogSeverity.Info, "UserDB");
+            Log.FastLog("Loaded database successfully ", LogSeverity.Info, "UserDB");
+
             databaseConnection.Close();
             databaseConnection.Dispose();
+
             IsInitialized = true;
+
             return;
 
             #endregion
@@ -114,18 +130,18 @@ namespace Server
 
         internal readonly ref struct LoginInfo
         {
-            internal LoginInfo(String hashedPasswordBase64, String saltBase64, Boolean isAdministrator, Boolean isEnabled, Boolean read, Boolean write)
+            internal LoginInfo(Byte[] hashedPassword, Byte[] salt, Boolean isAdministrator, Boolean isEnabled, Boolean read, Boolean write)
             {
-                HashedPasswordBase64 = hashedPasswordBase64;
-                SaltBase64 = saltBase64;
+                HashedPassword = hashedPassword;
+                Salt = salt;
                 IsAdministrator = isAdministrator;
                 IsEnabled = isEnabled;
                 Read = read;
                 Write = write;
             }
 
-            internal readonly String HashedPasswordBase64;
-            internal readonly String SaltBase64;
+            internal readonly Byte[] HashedPassword;
+            internal readonly Byte[] Salt;
             internal readonly Boolean IsAdministrator;
             internal readonly Boolean IsEnabled;
             internal readonly Boolean Read;
@@ -199,8 +215,8 @@ namespace Server
                 return false;
             }
 
-            String hashedPassword = dataReader.GetString(0);
-            String salt = dataReader.GetString(1);
+            Byte[] hashedPassword = Convert.FromBase64String(dataReader.GetString(0));
+            Byte[] salt = Convert.FromBase64String(dataReader.GetString(1));
             Boolean isAdministrator = dataReader.GetBoolean(2);
             Boolean isEnabled = dataReader.GetBoolean(3);
             Boolean read = dataReader.GetBoolean(4);
@@ -211,6 +227,7 @@ namespace Server
             command.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();
+
             return true;
         }
 

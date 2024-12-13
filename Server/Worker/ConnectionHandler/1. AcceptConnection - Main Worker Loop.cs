@@ -10,7 +10,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static void StartNewConnectionHandler()
+        private static void ConnectionHandler()
         {
             Socket connection = null;
 

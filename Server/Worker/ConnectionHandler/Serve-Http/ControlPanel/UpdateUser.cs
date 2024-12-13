@@ -27,6 +27,10 @@ namespace Server
             //
 
             SQLiteCommand command = databaseConnection.CreateCommand();
+
+            Byte[] password;
+            Byte[] salt;
+
             String encodedPassword;
             String encodedSalt;
 
@@ -37,7 +41,9 @@ namespace Server
             }
             else if (userConfiguration.Password != null && userConfiguration.DisplayUsername == null)
             {
-                (encodedPassword, encodedSalt) = CreatePassword(userConfiguration.LoginUsername, userConfiguration.Password);
+                (password, salt) = Authentication.CreateHash(userConfiguration.LoginUsername, userConfiguration.Password);
+                encodedPassword = Convert.ToBase64String(password);
+                encodedSalt = Convert.ToBase64String(salt);
 
                 command.CommandText = $"UPDATE User SET HashedPassword = @password, Salt = @salt, IsEnabled = {*(Byte*)&userConfiguration.IsEnabled}, Read = {*(Byte*)&userConfiguration.Read}, Write = {*(Byte*)&userConfiguration.Write} WHERE LoginUsername = @loginUsername";
                 command.Parameters.Add("@loginUsername", DbType.String).Value = userConfiguration.LoginUsername;
@@ -52,7 +58,9 @@ namespace Server
             }
             else // (userConfiguration.Password != null && userConfiguration.DisplayUsername != null) 
             {
-                (encodedPassword, encodedSalt) = CreatePassword(userConfiguration.LoginUsername!, userConfiguration.Password!);
+                (password, salt) = Authentication.CreateHash(userConfiguration.LoginUsername, userConfiguration.Password);
+                encodedPassword = Convert.ToBase64String(password);
+                encodedSalt = Convert.ToBase64String(salt);
 
                 command.CommandText = $"UPDATE User SET DisplayName = @displayName, HashedPassword = @password, Salt = @salt, IsEnabled = {*(Byte*)&userConfiguration.IsEnabled}, Read = {*(Byte*)&userConfiguration.Read}, Write = {*(Byte*)&userConfiguration.Write} WHERE LoginUsername = @loginUsername";
                 command.Parameters.Add("@loginUsername", DbType.String).Value = userConfiguration.LoginUsername;

@@ -36,7 +36,10 @@ namespace Server
                 return;
             }
 
-            (String encodedPassword, String encodedSalt) = CreatePassword(userConfiguration.LoginUsername, userConfiguration.Password);
+            (Byte[] password, Byte[] salt) = Authentication.CreateHash(userConfiguration.LoginUsername, userConfiguration.Password);
+
+            String encodedPassword = Convert.ToBase64String(password);
+            String encodedSalt = Convert.ToBase64String(salt);
 
             SQLiteCommand command = new($"INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES (@loginUsername, @displayUsername, @encodedPassword, @encodedSalt, 0, {*(Byte*)&userConfiguration.IsEnabled}, {*(Byte*)&userConfiguration.Read}, {*(Byte*)&userConfiguration.Write});", databaseConnection);
             command.Parameters.Add("@loginUsername", DbType.String).Value = userConfiguration.LoginUsername;

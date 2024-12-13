@@ -14,7 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
-	  <NoWarn>CS0618</NoWarn>
+    <NoWarn>CS0618</NoWarn>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -64,6 +64,9 @@
     <ApplicationManifest>App\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Cryptography">
+      <HintPath>..\..\..\2. Test-Projects\framework test\libs\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
     <Reference Include="HWRand.Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\HWRand.Net.dll</HintPath>
@@ -104,6 +107,12 @@
     <Compile Include="ServiceHandler.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Worker\Authentication\DatabaseSecret.cs" />
+    <Compile Include="Worker\Authentication\Hash.cs" />
+    <Compile Include="Worker\Authentication\ParseCredentials.cs" />
+    <Compile Include="Worker\Authentication\Validate.cs" />
+    <Compile Include="Worker\Authentication\PerformLogin.cs" />
+    <Compile Include="Worker\Authentication\ValidateClient.cs" />
     <Compile Include="Worker\ConnectionHandler\3. CloseConnection.cs" />
     <Compile Include="Worker\ConnectionHandler\1. AcceptConnection - Main Worker Loop.cs" />
     <Compile Include="Worker\ConnectionHandler\2. Serve.cs" />
@@ -123,10 +132,6 @@
     <Compile Include="Worker\ConnectionHandler\Serve-Http\.WebRootHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\_GETHandler.cs" />
     <Compile Include="Worker\ConnectionHandler\Serve-Http\_POSTHandler.cs" />
-    <Compile Include="Worker\ConnectionHandler\Serve-Http\ClientAuth\ParseCredentials.cs" />
-    <Compile Include="Worker\ConnectionHandler\Serve-Http\ClientAuth\PasswordTools.cs" />
-    <Compile Include="Worker\ConnectionHandler\Serve-Http\ClientAuth\PerformLogin.cs" />
-    <Compile Include="Worker\ConnectionHandler\Serve-Http\ClientAuth\ValidateClient.cs" />
     <Compile Include="Worker\ConnectionHandler\_UserDB.cs" />
     <Compile Include="Worker\Internals\HTTP-Tools\ConstructHttpResponse.cs" />
     <Compile Include="Worker\Internals\HTTP-Tools\GetClientIP.cs" />
@@ -170,6 +175,8 @@
     <Content Include="html\controlPanel\controlPanel.html" />
     <Content Include="html\controlPanel\createUser.html" />
     <Content Include="html\controlPanel\userConfig.html" />
+    <Content Include="html\controlPanel\userFiles.html" />
+    <Content Include="html\files.html" />
     <Content Include="html\loggedOut.html" />
     <Content Include="html\login.html" />
     <Content Include="html\loginError.html" />
