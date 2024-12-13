@@ -5,13 +5,14 @@ using System.IO;
 
 namespace Server
 {
-    internal static partial class Authentication
+    internal static partial class UserDB
     {
         private const UInt16 SECRET_SIZE = 384;
         private const String SECRET_FILENAME = "db_secret";
+
         internal static readonly Byte[] Secret = new Byte[SECRET_SIZE];
 
-        internal static Boolean GetSecret()
+        private static Boolean GetSecret()
         {
             if (!File.Exists(Worker.AssemblyPath + "\\" + SECRET_FILENAME))
             {
@@ -49,7 +50,7 @@ namespace Server
             }
         }
 
-        internal static Boolean PutSecret()
+        private static Boolean PutSecret()
         {
             if (File.Exists(Worker.AssemblyPath + "\\" + SECRET_FILENAME))
             {

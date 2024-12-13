@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace Server
 {
-    internal static class UserDB
+    internal static partial class UserDB
     {
         internal static Boolean IsInitialized { get; private set; }
 
@@ -27,14 +27,14 @@ namespace Server
                 {
                     databaseConnection.Open();
 
-                    if (!Authentication.GetSecret())
+                    if (!GetSecret())
                     {
                         return;
                     }
                 }
                 else
                 {
-                    if (!Authentication.PutSecret())
+                    if (!PutSecret())
                     {
                         return;
                     }
