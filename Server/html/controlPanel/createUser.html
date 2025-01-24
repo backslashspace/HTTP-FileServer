@@ -1,90 +1,145 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New User</title>
+    <style>
+        body {
+            background-color: #202020;
+            color: #fbfbfb;
+            font-family: Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-<style>
-	input {
-		margin-bottom: 12px;
-		border-radius: 5px;
-		width: 100%;
-		height: 20px;
-		align-self: center;
-		background: #bbbbbb;
-	}
+        header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #303030;
+        }
 
-	input[type=checkbox] {
-		margin-bottom: 12px;
-		border-radius: 5px;
-		width: 18px;
-		height: 18px;
-		align-self: flex-start;
-		background: #bbbbbb;
-	}
+            header a {
+                color: #fbfbfb;
+                text-decoration: none;
+                margin: 0 10px;
+            }
 
-	.footer {
-		background: #bbbbbb;
-		position: fixed;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		height: 50px;
-	}
-</style>
+                header a:hover {
+                    text-decoration: underline;
+                }
 
-<html style="background-color:#202020;font-family:Helvetica;color:#fbfbfb;">
-	<head>
-		<meta charset="utf-8">
-		<title>Create User</title>
-	</head>
+        main {
+            margin: 50px auto;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+        }
 
-	<body>
+        h1 {
+            text-align: center;
+        }
 
-		<nav link="#0067C0" alink="aqua" vlink="coral">
-			<p align="right" style="margin-right:10em;">
-				<a href="/fileSharing/controlPanel" style="padding:10px;">ControlPanel</a>
-				<a href="/fileSharing/logout">Log out</a>
-			</p>
-		</nav>
+        p {
+            margin: 20px 0;
+        }
 
-		<center>
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
 
-			<h1>New User</h1>
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #404040;
+            background-color: #303030;
+            color: #fbfbfb;
+        }
 
-			<hr style="margin-right:10em; margin-left:10em;" />
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
 
-			<p style="font-size: 18px; margin-top: 40px">Please enter the information below to create a new user.</p>
+        button {
+            background-color: #404040;
+            color: #fbfbfb;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+        }
 
-			<div style="width: 350px;">
-				<form method="POST" action="" style="margin-top: 10px;">
-					<input type="text" name="loginUsername" placeholder="login username" required />
-					<input type="text" name="displayUsername" placeholder="display username" required />
-					<input type="password" name="password" placeholder="password" required />
+            button:hover {
+                background-color: #505050;
+            }
 
-					<div style="width: 300px;">
-						<div style="text-align: left">
-							<div title="Blocks users from logging">
-								<input type="checkbox" name="isEnabled" id="IsEnabled" checked />
-								<label for="IsEnabled">Enabled</label>
-							</div>
-							<div title="Allows users to view and download files.">
-								<input type="checkbox" name="read" id="Read" checked />
-								<label for="Read">Read</label>
-							</div>
-							<div title="Allows users to delete and upload files.">
-								<input type="checkbox" name="write" id="Write" unchecked />
-								<label for="Write">Write</label>
-							</div>
-						</div>
-					</div>
+        hr {
+            border: none;
+            border-top: 2px solid #404040;
+            margin: 30px 0;
+            width: 100%;
+            max-width: 600px;
+        }
 
-					<input type="submit" value="Create User" style="width: 200px; height:26px; font-size: 13px; margin-top: 8px" />
-				</form>
-			</div>
+        .footer {
+            background: #bbbbbb;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/fileSharing/logout">Log out</a>
+    </header>
+    <main>
+        <h1>Create New User</h1>
+        <hr>
+        <p>Please enter the information below to create a new user. Ensure all required fields are completed.</p>
+        <form action="" method="post">
+            <label for="username">Username</label>
+            <input type="text" id="loginUsername" name="loginUsername" required>
 
-		</center>
+            <label for="displayName">Display Name</label>
+            <input type="text" id="displayUsername" name="displayUsername" required>
 
-		<div class="footer" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0px; font-size: 0.8vw;">
-			<p style="text-align: left; margin-left: 2em;">Logged in as: <!-- #DISPLAY#USERNAME#ANCHOR# --></p>
-			<p style="text-align: center"><!-- #INFO#ANCHOR# --></p>
-			<p style="text-align: right; margin-right: 2em;">Threadpool Threads: <!-- #THREADPOOL#ANCHOR# --></p>
-		</div>
-	</body>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <label>
+                <input type="checkbox" name="isEnabled" checked>
+                Enable User
+            </label>
+
+            <label>
+                <input type="checkbox" name="write">
+                Write Access
+            </label>
+
+            <label>
+                <input type="checkbox" name="read">
+                Read Access
+            </label>
+
+            <button type="submit">Create User</button>
+        </form>
+    </main>
+
+    <div class="footer" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0px; font-size: 0.8vw;">
+        <p style="text-align: left; margin-left: 2em;">Logged in as: <!-- #DISPLAY#USERNAME#ANCHOR# --></p>
+        <p style="text-align: center"><!-- #INFO#ANCHOR# --></p>
+        <p style="text-align: right; margin-right: 2em;">Threadpool Threads: <!-- #THREADPOOL#ANCHOR# --></p>
+    </div>
+
+</body>
 </html>

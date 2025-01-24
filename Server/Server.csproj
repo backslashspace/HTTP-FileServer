@@ -98,6 +98,10 @@
     <Compile Include="Program\Logging\Logging.cs" />
     <Compile Include="Program\Logging\LogMessage.cs" />
     <Compile Include="Program\Logging\LogSeverity.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\.POST-Relay.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\.GET-Relay.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\FilesView\.GET-Relay.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\FilesView\.POST-Relay.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -107,29 +111,29 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program\Database\UserDBSecret.cs" />
-    <Compile Include="Program\Worker\Authentication\Hash.cs" />
-    <Compile Include="Program\Worker\Authentication\ParseCredentials.cs" />
-    <Compile Include="Program\Worker\Authentication\Validate.cs" />
-    <Compile Include="Program\Worker\Authentication\PerformLogin.cs" />
-    <Compile Include="Program\Worker\Authentication\ValidateClient.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Authentication\Hash.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Authentication\ParseCredentials.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Authentication\Validate.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Authentication\PerformLogin.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Authentication\ValidateClient.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\3. CloseConnection.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\1. AcceptConnection - Main Worker Loop.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\2. Serve.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ChangePassword\SendChangePassword.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ChangePassword\UpdatePassword.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ControlPanel\ParseUserConfiguration.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ControlPanel\CreateUser.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ControlPanel\SendControlPanel.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ControlPanel\SendUserConfig.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ControlPanel\SendAdminUserFilesView.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\ControlPanel\UpdateUser.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\Log-in-out\SendLoggedOut.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\Log-in-out\SendLogin.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\UserView\SendUserFilesView.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\FileTools.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\.WebRootHandler.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\GET-Handler.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve-Http\POST-Handler.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ChangePassword\SendChangePassword.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ChangePassword\UpdatePassword.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\ParseUserConfiguration.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\CreateUser.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\SendControlPanel.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\SendUserConfig.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\SendAdminUserFilesView.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\UpdateUser.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Log-in-out\SendLoggedOut.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Log-in-out\SendLogin.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\FilesView\SendUserFilesView.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\FileTools.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\.WebRootHandler.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\GET-Handler.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\POST-Handler.cs" />
     <Compile Include="Program\HTTP\_BuildResponse.cs" />
     <Compile Include="Program\HTTP\GetClientIP.cs" />
     <Compile Include="Program\HTTP\GetContent.cs" />

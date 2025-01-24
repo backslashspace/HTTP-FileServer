@@ -13,7 +13,7 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendControlPanel(Socket connection, ref readonly UserDB.User user, String insertInfoString = null, Boolean setSelfURL = false)
+            internal static void SendControlPanel(Socket connection, ref readonly UserDB.User user, String insertInfoString = null!, Boolean setSelfURL = false)
             {
                 Log.Debug("controlPanel\\controlPanel.html", "SendFile()");
 
@@ -60,21 +60,9 @@ namespace Server
             command.CommandText = "SELECT DisplayName,IsAdministrator,IsEnabled,LoginUsername FROM User WHERE IsAdministrator = 0";
             SQLiteDataReader dataReader = command.ExecuteReader();
 
-            if (!dataReader.Read())
-            {
-                databaseConnection.Close();
-                databaseConnection.Dispose();
-                return true;
-            }
-
-            if (!Tools.CheckFilesDirectory(connection)) return false;
-            if (!Tools.GetUserFilesInfo(connection, dataReader.GetString(3), out String fileString)) return false;
-
-            fileContent = Regex.Replace(fileContent, "<!-- #USER#HEAD#ANCHOR# -->", CreateListUser(fileString, dataReader));
-
             while (dataReader.Read())
             {
-                if (!Tools.GetUserFilesInfo(connection, dataReader.GetString(3), out fileString)) return false;
+                if (!Tools.GetUserFilesInfo(connection, dataReader.GetString(3), out String fileString)) return false;
                 
                 fileContent = Regex.Replace(fileContent, "<!-- #USER#ANCHOR# -->", CreateListUser(fileString, dataReader));
             }
@@ -84,30 +72,22 @@ namespace Server
             return true;
         }
 
-        private static String CreateListUser(String fileString, SQLiteDataReader dataReader) => 
-"<hr style=\"margin-top: 20px; margin-left: 10em; margin-right: 10em;\" />\r\n" +
-"\r\n" +
-"<div style=\"display: grid; grid-template-columns: 2fr 1fr 1fr 2fr; gap: 0px; margin-top: 20px\">\r\n" +
-    "<div style=\"text-align: right;\">\r\n" +
-        $"<p>'{HttpUtility.HtmlEncode(dataReader.GetString(0))}'  ({HttpUtility.HtmlEncode(dataReader.GetString(3))})</p>\r\n" +
-    "</div>\r\n" +
-    "<div style=\"text-align: center;\">\r\n" +
-        "<form method=\"POST\" action=\"/fileSharing/controlPanel/config\">\r\n" +
-            $"<input type=\"text\" name=\"name\" value=\"{HttpUtility.HtmlEncode(dataReader.GetString(3))}\" hidden />\r\n" +
-            $"<button type=\"submit\" value=\"{HttpUtility.HtmlEncode(dataReader.GetString(3))}\" style=\"width: 120px; height:28px; font-size: 14px; margin-top: 12px\">Manage</button>\r\n" +
-        "</form>\r\n" +
-    "</div>\r\n" +
-    "<div style=\"text-align: center;\">\r\n" +
-        "<form method=\"POST\" action=\"/fileSharing/controlPanel/userFiles\">\r\n" +
-            $"<input type=\"text\" name=\"name\" value=\"{HttpUtility.HtmlEncode(dataReader.GetString(3))}\" hidden />\r\n" +
-            "<button type=\"submit\" style=\"width: 120px; height:28px; font-size: 14px; margin-top: 12px\">View Files</button>\r\n" +
-        "</form>\r\n" +
-    "</div>\r\n" +
-    "<div style=\"text-align: left;\">\r\n" +
-        $"<p>{fileString}</p>\r\n" +
-    "</div>\r\n" +
-"</div>\r\n" +
-"\r\n" +
-"<!-- #USER#ANCHOR# -->\r\n";
+        private static String CreateListUser(String fileString, SQLiteDataReader dataReader) =>
+            $@"<div class=""user"">
+                <span><strong>{HttpUtility.HtmlEncode(dataReader.GetString(0))}</strong> – '{HttpUtility.HtmlEncode(dataReader.GetString(3))}'</span>
+                <form action=""/fileSharing/controlPanel/userSettings"" method=""post"">
+                    <input type=""hidden"" name=""username"" value=""{HttpUtility.HtmlEncode(dataReader.GetString(3))}"">
+                    <button type=""submit"">User Settings</button>
+                </form>
+                <form action=""/fileSharing/files"" method=""post"">
+                    <input type=""hidden"" name=""username"" value=""{HttpUtility.HtmlEncode(dataReader.GetString(3))}"">
+                    <button type=""submit"">View Files</button>
+                </form>
+                <span>{fileString}</span>
+            </div>
+
+            <!-- #USER#ANCHOR# -->
+
+            ";
     }
 }

@@ -50,7 +50,7 @@ namespace Server
 			{
 				Log.FastLog("Failed to create user files directory 'files': " + exception.Message, LogSeverity.Error, "FileInfo");
                 HTTP.ERRORS.Send_500(connection);
-				fileString = null;
+				fileString = null!;
 				return false;
 			}
 

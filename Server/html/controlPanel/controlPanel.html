@@ -1,73 +1,144 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel</title>
+    <!-- #SCRIPT#ANCHOR# -->
+    <style>
+        body {
+            background-color: #202020;
+            color: #fbfbfb;
+            font-family: Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-<style>
-	input, button {
-		margin-bottom: 12px;
-		border-radius: 5px;
-		width: 100%;
-		height: 20px;
-		align-self: center;
-		background: #bbbbbb;
-	}
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #303030;
+        }
 
-	.footer {
-		background: #bbbbbb;
-		position: fixed;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		height: 2.5vw;
-	}
-</style>
+            header a {
+                color: #fbfbfb;
+                text-decoration: none;
+                margin: 0 10px;
+            }
 
-<html style="background-color:#202020;font-family:Helvetica;color:#fbfbfb;">
-	<head>
-		<meta charset="utf-8">
-		<title>Control Panel</title>
-		<!-- #SCRIPT#ANCHOR# -->
-	</head>
+                header a:hover {
+                    text-decoration: underline;
+                }
 
-	<body style="margin-top: 1em; padding-bottom: 10em;">
+        main {
+            text-align: center;
+            margin-top: 50px;
+        }
 
-		<nav link="#0067C0" alink="aqua" vlink="coral">
-			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0px; margin-left: 10em; margin-right: 10em;">
-				<div style="text-align: left;">
-					<a href="/fileSharing/changePassword" align="left">Change Password</a>
-				</div>
-				<div style="text-align: right;">
-					<a href="/" style="padding:10px;">Back to Main-Page</a>
-					<a href="/fileSharing/logout">Log out</a>
-				</div>
-			</div>
-		</nav>
+        .control-panel {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #404040;
+        }
 
-		<center style="margin-right:10em; margin-left:10em;">
+        button {
+            background-color: #404040;
+            color: #fbfbfb;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
 
-			<h1>Control Panel</h1>
+            button:hover {
+                background-color: #505050;
+            }
 
-			<hr />
+        .user-list {
+            margin: 20px auto;
+            width: 80%;
+            max-width: 800px;
+            text-align: left;
+        }
 
-			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0px; margin-left: 20em; margin-right: 20em; margin-top: 40px;">
-				<div style="text-align: center;">
-					<form method="GET" action="/fileSharing/controlPanel/createUser">
-						<button type="submit" style="width: 120px; height:32px; font-size: 14px; margin-top: 8px">Create new user</button>
-					</form>
-				</div>
-				<div style="text-align: center;">
-					<form method="GET" action="/fileSharing/controlPanel/createUser">
-						<button type="submit" style="width: 120px; height:32px; font-size: 14px; margin-top: 8px">View own Files</button>
-					</form>
-				</div>
-			</div>
+        .user {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid #404040;
+            position: relative;
+        }
 
-			<!-- #USER#HEAD#ANCHOR# -->
+            .user span {
+                flex-shrink: 0;
+                max-width: 200px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
 
-		</center>
+            .user form:first-of-type {
+                position: absolute;
+                left: 40%;
+                transform: translateX(-50%);
+            }
 
-		<div class="footer" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0px; font-size: 0.8vw;">
-			<p style="text-align: left; margin-left: 2em;">Logged in as: <!-- #DISPLAY#USERNAME#ANCHOR# --></p>
-			<p style="text-align: center"><!-- #INFO#ANCHOR# --></p>
-			<p style="text-align: right; margin-right: 2em;">Threadpool Threads: <!-- #THREADPOOL#ANCHOR# --></p>
-		</div>
-	</body>
+            .user form:last-of-type {
+                position: absolute;
+                left: 60%;
+                transform: translateX(-50%);
+            }
+
+        form {
+            display: inline;
+        }
+
+        .footer {
+            background: #bbbbbb;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2.5vw;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/fileSharing/changePassword">Change Password</a>
+        <div>
+            <a href="/">Back to Main-Page</a>
+            <a href="/fileSharing/logout">Log out</a>
+        </div>
+    </header>
+    <main>
+        <div class="control-panel">
+            <h1>Control Panel</h1>
+            <form action="/fileSharing/controlPanel/createUser" method="get" style="display: inline;">
+                <button type="submit">Create User</button>
+            </form>
+            <form action="/fileSharing/files" method="get" style="display: inline;">
+                <button type="submit">View Files</button>
+            </form>
+        </div>
+
+        <div class="user-list">
+
+            <!-- #USER#ANCHOR# -->
+
+        </div>
+    </main>
+
+    <div class="footer" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0px; font-size: 0.8vw;">
+        <p style="text-align: left; margin-left: 2em;">Logged in as: <!-- #DISPLAY#USERNAME#ANCHOR# --></p>
+        <p style="text-align: center"><!-- #INFO#ANCHOR# --></p>
+        <p style="text-align: right; margin-right: 2em;">Threadpool Threads: <!-- #THREADPOOL#ANCHOR# --></p>
+    </div>
+
+</body>
 </html>
