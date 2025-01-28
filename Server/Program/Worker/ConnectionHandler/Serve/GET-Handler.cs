@@ -8,7 +8,6 @@ namespace Server
     {
         private static void AuthenticatedGETHandler(Socket connection, String header, String[] pathParts, ref UserDB.User user)
         {
-            // see paths.png
             switch (pathParts[1].ToLower())
             {
                 case "controlpanel":
@@ -29,7 +28,7 @@ namespace Server
                     if (user.IsAdministrator || user.Write) HTML.CGI.SendChangePasswordView(connection, ref user);
                     else
                     {
-                        Log.FastLog($"User '{user.LoginUsername}' attempted to load the password changing page, but does not have the write permission -> sending 403", LogSeverity.Warning, "GET");
+                        Log.FastLog($"User '{user.LoginUsername}' attempted to load the password change page, but does not have the write permission -> sending 403", LogSeverity.Warning, "GET");
                         HTTP.ERRORS.Send_403(connection);
                     }
                     return;

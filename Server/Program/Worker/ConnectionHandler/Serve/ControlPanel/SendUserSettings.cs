@@ -32,26 +32,23 @@ namespace Server
 
                 String loginUsername = HttpUtility.UrlDecode(content.Substring(5, content.Length - 5));
 
-                if (!UserDB.GetUserPermissions(loginUsername, out UserDB.User configUser))
+                if (!UserDB.GetUserPermissions(loginUsername, out UserDB.User selectedUser))
                 {
                     SendControlPanel(connection, in user, "<span style=\"color: red; font-weight: bold\">User not found</span>", true);
                     return;
                 }
 
-                SendUserConfig(connection, configUser);
-            }
+                // #### #### #### #### ####
 
-            private static void SendUserConfig(Socket connection, UserDB.User user)
-            {
-                Log.Debug("controlPanel\\userConfig.html", "SendFile()");
+                Log.Debug("controlPanel\\userSettings.html", "SendFile()");
 
-                String fileContent = Worker.ReadFileText("controlPanel\\userConfig.html");
-                fileContent = fileContent.Replace("<!-- #LOGIN#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(user.LoginUsername));
-                fileContent = fileContent.Replace("<!-- #DISPLAY#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(user.DisplayName));
+                String fileContent = Worker.ReadFileText("controlPanel\\userSettings.html");
+                fileContent = fileContent.Replace("<!-- #LOGIN#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(selectedUser.LoginUsername));
+                fileContent = fileContent.Replace("<!-- #DISPLAY#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(selectedUser.DisplayName));
 
-                fileContent = fileContent.Replace("<!-- #IsEnabled#ANCHOR# -->", user.IsEnabled ? "checked" : "unchecked");
-                fileContent = fileContent.Replace("<!-- #Read#ANCHOR# -->", user.Read ? "checked" : "unchecked");
-                fileContent = fileContent.Replace("<!-- #Write#ANCHOR# -->", user.Write ? "checked" : "unchecked");
+                fileContent = fileContent.Replace("<!-- #IsEnabled#ANCHOR# -->", selectedUser.IsEnabled ? "checked" : "unchecked");
+                fileContent = fileContent.Replace("<!-- #Read#ANCHOR# -->", selectedUser.Read ? "checked" : "unchecked");
+                fileContent = fileContent.Replace("<!-- #Write#ANCHOR# -->", selectedUser.Write ? "checked" : "unchecked");
 
                 Byte[] buffer = Encoding.UTF8.GetBytes(fileContent);
 
@@ -62,8 +59,6 @@ namespace Server
 
                 Worker.CloseConnection(connection);
             }
-
-            
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Server
                     CreateUser(connection, header, pathParts, ref user);
                     return;
 
-                case "config":
+                case "usersettings":
                     if (pathParts.Length == 4 && pathParts[3].ToLower() == "update") UpdateUser(connection, header, ref user);
                     else HTML.CGI.SendUserConfigView(connection, header, ref user);
                     return;

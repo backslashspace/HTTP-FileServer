@@ -14,7 +14,7 @@ namespace Server
 		{
 			try
 			{
-				if (!Directory.Exists(Worker.AssemblyPath + "\\files"))
+				if (!Directory.Exists("\\\\?\\" + Worker.AssemblyPath + "\\files"))
 				{
 					Directory.CreateDirectory(Worker.AssemblyPath + "\\files");
 					Log.FastLog("Created 'files' directory", LogSeverity.Info, "FileInfo");
@@ -37,8 +37,15 @@ namespace Server
 		{
 			try
 			{
-				if (!Directory.Exists(Worker.AssemblyPath + "\\files\\" + loginUsername))
+				if (!Directory.Exists("\\\\?\\" + Worker.AssemblyPath + "\\files\\" + loginUsername))
 				{
+                    if (loginUsername.Length > 128)
+                    {
+                        Log.FastLog($"Detected long username (over 128 char), skipping: {loginUsername}", LogSeverity.Warning, "FileInfo");
+                        fileString = " --- ";
+                        return true;
+                    }
+
 					Directory.CreateDirectory(Worker.AssemblyPath + "\\files\\" + loginUsername);
 					Log.FastLog($"Created file store directory for '{loginUsername}'", LogSeverity.Info, "FileInfo");
 
@@ -59,7 +66,7 @@ namespace Server
 
 			try
 			{
-				DirectoryInfo directoryInfo = new(Worker.AssemblyPath + "\\files\\" + loginUsername);
+				DirectoryInfo directoryInfo = new("\\\\?\\" + Worker.AssemblyPath + "\\files\\" + loginUsername);
 
 				FileInfo[] fileInfo = directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
 				fileCount = fileInfo.Length;

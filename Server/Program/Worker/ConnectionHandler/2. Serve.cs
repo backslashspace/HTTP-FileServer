@@ -40,7 +40,7 @@ namespace Server
             catch (SocketException exception)
             {
                 Log.FastLog($"A socket error occurred, connection to client lost:\n{exception.Message}", LogSeverity.Warning, "Worker");
-                CloseConnection(connection, true);
+                if (connection != null) CloseConnection(connection, true);
                 return;
             }
             catch (Exception exception)

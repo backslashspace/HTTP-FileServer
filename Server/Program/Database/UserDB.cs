@@ -57,7 +57,7 @@ namespace Server
                     String encodedSalt = Convert.ToBase64String(salt);
 
                     command = new($"INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '{encodedPassword}', '{encodedSalt}', 1, 1, 1, 1);", databaseConnection);
-                    command.ExecuteNonQuery(CommandBehavior.SingleResult);
+                    command.ExecuteNonQuery();
                 }
             }
             catch (Exception exception)
@@ -73,6 +73,7 @@ namespace Server
             command = databaseConnection.CreateCommand();
             command.CommandText = "PRAGMA user_version";
             Int64 databaseVersion = (Int64)command.ExecuteScalar(CommandBehavior.SingleResult);
+            command.Dispose();
 
             if (DATABASE_VERSION != databaseVersion)
             {
@@ -113,6 +114,7 @@ namespace Server
 
             Log.FastLog("Loaded database successfully ", LogSeverity.Info, "UserDB");
 
+            tables.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();
 
@@ -246,6 +248,7 @@ namespace Server
             if (!dataReader.Read())
             {
                 user = new();
+                dataReader.Close();
                 command.Dispose();
                 databaseConnection.Close();
                 databaseConnection.Dispose();
@@ -260,6 +263,7 @@ namespace Server
 
             user = new(loginUsername, displayName, isAdministrator, isEnabled, read, write);
 
+            dataReader.Close();
             command.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();
@@ -276,10 +280,11 @@ namespace Server
             SQLiteCommand command = databaseConnection.CreateCommand();
             command.CommandText = "SELECT IsEnabled FROM User WHERE LoginUsername = @loginUsername COLLATE NOCASE";
             command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
-            SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleResult);
+            SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleRow);
 
-            Boolean userExists = dataReader.Read();
+            Boolean userExists = dataReader.HasRows;
 
+            dataReader.Close();
             command.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();

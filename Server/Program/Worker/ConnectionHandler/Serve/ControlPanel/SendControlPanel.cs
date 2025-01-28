@@ -19,7 +19,7 @@ namespace Server
 
                 String fileContent = Worker.ReadFileText("controlPanel\\controlPanel.html");
 
-                ControlPanelInsertUsers(ref fileContent, connection);
+                if (!ControlPanelInsertUsers(ref fileContent, connection)) return;
 
                 fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", user.DisplayName);
                 fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
@@ -76,11 +76,11 @@ namespace Server
             $@"<div class=""user"">
                 <span><strong>{HttpUtility.HtmlEncode(dataReader.GetString(0))}</strong> – '{HttpUtility.HtmlEncode(dataReader.GetString(3))}'</span>
                 <form action=""/fileSharing/controlPanel/userSettings"" method=""post"">
-                    <input type=""hidden"" name=""username"" value=""{HttpUtility.HtmlEncode(dataReader.GetString(3))}"">
+                    <input type=""hidden"" name=""name"" value=""{HttpUtility.HtmlEncode(dataReader.GetString(3))}"">
                     <button type=""submit"">User Settings</button>
                 </form>
                 <form action=""/fileSharing/files"" method=""post"">
-                    <input type=""hidden"" name=""username"" value=""{HttpUtility.HtmlEncode(dataReader.GetString(3))}"">
+                    <input type=""hidden"" name=""name"" value=""{HttpUtility.HtmlEncode(dataReader.GetString(3))}"">
                     <button type=""submit"">View Files</button>
                 </form>
                 <span>{fileString}</span>

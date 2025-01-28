@@ -22,9 +22,16 @@ namespace Server
                 return;
             }
 
+            if (userConfiguration.LoginUsername.Length > 128)
+            {
+                Log.FastLog($"'{user.LoginUsername}' attempted to create a user with a name longer than 128 character -> sending 400", LogSeverity.Warning, "CreateUser");
+                HTTP.ERRORS.Send_400(connection);
+                return;
+            }
+
             if (UserDB.UserExists(userConfiguration.LoginUsername))
             {
-                HTML.CGI.SendCreateUserView(connection, user.LoginUsername, true);
+                HTML.CGI.SendCreateUserView(connection);
                 return;
             }
 
@@ -47,7 +54,7 @@ namespace Server
             command.Parameters.Add("@encodedPassword", DbType.String).Value = encodedPassword;
             command.Parameters.Add("@encodedSalt", DbType.String).Value = encodedSalt;
 
-            if (command.ExecuteNonQuery(CommandBehavior.SingleResult) == 0)
+            if (command.ExecuteNonQuery() == 0)
             {
                 Log.FastLog($"'{user.LoginUsername}' failed to created user '{userConfiguration.LoginUsername}'", LogSeverity.Error, "CreateUser");
                 HTTP.ERRORS.Send_500(connection);
@@ -65,19 +72,11 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendCreateUserView(Socket connection, String loginUsername, Boolean insertUserExists = false)
+            internal static void SendCreateUserView(Socket connection)
             {
                 Log.Debug("controlPanel\\createUser.html", "SendFile()");
 
                 String fileContent = Worker.ReadFileText("controlPanel\\createUser.html");
-
-                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", HttpUtility.HtmlEncode(loginUsername));
-                fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
-
-                if (insertUserExists)
-                {
-                    fileContent = Regex.Replace(fileContent, "<!-- #INFO#ANCHOR# -->", "<span style=\"color: red; font-weight: bold\">User already exists</span>");
-                }
 
                 Byte[] buffer = Encoding.UTF8.GetBytes(fileContent);
 

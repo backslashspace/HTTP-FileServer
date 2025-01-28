@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>User Settings</title>
+	<style>
+		body {
+			background-color: #202020;
+			color: #fbfbfb;
+			font-family: Helvetica, Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+		}
+
+		header {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			padding: 10px 20px;
+			background-color: #303030;
+		}
+
+			header a {
+				color: #fbfbfb;
+				text-decoration: none;
+				margin: 0 10px;
+			}
+
+				header a:hover {
+					text-decoration: underline;
+				}
+
+		main {
+			margin: 50px auto;
+			width: 80%;
+			max-width: 600px;
+			text-align: left;
+		}
+
+		h1 {
+			text-align: center;
+		}
+
+		label {
+			display: block;
+			margin: 10px 0 5px;
+		}
+
+		input[type="text"], input[type="password"] {
+			width: 96.4%;
+			padding: 10px;
+			margin-bottom: 15px;
+			border: 1px solid #404040;
+			background-color: #303030;
+			color: #fbfbfb;
+		}
+
+		input[type="checkbox"] {
+			margin-right: 10px;
+		}
+
+		.checkbox-group {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		button {
+			background-color: #404040;
+			color: #fbfbfb;
+			border: none;
+			padding: 10px 20px;
+			margin-top: 20px;
+			font-size: 16px;
+			cursor: pointer;
+			display: block;
+			width: 100%;
+		}
+
+			button:hover {
+				background-color: #505050;
+			}
+
+		hr {
+			border: none;
+			border-top: 2px solid #404040;
+			margin: 30px 0;
+			width: 100%;
+			max-width: 600px;
+		}
+
+		.footer {
+			background: #bbbbbb;
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 2.5vw;
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<a href="/fileSharing/logout">Log out</a>
+	</header>
+	<main>
+		<h1><!-- #DISPLAY#NAME#ANCHOR# -->'s Settings</h1>
+		<hr>
+		<p>Please enter the information below to update the user</p>
+		<form action="/fileSharing/controlPanel/userSettings/update" method="post">
+			<label for="username">Username</label>
+			<input type="text" id="loginUsername" value="<!-- #LOGIN#NAME#ANCHOR# -->" name="loginUsername" readonly required />
+
+			<label for="displayName">Display Name</label>
+			<input type="text" id="displayUsername" placeholder="new display name (optional)" name="displayUsername" />
+
+			<label for="password">Password</label>
+			<input type="password" id="password" placeholder="new password (optional)" name="password" />
+
+			<label>
+				<input type="checkbox" name="isEnabled" <!-- #IsEnabled#ANCHOR# --> />
+				Enable User
+			</label>
+
+			<div class="checkbox-group">
+				<label>
+					<input type="checkbox" name="write" <!-- #Write#ANCHOR# --> />
+					Write Access
+				</label>
+				<label>
+					<input type="checkbox" name="remove" />
+					<span style="color:red">REMOVE USER</span>
+				</label>
+			</div>
+
+			<label>
+				<input type="checkbox" name="read" <!-- #Read#ANCHOR# --> />
+				Read Access
+			</label>
+
+			<button type="submit">Update User</button>
+		</form>
+	</main>
+
+	<div class="footer" />
+
+</body>
+</html>

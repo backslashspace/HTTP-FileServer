@@ -8,14 +8,15 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private readonly ref struct UserConfiguration
+        private readonly ref struct UserUpdate
         {
-            internal UserConfiguration(String loginUsername, String displayUsername, String password, Boolean isEnabled, Boolean read, Boolean write)
+            internal UserUpdate(String loginUsername, String displayUsername, String password, Boolean remove, Boolean isEnabled, Boolean read, Boolean write)
             {
                 LoginUsername = loginUsername;
                 DisplayUsername = displayUsername;
                 Password = password;
 
+                Remove = remove;
                 IsEnabled = isEnabled;
                 Read = read;
                 Write = write;
@@ -25,12 +26,13 @@ namespace Server
             internal readonly String DisplayUsername;
             internal readonly String Password;
 
+            internal readonly Boolean Remove;
             internal readonly Boolean IsEnabled;
             internal readonly Boolean Read;
             internal readonly Boolean Write;
         }
 
-        private static Boolean ParseUserConfiguration(String urlEncodedContent, out UserConfiguration userConfiguration, Boolean updateMode = false)
+        private static Boolean ParseUserUpdate(String urlEncodedContent, out UserUpdate userConfiguration, Boolean updateMode = false)
         {
             Int32 contentLength = urlEncodedContent.Length;
 
@@ -57,6 +59,9 @@ namespace Server
 
             Int32 writeStartIndex = 0;
             Int32 writeLength = 0;
+
+            Int32 removeStartIndex = 0;
+            Int32 removeLength = 0;
 
             for (Int32 i = 0; i < contentLength; ++i)
             {
@@ -179,6 +184,30 @@ namespace Server
                     }
                 }
 
+                if (removeLength == 0 && i + 7 <= contentLength)
+                {
+                    if (urlEncodedContent[i] == 'r'
+                        && urlEncodedContent[i + 1] == 'e'
+                        && urlEncodedContent[i + 2] == 'm'
+                        && urlEncodedContent[i + 3] == 'o'
+                        && urlEncodedContent[i + 4] == 'v'
+                        && urlEncodedContent[i + 5] == 'e'
+                        && urlEncodedContent[i + 6] == '=')
+                    {
+                        removeStartIndex = i + 7;
+
+                        for (Int32 j = removeStartIndex; i < contentLength; ++j)
+                        {
+                            if (contentLength == j || urlEncodedContent[j] == '&')
+                            {
+                                removeLength = j - removeStartIndex;
+                                i = j;
+                                goto OUTER;
+                            }
+                        }
+                    }
+                }
+
                 if (writeLength == 0 && i + 6 <= contentLength)
                 {
                     if (urlEncodedContent[i] == 'w'
@@ -233,23 +262,47 @@ namespace Server
             String displayUsername;
             String password;
 
-            if (loginUsernameLength == 0)
+            if (!updateMode)
             {
-                userConfiguration = new();
-                return false;
+                if (loginUsernameLength == 0 || displayUsernameLength == 0 || passwordLength == 0)
+                {
+                    userConfiguration = new();
+                    return false;
+                }
+
+                loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
+                displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
+                password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
+            }
+            else
+            {
+                if (loginUsernameLength == 0)
+                {
+                    userConfiguration = new();
+                    return false;
+                }
+
+                loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
+
+                if (displayUsernameLength != 0) displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
+                else displayUsername = null;
+
+                if (passwordLength != 0) password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
+                else password = null;
             }
 
-            loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
-
-            if (displayUsernameLength != 0) displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
-            else displayUsername = null;
-
-            if (passwordLength != 0) password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
-            else password = null;
-
+            Boolean remove = false;
             Boolean isEnabled = false;
             Boolean read = false;
             Boolean write = false;
+
+            if (removeLength != 0)
+            {
+                if (urlEncodedContent[removeStartIndex] == 'o' && urlEncodedContent[removeStartIndex + 1] == 'n')
+                {
+                    remove = true;
+                }
+            }
 
             if (isEnabledLength != 0)
             {
@@ -275,7 +328,7 @@ namespace Server
                 }
             }
 
-            userConfiguration = new(HttpUtility.UrlDecode(loginUsername), HttpUtility.UrlDecode(displayUsername), HttpUtility.UrlDecode(password), isEnabled, read, write);
+            userConfiguration = new(HttpUtility.UrlDecode(loginUsername), HttpUtility.UrlDecode(displayUsername), HttpUtility.UrlDecode(password), remove, isEnabled, read, write);
             return true;
         }
     }
