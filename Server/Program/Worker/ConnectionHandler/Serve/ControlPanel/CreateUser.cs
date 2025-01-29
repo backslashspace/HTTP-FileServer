@@ -7,6 +7,7 @@ using System.Text;
 using System.Data.SQLite;
 using System.Data;
 using System.Web;
+using System.IO;
 
 namespace Server
 {
@@ -29,9 +30,10 @@ namespace Server
                 return;
             }
 
-            if (UserDB.UserExists(userConfiguration.LoginUsername))
+            if (UserDB.UserExistsPlusEnabled(userConfiguration.LoginUsername))
             {
-                HTML.CGI.SendCreateUserView(connection);
+                Log.FastLog($"'{user.LoginUsername}' attempted to create a new user that already exists", LogSeverity.Info, "CreateUser");
+                HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: orangered; font-weight: bold\">User already exists</span>", true);
                 return;
             }
 
@@ -63,6 +65,9 @@ namespace Server
             }
 
             command.Dispose();
+
+            Directory.CreateDirectory(AssemblyPath + "\\files\\" + userConfiguration.LoginUsername);
+
             Log.FastLog($"'{user.LoginUsername}' successfully created user '{userConfiguration.LoginUsername}'", LogSeverity.Info, "CreateUser");
             HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: green; font-weight: bold\">User created successfully</span>", true);
         }

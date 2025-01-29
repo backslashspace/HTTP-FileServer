@@ -16,7 +16,7 @@ namespace Server
             switch (pathParts[2].ToLower())
             {
                 case "userfiles":
-                    HTML.CGI.SendUserFilesView(connection, ref user);
+                    HTML.CGI.SendUserFilesView(connection, ref user, ref user);
                     return;
 
                 case "config?":

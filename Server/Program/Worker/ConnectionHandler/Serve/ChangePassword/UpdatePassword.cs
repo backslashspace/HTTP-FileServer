@@ -33,7 +33,7 @@ namespace Server
                 return;
             }
 
-            if (!UserDB.UserExists(user.LoginUsername))
+            if (!UserDB.UserExistsPlusEnabled(user.LoginUsername))
             {
                 Log.FastLog($"'{user.LoginUsername}' was unable to update user '{userConfiguration.LoginUsername}', target not found", LogSeverity.Warning, "ChangePassword");
                 HTTP.ERRORS.Send_404(connection);
@@ -91,14 +91,14 @@ namespace Server
                     Log.FastLog($"'{user.LoginUsername}' updated user '{userConfiguration.LoginUsername}' successfully", LogSeverity.Info, "ChangePassword");
 
                     if (user.IsAdministrator) HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: green; font-weight: bold\">Updated user successfully</span>", true);
-                    else HTML.CGI.SendUserFilesView(connection, in user, "<span style=\"color: green; font-weight: bold\">Updated user successfully</span>", true);
+                    else HTML.CGI.SendUserFilesView(connection, in user, in user, "<span style=\"color: green; font-weight: bold\">Updated user successfully</span>", true);
                 }
                 else
                 {
                     Log.FastLog($"'{user.LoginUsername}': no database entries were updated for user '{userConfiguration.LoginUsername}'", LogSeverity.Info, "ChangePassword");
                     
                     if (user.IsAdministrator) HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: orangered; font-weight: bold\">No database entries were updated</span>", true);
-                    else HTML.CGI.SendUserFilesView(connection, in user, "<span style=\"color: orangered; font-weight: bold\">No database entries were updated</span>", true);
+                    else HTML.CGI.SendUserFilesView(connection, in user, in user, "<span style=\"color: orangered; font-weight: bold\">No database entries were updated</span>", true);
                 }
             }
             catch (Exception exception)
@@ -106,7 +106,7 @@ namespace Server
                 Log.FastLog($"An error occurred while '{user.LoginUsername}' attempted to updated user '{userConfiguration.LoginUsername}': " + exception.Message, LogSeverity.Error, "ChangePassword");
                 
                 if (user.IsAdministrator) HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: orangered; font-weight: bold\">Error updating user</span>", true);
-                else HTML.CGI.SendUserFilesView(connection, in user, "<span style=\"color: orangered; font-weight: bold\">Error updating user</span>", true);
+                else HTML.CGI.SendUserFilesView(connection, in user, in user, "<span style=\"color: orangered; font-weight: bold\">Error updating user</span>", true);
             }
 
             command.Dispose();

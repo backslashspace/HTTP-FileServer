@@ -7,6 +7,7 @@ using System.Globalization;
 
 #pragma warning disable IDE0079
 #pragma warning disable CS8625
+#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
 
 namespace Server
 {
@@ -58,6 +59,15 @@ namespace Server
 
                     command = new($"INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '{encodedPassword}', '{encodedSalt}', 1, 1, 1, 1);", databaseConnection);
                     command.ExecuteNonQuery();
+
+                    try
+                    {
+                        Directory.CreateDirectory(Worker.AssemblyPath + "\\files\\admin");
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.FastLog($"Unable to create, admin file repository under '{Worker.AssemblyPath}\\files\\admin' error: {exception.Message}", LogSeverity.Error, "UserDB");
+                    }
                 }
             }
             catch (Exception exception)
@@ -229,7 +239,7 @@ namespace Server
             return true;
         }
 
-        internal static Boolean GetUserPermissions(String loginUsername, out User user)
+        internal static Boolean GetUser(String loginUsername, out User user)
         {
             if (!IsInitialized)
             {
@@ -270,7 +280,7 @@ namespace Server
             return true;
         }
 
-        internal unsafe static Boolean UserExists(String loginUsername)
+        internal unsafe static Boolean UserExistsPlusEnabled(String loginUsername)
         {
             if (!IsInitialized) return false;
 
@@ -281,13 +291,13 @@ namespace Server
             command.CommandText = "SELECT IsEnabled FROM User WHERE LoginUsername = @loginUsername COLLATE NOCASE";
             command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
 
-            Int64 isEnabled  = (Int64)command.ExecuteScalar(CommandBehavior.SingleResult);
+            Object isEnabled = command.ExecuteScalar(CommandBehavior.SingleResult);
 
             command.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();
 
-            return *(Boolean*)&isEnabled;
+            return isEnabled != null && *(Boolean*)&isEnabled;
         }
 
         internal static Boolean GetDatabaseConnection(out SQLiteConnection databaseConnection)

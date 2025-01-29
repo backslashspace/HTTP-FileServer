@@ -102,8 +102,14 @@
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\.POST-Relay.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\.GET-Relay.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\ParseUserUpdate.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve\FilesView\.GET-Relay.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve\FilesView\.POST-Relay.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\SendUserFilesFromPOST.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\.GET-Relay.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\.POST-Relay.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\ParseUserAndFilename.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\RemoveFile.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\DownloadFile.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\UploadFile.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\SendUploadView.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -127,11 +133,10 @@
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\CreateUser.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\SendControlPanel.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\SendUserSettings.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\SendAdminUserFilesView.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\UpdateUser.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\Log-in-out\SendLoggedOut.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\Log-in-out\SendLogin.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve\FilesView\SendUserFilesView.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\SendUserFilesView.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\FileTools.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\.WebRootHandler.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\GET-Handler.cs" />

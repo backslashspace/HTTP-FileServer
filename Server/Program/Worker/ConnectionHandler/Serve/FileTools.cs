@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 
+// todo: refactor into cp send / construct file
+
 namespace Server
 {
 	internal static class Tools
@@ -89,40 +91,40 @@ namespace Server
 				return true;
 			}
 
-			//
+            //
 
-			if (totalSize > 1152921504606846976)
-			{
-				fileString = $"{totalSize / 1125899906842624}PiB in {fileCount} files";
-				return true;
-			}
+            if (totalSize > 1125899906842624)
+            {
+                fileString = $"{Math.Round((Double)totalSize / (Double)1125899906842624, 2, MidpointRounding.AwayFromZero)} PiB in {fileCount} files";
+                return true;
+            }
 
-			if (totalSize > 1125899906842624)
-			{
-				fileString = $"{totalSize / 1099511627776}TiB in {fileCount} files";
-				return true;
-			}
+            if (totalSize > 1099511627776)
+            {
+                fileString = $"{Math.Round((Double)totalSize / (Double)1099511627776, 2, MidpointRounding.AwayFromZero)} TiB in {fileCount} files";
+                return true;
+            }
 
-			if (totalSize > 1099511627776)
-			{
-				fileString = $"{totalSize / 1073741824}GiB in {fileCount} files";
-				return true;
-			}
+            if (totalSize > 1073741824)
+            {
+                fileString = $"{Math.Round((Double)totalSize / (Double)1073741824, 2, MidpointRounding.AwayFromZero)} GiB in {fileCount} files";
+                return true;
+            }
 
-			if (totalSize > 1073741824)
-			{
-				fileString = $"{totalSize / 1048576}MiB in {fileCount} files";
-				return true;
-			}
+            if (totalSize > 1048576)
+            {
+                fileString = $"{Math.Round((Double)totalSize / (Double)1048576, 2, MidpointRounding.AwayFromZero)} MiB in {fileCount} files";
+                return true;
+            }
 
-			if (totalSize > 1048576)
-			{
-				fileString = $"{totalSize / 1024}KiB in {fileCount} files";
-				return true;
-			}
+            if (totalSize > 1024)
+            {
+                fileString = $"{Math.Round((Double)totalSize / (Double)1024, 2, MidpointRounding.AwayFromZero)} KiB in {fileCount} files";
+                return true;
+            }
 
-			fileString = $"{totalSize}B in {fileCount} files";
-			return true;
-		}
+            fileString = $"{totalSize} B in {fileCount} files";
+            return true;
+        }
 	}
 }

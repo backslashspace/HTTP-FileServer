@@ -18,10 +18,6 @@ namespace Server
                     else HTML.CGI.SendUserConfigView(connection, header, ref user);
                     return;
 
-                case "userfiles":
-                    HTTP.ERRORS.Send_501(connection);
-                    return;
-
                 default:
                     HTTP.ERRORS.Send_404(connection);
                     return;

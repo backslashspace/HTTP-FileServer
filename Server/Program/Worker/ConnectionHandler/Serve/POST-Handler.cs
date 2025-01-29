@@ -20,6 +20,11 @@ namespace Server
                     FilesPOSTHandler(connection, header, pathParts, ref user);
                     return;
 
+                case "files":
+                    if (pathParts.Length == 3) FilesPOSTHandler(connection, header, pathParts, in user); // upload, download and remove
+                    else HTML.CGI.SendUserFilesFromPOST(connection, header, ref user); // view files
+                    return;
+
                 case "changepassword":
                     if (pathParts.Length != 3 || pathParts[2].ToLower() != "commit")
                     {

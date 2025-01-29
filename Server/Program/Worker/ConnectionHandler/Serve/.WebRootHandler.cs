@@ -105,7 +105,7 @@ namespace Server
                     return;
             }
 
-            if (!UserDB.GetUserPermissions(loginUsername, out UserDB.User user))
+            if (!UserDB.GetUser(loginUsername, out UserDB.User user))
             {
                 HTTP.ERRORS.Send_403(connection);
                 return;

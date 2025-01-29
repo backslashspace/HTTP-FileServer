@@ -15,8 +15,13 @@ namespace Server
                     else HTTP.ERRORS.Send_403(connection);
                     return;
 
+                case "files?":
+                    HTML.CGI.SendUserFilesView(connection, ref user, ref user);
+                    return;
+
                 case "files":
-                    HTML.CGI.SendUserFilesView(connection, ref user);
+                    if (pathParts.Length == 3 && pathParts[2].ToLower() == "upload?") HTML.CGI.SendUploadView(connection);
+                    else HTML.CGI.SendUserFilesView(connection, ref user, ref user);
                     return;
 
                 case "logout":

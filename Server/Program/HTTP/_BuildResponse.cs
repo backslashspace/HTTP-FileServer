@@ -30,7 +30,7 @@ namespace Server
 
         internal enum ResponseType : UInt32
         {
-            /// <summary>OK - arg[1] can be cookie name | arg[2] can be cookie value | arg[0] can be time in seconds or null for 5 min</summary>
+            /// <summary>OK</summary>
             HTTP_200 = 200,
 
             /// <summary>See Other (make client use GET on new location)</summary>

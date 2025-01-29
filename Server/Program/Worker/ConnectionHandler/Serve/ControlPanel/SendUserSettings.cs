@@ -32,7 +32,7 @@ namespace Server
 
                 String loginUsername = HttpUtility.UrlDecode(content.Substring(5, content.Length - 5));
 
-                if (!UserDB.GetUserPermissions(loginUsername, out UserDB.User selectedUser))
+                if (!UserDB.GetUser(loginUsername, out UserDB.User selectedUser))
                 {
                     SendControlPanel(connection, in user, "<span style=\"color: red; font-weight: bold\">User not found</span>", true);
                     return;
