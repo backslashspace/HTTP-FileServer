@@ -1,36 +1,25 @@
 ﻿using System;
 using System.Web;
 
-#pragma warning disable IDE0079
-#pragma warning disable CS8600
-
 namespace Server
 {
     internal static partial class Worker
     {
-        private readonly ref struct UserConfiguration
+        private readonly ref struct UserChangePassword
         {
-            internal UserConfiguration(String loginUsername, String displayUsername, String password, Boolean isEnabled, Boolean read, Boolean write)
+            internal UserChangePassword(String loginUsername, String displayUsername, String password)
             {
                 LoginUsername = loginUsername;
                 DisplayUsername = displayUsername;
                 Password = password;
-
-                IsEnabled = isEnabled;
-                Read = read;
-                Write = write;
             }
 
             internal readonly String LoginUsername;
             internal readonly String DisplayUsername;
             internal readonly String Password;
-
-            internal readonly Boolean IsEnabled;
-            internal readonly Boolean Read;
-            internal readonly Boolean Write;
         }
 
-        private static Boolean ParseUserConfiguration(String urlEncodedContent, out UserConfiguration userConfiguration)
+        private static Boolean ParseUserChangePassword(String urlEncodedContent, out UserChangePassword userConfiguration)
         {
             Int32 contentLength = urlEncodedContent.Length;
 
@@ -48,15 +37,6 @@ namespace Server
 
             Int32 passwordStartIndex = 0;
             Int32 passwordLength = 0;
-
-            Int32 isEnabledStartIndex = 0;
-            Int32 isEnabledLength = 0;
-
-            Int32 readStartIndex = 0;
-            Int32 readLength = 0;
-
-            Int32 writeStartIndex = 0;
-            Int32 writeLength = 0;
 
             for (Int32 i = 0; i < contentLength; ++i)
             {
@@ -150,80 +130,6 @@ namespace Server
                     }
                 }
 
-                //
-
-                if (isEnabledLength == 0 && i + 10 <= contentLength)
-                {
-                    if (urlEncodedContent[i] == 'i'
-                        && urlEncodedContent[i + 1] == 's'
-                        && urlEncodedContent[i + 2] == 'E'
-                        && urlEncodedContent[i + 3] == 'n'
-                        && urlEncodedContent[i + 4] == 'a'
-                        && urlEncodedContent[i + 5] == 'b'
-                        && urlEncodedContent[i + 6] == 'l'
-                        && urlEncodedContent[i + 7] == 'e'
-                        && urlEncodedContent[i + 8] == 'd'
-                        && urlEncodedContent[i + 9] == '=')
-                    {
-                        isEnabledStartIndex = i + 10;
-
-                        for (Int32 j = isEnabledStartIndex; i < contentLength; ++j)
-                        {
-                            if (contentLength == j || urlEncodedContent[j] == '&')
-                            {
-                                isEnabledLength = j - isEnabledStartIndex;
-                                i = j;
-                                goto OUTER;
-                            }
-                        }
-                    }
-                }
-
-                if (writeLength == 0 && i + 6 <= contentLength)
-                {
-                    if (urlEncodedContent[i] == 'w'
-                        && urlEncodedContent[i + 1] == 'r'
-                        && urlEncodedContent[i + 2] == 'i'
-                        && urlEncodedContent[i + 3] == 't'
-                        && urlEncodedContent[i + 4] == 'e'
-                        && urlEncodedContent[i + 5] == '=')
-                    {
-                        writeStartIndex = i + 6;
-
-                        for (Int32 j = writeStartIndex; i < contentLength; ++j)
-                        {
-                            if (contentLength == j || urlEncodedContent[j] == '&')
-                            {
-                                writeLength = j - writeStartIndex;
-                                i = j;
-                                goto OUTER;
-                            }
-                        }
-                    }
-                }
-
-                if (readLength == 0 && i + 5 <= contentLength)
-                {
-                    if (urlEncodedContent[i] == 'r'
-                        && urlEncodedContent[i + 1] == 'e'
-                        && urlEncodedContent[i + 2] == 'a'
-                        && urlEncodedContent[i + 3] == 'd'
-                        && urlEncodedContent[i + 4] == '=')
-                    {
-                        readStartIndex = i + 5;
-
-                        for (Int32 j = readStartIndex; i < contentLength; ++j)
-                        {
-                            if (contentLength == j || urlEncodedContent[j] == '&')
-                            {
-                                readLength = j - readStartIndex;
-                                i = j;
-                                goto OUTER;
-                            }
-                        }
-                    }
-                }
-
             OUTER:;
             }
 
@@ -242,40 +148,12 @@ namespace Server
             loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
 
             if (displayUsernameLength != 0) displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
-            else displayUsername = null;
+            else displayUsername = null!;
 
             if (passwordLength != 0) password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
-            else password = null;
+            else password = null!;
 
-            Boolean isEnabled = false;
-            Boolean read = false;
-            Boolean write = false;
-
-            if (isEnabledLength != 0)
-            {
-                if (urlEncodedContent[isEnabledStartIndex] == 'o' && urlEncodedContent[isEnabledStartIndex + 1] == 'n')
-                {
-                    isEnabled = true;
-                }
-            }
-
-            if (readLength != 0)
-            {
-                if (urlEncodedContent[readStartIndex] == 'o' && urlEncodedContent[readStartIndex + 1] == 'n')
-                {
-                    read = true;
-                }
-            }
-
-            if (writeLength != 0)
-            {
-                if (urlEncodedContent[writeStartIndex] == 'o' && urlEncodedContent[writeStartIndex + 1] == 'n')
-                {
-                    write = true;
-                }
-            }
-
-            userConfiguration = new(HttpUtility.UrlDecode(loginUsername), HttpUtility.UrlDecode(displayUsername), HttpUtility.UrlDecode(password), isEnabled, read, write);
+            userConfiguration = new(HttpUtility.UrlDecode(loginUsername), HttpUtility.UrlDecode(displayUsername), HttpUtility.UrlDecode(password));
             return true;
         }
     }

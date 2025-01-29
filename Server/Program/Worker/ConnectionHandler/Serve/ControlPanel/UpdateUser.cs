@@ -12,7 +12,7 @@ namespace Server
         {
             if (!GetContent(header, connection, out String content)) return;
 
-            if (!ParseUserUpdate(content, out UserUpdate userConfiguration, true))
+            if (!ParseUserUpdate(content, out UserUpdate userConfiguration))
             {
                 HTTP.ERRORS.Send_400(connection);
                 return;
@@ -58,12 +58,12 @@ namespace Server
                     else
                     {
                         Log.FastLog($"'{user.LoginUsername}' attempted to REMOVED user '{userConfiguration.LoginUsername}', but no rows were affected", LogSeverity.Warning, "UpdateUser");
-                        HTML.CGI.SendControlPanel(connection, in user, null, true);
+                        HTML.CGI.SendControlPanel(connection, in user, null!, true);
                     }
                 }
                 catch (Exception exception)
                 {
-                    Log.FastLog($"An error occurred while '{user.LoginUsername}' attempted to remove user '{userConfiguration.LoginUsername}': " + exception.Message + exception.StackTrace, LogSeverity.Error, "UpdateUser");
+                    Log.FastLog($"An error occurred while '{user.LoginUsername}' attempted to remove user '{userConfiguration.LoginUsername}': " + exception.Message, LogSeverity.Error, "UpdateUser");
                     HTML.CGI.SendControlPanel(connection, in user, "<span style=\"color: orangered; font-weight: bold\">Error removing user</span>", true);
                 }
 

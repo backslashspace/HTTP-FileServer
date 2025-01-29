@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Panel</title>
+    <title>Files</title>
     <!-- #SCRIPT#ANCHOR# -->
     <style>
         body {
@@ -57,13 +57,6 @@
                 background-color: #505050;
             }
 
-        .user-list {
-            margin: 20px auto;
-            width: 80%;
-            max-width: 800px;
-            text-align: left;
-        }
-
         .user {
             display: flex;
             justify-content: space-between;
@@ -98,6 +91,23 @@
             display: inline;
         }
 
+        table {
+            margin-top: 40px;
+            max-width: 1200px;
+            min-width: 800px;
+            margin-inline: auto;
+        }
+
+        table, th, td {
+            
+            border: 1px solid #a0a0a0;
+            width: auto;
+        }
+
+        td {
+            padding: 0.4em 1em 0.4em 1em;
+        }
+
         .footer {
             background: #bbbbbb;
             position: fixed;
@@ -118,26 +128,45 @@
     </header>
     <main>
         <div class="control-panel">
-            <h1>Control Panel</h1>
-            <form action="/fileSharing/controlPanel/createUser" method="get" style="display: inline;">
-                <button type="submit">Create User</button>
-            </form>
-            <form action="/fileSharing/files" method="get" style="display: inline;">
-                <button type="submit">View Files</button>
+            <h1>Your Files</h1>
+            <form action="/fileSharing/files/upload" method="get" style="display: inline;">
+                <button type="submit">Upload File</button>
             </form>
         </div>
 
-        <div class="user-list">
+            <table>
+                <tr>
+                    <td><span style="margin: 1em">yest.mv4</span></td>
+                    <td>
+                        <form method="POST" action="/fileSharing/files/remove" style="width: 64px; margin-top: 10px; margin-bottom: -2px; margin-left: 2px; margin-right: 2px;">
+                            <input type="hidden" name="fileName" value="encodedName" required readonly />
+                            <input type="submit" value="Delete" style="height:23px; font-size: 13px" />
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="/fileSharing/files/download" style="width: 84px; margin-top: 10px; margin-bottom: -2px; margin-left: 2px; margin-right: 2px;">
+                            <input type="hidden" name="fileName" value="encodedName" required readonly />
+                            <input type="submit" value="Download" style="height:23px; font-size: 13px" />
+                        </form>
+                    </td>
+                    <td><span style="margin: 1em">400 Yibbabytes</span></td>
+                </tr>
+                <tr>
+                    <td> nodelsssssssssssssssssssess.pdf </td>
+                    <td> --- </td>
+                    <td> --- </td>
+                    <td><span style="margin: 1em">400 Yibbabytes</span></td>
+                </tr>
+            </table>
 
-            <!-- #USER#ANCHOR# -->
+            <!-- #FILE#ANCHOR# -->
 
-        </div>
     </main>
 
     <div class="footer" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0px; font-size: 0.8vw;">
         <p style="text-align: left; margin-left: 2em;">Logged in as: <!-- #DISPLAY#USERNAME#ANCHOR# --></p>
         <p style="text-align: center"><!-- #INFO#ANCHOR# --></p>
-        <p style="text-align: right; margin-right: 2em;">Thread pool Threads: <!-- #THREADPOOL#ANCHOR# --></p>
+        <p style="text-align: right; margin-right: 2em;"><!-- #THREADPOOL#ANCHOR# --></p>
     </div>
 
 </body>

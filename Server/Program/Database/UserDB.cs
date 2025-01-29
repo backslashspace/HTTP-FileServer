@@ -172,7 +172,7 @@ namespace Server
         {
             internal ControlPanelUserInfo(String loginUsername, String displayName, Boolean isAdministrator, Boolean isEnabled)
             {
-                LoginUsername = displayName;
+                LoginUsername = loginUsername;
                 DisplayName = displayName;
 
                 IsAdministrator = isAdministrator;
@@ -270,7 +270,7 @@ namespace Server
             return true;
         }
 
-        internal static Boolean UserExists(String loginUsername)
+        internal unsafe static Boolean UserExists(String loginUsername)
         {
             if (!IsInitialized) return false;
 
@@ -280,16 +280,14 @@ namespace Server
             SQLiteCommand command = databaseConnection.CreateCommand();
             command.CommandText = "SELECT IsEnabled FROM User WHERE LoginUsername = @loginUsername COLLATE NOCASE";
             command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
-            SQLiteDataReader dataReader = command.ExecuteReader(CommandBehavior.SingleRow);
 
-            Boolean userExists = dataReader.HasRows;
+            Int64 isEnabled  = (Int64)command.ExecuteScalar(CommandBehavior.SingleResult);
 
-            dataReader.Close();
             command.Dispose();
             databaseConnection.Close();
             databaseConnection.Dispose();
 
-            return userExists;
+            return *(Boolean*)&isEnabled;
         }
 
         internal static Boolean GetDatabaseConnection(out SQLiteConnection databaseConnection)

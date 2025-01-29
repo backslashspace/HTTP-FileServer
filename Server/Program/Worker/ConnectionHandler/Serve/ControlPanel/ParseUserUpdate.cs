@@ -32,7 +32,7 @@ namespace Server
             internal readonly Boolean Write;
         }
 
-        private static Boolean ParseUserUpdate(String urlEncodedContent, out UserUpdate userConfiguration, Boolean updateMode = false)
+        private static Boolean ParseUserUpdate(String urlEncodedContent, out UserUpdate userConfiguration)
         {
             Int32 contentLength = urlEncodedContent.Length;
 
@@ -262,34 +262,19 @@ namespace Server
             String displayUsername;
             String password;
 
-            if (!updateMode)
+            if (loginUsernameLength == 0)
             {
-                if (loginUsernameLength == 0 || displayUsernameLength == 0 || passwordLength == 0)
-                {
-                    userConfiguration = new();
-                    return false;
-                }
-
-                loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
-                displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
-                password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
+                userConfiguration = new();
+                return false;
             }
-            else
-            {
-                if (loginUsernameLength == 0)
-                {
-                    userConfiguration = new();
-                    return false;
-                }
 
-                loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
+            loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
 
-                if (displayUsernameLength != 0) displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
-                else displayUsername = null;
+            if (displayUsernameLength != 0) displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
+            else displayUsername = null;
 
-                if (passwordLength != 0) password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
-                else password = null;
-            }
+            if (passwordLength != 0) password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
+            else password = null;
 
             Boolean remove = false;
             Boolean isEnabled = false;

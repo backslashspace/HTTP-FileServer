@@ -14,7 +14,7 @@ namespace Server
                     return;
 
                 case "usersettings":
-                    if (pathParts.Length == 4 && pathParts[3].ToLower() == "update") UpdateUser(connection, header, ref user);
+                    if (pathParts.Length == 4 && pathParts[3].ToLower() == "commit") UpdateUser(connection, header, ref user);
                     else HTML.CGI.SendUserConfigView(connection, header, ref user);
                     return;
 

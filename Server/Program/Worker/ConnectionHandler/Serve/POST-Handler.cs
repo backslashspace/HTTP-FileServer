@@ -21,7 +21,14 @@ namespace Server
                     return;
 
                 case "changepassword":
-                    if (user.IsAdministrator || user.Write) UpdatePassword(connection, header, ref user);
+                    if (pathParts.Length != 3 || pathParts[2].ToLower() != "commit")
+                    {
+                        HTTP.ERRORS.Send_404(connection);
+                    }
+                    else if (user.IsAdministrator || user.Write)
+                    {
+                        UpdatePassword(connection, header, ref user);
+                    }
                     else
                     {
                         Log.FastLog($"User '{user.LoginUsername}' attempted to change their password, but does not have the write permission -> sending 403", LogSeverity.Warning, "POST");

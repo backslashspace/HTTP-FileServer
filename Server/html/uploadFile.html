@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <!-- #SCRIPT#ANCHOR# -->
+    <style>
+        body {
+            background-color: #202020;
+            color: #fbfbfb;
+            font-family: Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #303030;
+        }
+
+            header a {
+                color: #fbfbfb;
+                text-decoration: none;
+                margin: 0 10px;
+            }
+
+                header a:hover {
+                    text-decoration: underline;
+                }
+
+        main {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .upload-section {
+            border: 2px dashed #404040;
+            padding: 40px;
+            margin: 20px auto;
+            max-width: 400px;
+            border-radius: 10px;
+            background-color: #303030;
+        }
+
+            .upload-section h1 {
+                margin-bottom: 20px;
+                font-size: 1.5em;
+            }
+
+            .upload-section label {
+                background-color: #404040;
+                color: #fbfbfb;
+                padding: 10px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                display: inline-block;
+            }
+
+                .upload-section label:hover {
+                    background-color: #505050;
+                }
+
+        .footer {
+            background: #bbbbbb;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2.5vw;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/fileSharing/changePassword">Change Password</a>
+        <div>
+            <a href="/">Back to Main-Page</a>
+            <a href="/fileSharing/logout">Log out</a>
+        </div>
+    </header>
+    <main>
+        <div class="upload-section">
+            <h1>Upload a File</h1>
+
+            <form action="/fileSharing/files/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="fileName" required>
+                <button type="submit" style="margin-top: 20px; background-color: #404040; padding: 10px 20px; border: none; color: #fbfbfb; cursor: pointer; font-size: 16px;">Upload</button>
+            </form>
+
+        </div>
+
+    </main>
+    <div class="footer" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0px; font-size: 0.8vw;">
+        <p style="text-align: left; margin-left: 2em;">Logged in as: <!-- #DISPLAY#USERNAME#ANCHOR# --></p>
+        <p style="text-align: center"><!-- #INFO#ANCHOR# --></p>
+        <p style="text-align: right; margin-right: 2em;"><!-- #THREADPOOL#ANCHOR# --></p>
+    </div>
+</body>
+</html>

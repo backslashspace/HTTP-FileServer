@@ -98,6 +98,7 @@
     <Compile Include="Program\Logging\Logging.cs" />
     <Compile Include="Program\Logging\LogMessage.cs" />
     <Compile Include="Program\Logging\LogSeverity.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\ChangePassword\ParseUserChangePassword.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\.POST-Relay.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\.GET-Relay.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\ControlPanel\ParseUserUpdate.cs" />
@@ -179,8 +180,8 @@
     <Content Include="html\controlPanel\controlPanel.html" />
     <Content Include="html\controlPanel\createUser.html" />
     <Content Include="html\controlPanel\userSettings.html" />
-    <Content Include="html\controlPanel\userFiles.html" />
-    <Content Include="html\files.html" />
+    <Content Include="html\userFiles.html" />
+    <Content Include="html\uploadFile.html" />
     <Content Include="html\loggedOut.html" />
     <Content Include="html\login.html" />
     <Content Include="html\loginError.html" />
