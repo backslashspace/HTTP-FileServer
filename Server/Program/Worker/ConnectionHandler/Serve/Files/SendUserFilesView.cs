@@ -20,7 +20,15 @@ namespace Server
 
                 //
 
-                if (!InsertFiles(connection, destinationUser.LoginUsername, ref fileContent)) return;
+                if (invokingUser.Write || invokingUser.IsAdministrator)
+                {
+                    fileContent = Regex.Replace(fileContent, "<!-- #UPLOAD#ANCHOR# -->", "<form action=\"/fileSharing/files/upload\" method=\"get\" style=\"display: inline;\">\r\n    <button type=\"submit\">Upload File</button>\r\n</form>");
+                }
+
+                if (invokingUser.Read || invokingUser.IsAdministrator)
+                {
+                    if (!InsertFiles(connection, destinationUser.LoginUsername, ref fileContent)) return;
+                }
 
                 if (invokingUser.IsAdministrator) fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"Thread pool Threads: {ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
 

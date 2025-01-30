@@ -4,11 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-#pragma warning disable IDE0079
-#pragma warning disable CS0649
 #pragma warning disable CS8618
-#pragma warning disable CS8619
-#pragma warning disable CS8625
 
 namespace Server
 {
@@ -51,7 +47,7 @@ namespace Server
                     connection.Shutdown(SocketShutdown.Both);
                     connection.Close();
 
-                    header = null;
+                    header = null!;
                     return (false, false);
                 }
 
@@ -69,7 +65,7 @@ namespace Server
                 }
             }
 
-            header = null;
+            header = null!;
             return (false, true);
         }
     }

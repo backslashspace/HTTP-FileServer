@@ -1,6 +1,5 @@
 ﻿using System;
 
-#pragma warning disable IDE0079
 #pragma warning disable CS8618
 
 namespace BSS.Logging

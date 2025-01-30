@@ -5,9 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-#pragma warning disable IDE0079
 #pragma warning disable CS8618
-#pragma warning disable CS8600
 
 namespace BSS.Logging
 {
@@ -134,7 +132,7 @@ namespace BSS.Logging
             String source = $"]-[{formattedLogMessage.Source}]";
             String timeStampString = $"[{timeStamp.ToString(_configuration.TimeFormat)}] [";
 
-            String severityString = null;
+            String severityString = null!;
             switch (formattedLogMessage.Severity)
             {
                 case LogSeverity.Info:

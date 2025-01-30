@@ -2,15 +2,13 @@
 using System;
 using System.Net;
 
-#pragma warning disable CS8603
-
 namespace Server
 {
     internal static partial class Worker
     {
         private static IPAddress GetClientIP(String header)
         {
-            if (header == null || header.Length < 16) return null;
+            if (header == null || header.Length < 16) return null!;
 
             Int32 headerLength = header.Length;
             Int32 ipStartIndex = 0;
@@ -37,7 +35,7 @@ namespace Server
                 break;
             }
 
-            if (ipStartIndex == 0) return null;
+            if (ipStartIndex == 0) return null!;
 
             for (Int32 i = ipStartIndex; i < headerLength; ++i)
             {
@@ -48,7 +46,7 @@ namespace Server
                 break;
             }
 
-            if (ipEndIndex == 0) return null;
+            if (ipEndIndex == 0) return null!;
 
             Log.Debug("X-Client-IP: " + header.Substring(ipStartIndex, ipEndIndex - ipStartIndex), "GetClientIP");
 

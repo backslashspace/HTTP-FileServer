@@ -3,8 +3,6 @@ using System.Net.Sockets;
 using System.Text;
 using BSS.Logging;
 
-#pragma warning disable CS8625
-
 namespace Server
 {
     internal static partial class Worker
@@ -14,14 +12,14 @@ namespace Server
             if (!GetContentLength(header, out Int64 contentLength))
             {
                 HTTP.ERRORS.Send_400(connection);
-                content = null;
+                content = null!;
                 return false;
             }
 
             if (contentLength > 1048576)
             {
                 HTTP.ERRORS.Send_400(connection);
-                content = null;
+                content = null!;
                 return false;
             }
 

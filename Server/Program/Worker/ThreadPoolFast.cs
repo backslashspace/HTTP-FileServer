@@ -2,10 +2,7 @@
 using System;
 using System.Threading;
 
-#pragma warning disable IDE0079
-#pragma warning disable IDE0032
 #pragma warning disable CS8618
-#pragma warning disable CS8625
 
 namespace BSS.Threading
 {
@@ -27,7 +24,7 @@ namespace BSS.Threading
 
         // ###################################################################
 
-        internal static void Initialize(UInt16 threadCount, Action initializationTask = null)
+        internal static void Initialize(UInt16 threadCount, Action initializationTask = null!)
         {
             if (IsInitialized) return;
 
@@ -55,14 +52,14 @@ namespace BSS.Threading
             ValueTuple<UInt16, Action> infoTuple = (ValueTuple<UInt16, Action>)workerInfo;
             UInt16 index = infoTuple.Item1;
             infoTuple.Item2?.Invoke();
-            infoTuple.Item2 = null;
+            infoTuple.Item2 = null!;
 
             Thread.CurrentThread.Suspend();
 
             while (!Server.Worker.ShutdownPending)
             {
                 _tasks[index].Invoke();
-                _tasks[index] = null;
+                _tasks[index] = null!;
 
                 lock (_lock)
                 {

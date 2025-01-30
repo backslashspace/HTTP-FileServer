@@ -7,10 +7,6 @@ using System.Diagnostics;
 using BSS.Logging;
 using BSS.Random;
 
-#pragma warning disable IDE0079
-#pragma warning disable CS8603
-#pragma warning disable CS8625
-
 namespace Server
 {
     internal static class CookieDB
@@ -61,7 +57,7 @@ namespace Server
         /// <summary>Returns base64 encoded token</summary>
         internal static String AddUser(String loginUsername, IPAddress clientIP)
         {
-            if (loginUsername == null || clientIP == IPAddress.None) return null;
+            if (loginUsername == null || clientIP == IPAddress.None) return null!;
 
             Byte[] token = new Byte[64];
             if (!HWRandom.NextBytes(token)) throw new SystemException("RDSEED instruction failed 128 times in a row");
@@ -146,7 +142,7 @@ namespace Server
                     Log.FastLog("Client send unknown token", LogSeverity.Info, "CookieDB");
                     dataReader.Close();
                     command.Dispose();
-                    loginUsername = null;
+                    loginUsername = null!;
                     return TokenState.Invalid;
                 }
 

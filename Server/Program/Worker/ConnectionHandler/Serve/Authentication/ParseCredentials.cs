@@ -1,8 +1,5 @@
 ﻿using System;
 
-#pragma warning disable IDE0079
-#pragma warning disable CS8625
-
 namespace Server
 {
     internal static partial class Worker
@@ -11,8 +8,8 @@ namespace Server
         {
             if (credentials == null || credentials.Length < 17 || credentials.Length > 527)
             {
-                urlEncodedUsername = null;
-                urlEncodedPassword = null;
+                urlEncodedUsername = null!;
+                urlEncodedPassword = null!;
                 return false;
             }
 
@@ -25,8 +22,8 @@ namespace Server
                 || credentials[3] != 'r'
                 || credentials[4] != '=')
             {
-                urlEncodedUsername = null;
-                urlEncodedPassword = null;
+                urlEncodedUsername = null!;
+                urlEncodedPassword = null!;
                 return false;
             }
 
@@ -41,8 +38,8 @@ namespace Server
 
             if (usernameLength == 0 || contentLength < usernameLength + 16)
             {
-                urlEncodedUsername = null;
-                urlEncodedPassword = null;
+                urlEncodedUsername = null!;
+                urlEncodedPassword = null!;
                 return false;
             }
 
@@ -56,8 +53,8 @@ namespace Server
                 || credentials[usernameLength + 13] != 'd'
                 || credentials[usernameLength + 14] != '=')
             {
-                urlEncodedUsername = null;
-                urlEncodedPassword = null;
+                urlEncodedUsername = null!;
+                urlEncodedPassword = null!;
                 return false;
             }
 

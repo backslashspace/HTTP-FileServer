@@ -1,14 +1,12 @@
 ﻿using System;
 
-#pragma warning disable CS8603
-
 namespace Server
 {
     internal static partial class Worker
     {
         private static String GetTokenCookieValue(String header)
         {
-            if (header == null || header.Length < 10) return null;
+            if (header == null || header.Length < 10) return null!;
 
             Int32 headerLength = header.Length;
             Int32 cookieValueStartIndex = 0;
@@ -32,7 +30,7 @@ namespace Server
                 break;
             }
 
-            if (cookieValueStartIndex == 0) return null;
+            if (cookieValueStartIndex == 0) return null!;
 
             for (Int32 i = cookieValueStartIndex; i < headerLength; ++i)
             {
@@ -43,20 +41,20 @@ namespace Server
                 break;
             }
 
-            if (cookieValueEndIndex == 0) return null;
+            if (cookieValueEndIndex == 0) return null!;
 
             // get value if cookie is called token
 
             Int32 cookieLength = cookieValueEndIndex - cookieValueStartIndex;
 
-            if (cookieLength < 7) return null;
+            if (cookieLength < 7) return null!;
 
             if (header[cookieValueStartIndex] != 't'
                 || header[cookieValueStartIndex + 1] != 'o'
                 || header[cookieValueStartIndex + 2] != 'k'
                 || header[cookieValueStartIndex + 3] != 'e'
                 || header[cookieValueStartIndex + 4] != 'n'
-                || header[cookieValueStartIndex + 5] != '=') return null;
+                || header[cookieValueStartIndex + 5] != '=') return null!;
 
             return header.Substring(cookieValueStartIndex + 6, cookieLength - 6);
         }

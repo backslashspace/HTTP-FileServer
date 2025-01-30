@@ -1,17 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Text.RegularExpressions;
-using System.Text;
 using BSS.Logging;
-using BSS.Threading;
 using System.IO;
-using System.Web;
-using static Server.UserDB;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Threading;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace Server
 {
@@ -85,6 +75,8 @@ namespace Server
 
                 Worker.CloseConnection(connection);
             }
+
+            //
 
             private static Boolean BufferedSend(Socket connection, String filePath, String user, Byte[] headerBuffer)
             {

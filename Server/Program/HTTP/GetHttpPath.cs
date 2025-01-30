@@ -1,14 +1,12 @@
 ﻿using System;
 
-#pragma warning disable CS8603
-
 namespace Server
 {
     internal static partial class Worker
     {
         private static String GetHttpPath(String header)
         {
-            if (header == null || header.Length < 10) return null;
+            if (header == null || header.Length < 10) return null!;
 
             Int32 headerLength = header.Length;
             Int32 pathStartIndex = 0;
@@ -22,7 +20,7 @@ namespace Server
                 break;
             }
 
-            if (pathStartIndex == 0) return null;
+            if (pathStartIndex == 0) return null!;
 
             for (Int32 i = pathStartIndex; i < headerLength; ++i)
             {
@@ -32,7 +30,7 @@ namespace Server
                 break;
             }
 
-            if (pathEndIndex == 0) return null;
+            if (pathEndIndex == 0) return null!;
 
             return header.Substring(pathStartIndex, pathEndIndex - pathStartIndex);
         }

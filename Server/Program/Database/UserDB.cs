@@ -6,7 +6,6 @@ using System.Data.SQLite;
 using System.Globalization;
 
 #pragma warning disable IDE0079
-#pragma warning disable CS8625
 #pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
 
 namespace Server
@@ -304,7 +303,7 @@ namespace Server
         {
             if (!IsInitialized)
             {
-                databaseConnection = null;
+                databaseConnection = null!;
                 return false;
             }
 

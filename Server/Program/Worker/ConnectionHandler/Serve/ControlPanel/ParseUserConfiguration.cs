@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Web;
 
-#pragma warning disable IDE0079
-#pragma warning disable CS8600
-
 namespace Server
 {
     internal static partial class Worker
@@ -242,10 +239,10 @@ namespace Server
             loginUsername = urlEncodedContent.Substring(loginUsernameStartIndex, loginUsernameLength);
 
             if (displayUsernameLength != 0) displayUsername = urlEncodedContent.Substring(displayUsernameStartIndex, displayUsernameLength);
-            else displayUsername = null;
+            else displayUsername = null!;
 
             if (passwordLength != 0) password = urlEncodedContent.Substring(passwordStartIndex, passwordLength);
-            else password = null;
+            else password = null!;
 
             Boolean isEnabled = false;
             Boolean read = false;

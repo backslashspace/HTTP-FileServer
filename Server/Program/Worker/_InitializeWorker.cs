@@ -7,7 +7,6 @@ using BSS.Logging;
 using BSS.Random;
 using BSS.Threading;
 
-#pragma warning disable IDE0079
 #pragma warning disable CS8618
 
 namespace Server
