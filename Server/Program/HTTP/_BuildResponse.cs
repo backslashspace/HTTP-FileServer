@@ -3,10 +3,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 
-#pragma warning disable IDE0079
-#pragma warning disable CS8600
-#pragma warning disable CS8625
-
 namespace Server
 {
     internal static partial class HTTP
@@ -196,7 +192,7 @@ namespace Server
         {
             String requestLinePlusSpecificFields;
             String contentTypeField;
-            String cookieField = null;
+            String cookieField = null!;
 
             if (headerOptions.CookieOptions.IsSet)
             {
@@ -214,12 +210,12 @@ namespace Server
                     ResponseType.HTTP_307 => "HTTP/1.1 307 Temporary Redirect\r\n" +
                                                 $"Location: {headerOptions.RedirectOptions.Location}\r\n",
 
-                    _ => null,
+                    _ => null!,
                 };
 
                 if (requestLinePlusSpecificFields == null)
                 {
-                    header = null;
+                    header = null!;
                     return false;
                 }
 
@@ -281,12 +277,12 @@ namespace Server
                 ResponseType.HTTP_507 => "HTTP/1.1 507 Insufficient Storage\r\n" +
                                        $"Content-length: {headerOptions.ContentLength}\r\n",
 
-                _ => null,
+                _ => null!,
             };
 
             if (requestLinePlusSpecificFields == null)
             {
-                header = null;
+                header = null!;
                 return false;
             }
 

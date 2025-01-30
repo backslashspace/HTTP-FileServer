@@ -109,7 +109,9 @@ namespace Server
                 {
                     connection.Send(fileBuffer, 0, (Int32)receivedBytes, SocketFlags.None);
                 }
-                connection.Close(0);
+
+                connection.Shutdown(SocketShutdown.Both);
+                connection.Close();
 
                 return true;
             }

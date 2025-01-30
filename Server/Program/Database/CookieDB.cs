@@ -61,26 +61,29 @@ namespace Server
         /// <summary>Returns base64 encoded token</summary>
         internal static String AddUser(String loginUsername, IPAddress clientIP)
         {
-            if (loginUsername == null || clientIP == IPAddress.None)
-            {
-                return null;
-            }
+            if (loginUsername == null || clientIP == IPAddress.None) return null;
 
             Byte[] token = new Byte[64];
-
-            if (!HWRandom.NextBytes(token))
-            {
-                throw new SystemException("RDSEED instruction failed 128 times in a row");
-            }
+            if (!HWRandom.NextBytes(token)) throw new SystemException("RDSEED instruction failed 128 times in a row");
 
             String tokenBase64;
 
             lock (_databaseLock)
             {
-                SQLiteCommand command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
+                Boolean overwriteToken;
+
+                SQLiteCommand command = new("SELECT LoginUsername FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                 command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
-                command.ExecuteNonQuery();
+                overwriteToken = command.ExecuteScalar(CommandBehavior.SingleResult) != null;
                 command.Dispose();
+
+                if (overwriteToken)
+                {
+                    command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
+                    command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
+                    command.ExecuteNonQuery();
+                    command.Dispose();
+                }
 
                 tokenBase64 = Convert.ToBase64String(token);
                 Int64 expiresOnAsFileTimeUTC = DateTime.Now.AddSeconds(LOGIN_TIME).ToFileTimeUtc();
@@ -88,11 +91,13 @@ namespace Server
 
                 command = new("INSERT INTO Cookie (LoginUsername, IPAddress, ExpiresOnAsFileTimeUTC, Token) VALUES (@loginUsername, @ipAddress, @expiresOnAsFileTimeUTC, @token)", _memoryDatabase);
                 command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
-                command.Parameters.Add("@ipAddress", DbType.String).Value = Convert.ToBase64String(IPAddress.Loopback.GetAddressBytes());
+                command.Parameters.Add("@ipAddress", DbType.String).Value = Convert.ToBase64String(clientIP.GetAddressBytes());
                 command.Parameters.Add("@expiresOnAsFileTimeUTC", DbType.Int64).Value = expiresOnAsFileTimeUTC;
                 command.Parameters.Add("@token", DbType.String).Value = tokenBase64;
                 command.ExecuteNonQuery();
                 command.Dispose();
+
+                if (overwriteToken) Log.FastLog($"User '{loginUsername}' overwrote the previous token", LogSeverity.Verbose, "CookieDB");
 
                 if (!_timerIsRunning) _timer.Start();
             }
@@ -139,6 +144,7 @@ namespace Server
                 if (!dataReader.Read())
                 {
                     Log.FastLog("Client send unknown token", LogSeverity.Info, "CookieDB");
+                    dataReader.Close();
                     command.Dispose();
                     loginUsername = null;
                     return TokenState.Invalid;
@@ -162,7 +168,9 @@ namespace Server
 
                 if (tokenState != TokenState.None)
                 {
+                    dataReader.Close();
                     command.Dispose();
+
                     command = new("DELETE FROM Cookie WHERE LoginUsername = @loginUsername", _memoryDatabase);
                     command.Parameters.Add("@loginUsername", DbType.String).Value = loginUsername;
                     command.ExecuteNonQuery();

@@ -2,9 +2,6 @@
 using System;
 using System.Net.Sockets;
 
-#pragma warning disable IDE0079
-#pragma warning disable CS8604
-
 namespace Server
 {
     internal static partial class Worker
@@ -40,7 +37,7 @@ namespace Server
             catch (SocketException exception)
             {
                 Log.FastLog($"A socket error occurred, connection to client lost:\n{exception.Message}", LogSeverity.Warning, "Worker");
-                if (connection != null) CloseConnection(connection, true);
+                CloseConnection(connection);
                 return;
             }
             catch (Exception exception)
@@ -56,7 +53,7 @@ namespace Server
                     catch { }
                 }
 
-                CloseConnection(connection, true);
+                CloseConnection(connection!);
                 return;
             }
         }

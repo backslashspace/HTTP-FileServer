@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BSS.Logging;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -13,6 +14,7 @@ namespace Server
             String token = GetTokenCookieValue(header);
             if (token == null)
             {
+                Log.Debug("No token was send by client -> redirecting to login", "ClientIsValid()");
                 RedirectClient(connection, new(HTTP.ResponseType.HTTP_303, $"{WEB_ROOT}/login"));
                 return false;
             }

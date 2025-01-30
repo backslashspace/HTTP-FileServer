@@ -45,7 +45,7 @@ namespace Server
                 }
 
                 if (!ClientIsValid(connection, pathParts, header, clientIP, out UserDB.User user)) return;
-      
+
                 AuthenticatedGETHandler(connection, header, pathParts, ref user);
                 return;
             }
