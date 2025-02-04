@@ -21,17 +21,19 @@ namespace Server
 
                 if (!ControlPanelInsertUsers(ref fileContent, connection)) return;
 
-                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", user.DisplayName);
-                fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
+                fileContent = fileContent.Replace("<!-- #DISPLAY#USERNAME#ANCHOR# -->", user.DisplayName);
+                fileContent = fileContent.Replace("<!-- #THREADPOOL#ANCHOR# -->", $"{ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
 
                 if (insertInfoString != null)
                 {
-                    fileContent = Regex.Replace(fileContent, "<!-- #INFO#ANCHOR# -->", insertInfoString);
+                    fileContent = fileContent.Replace("<!-- #INFO#ANCHOR# -->", insertInfoString);
+
+                    fileContent = fileContent.Replace("<!-- #INFO#ANCHOR# -->", insertInfoString);
                 }
 
                 if (setSelfURL)
                 {
-                    fileContent = Regex.Replace(fileContent, "<!-- #SCRIPT#ANCHOR# -->", "<script type=\"text/javascript\">\r\n\t\t\twindow.history.replaceState(null, document.title, \"/fileSharing/controlPanel\")\r\n\t\t</script>");
+                    fileContent = fileContent.Replace("<!-- #SCRIPT#ANCHOR# -->", "<script type=\"text/javascript\">\r\n\t\t\twindow.history.replaceState(null, document.title, \"/fileSharing/controlPanel\")\r\n\t\t</script>");
                 }
 
                 Byte[] buffer = Encoding.UTF8.GetBytes(fileContent);
@@ -64,7 +66,7 @@ namespace Server
             {
                 if (!Tools.GetUserFilesInfo(connection, dataReader.GetString(3), out String fileString)) return false;
                 
-                fileContent = Regex.Replace(fileContent, "<!-- #USER#ANCHOR# -->", CreateListUser(fileString, dataReader));
+                fileContent = fileContent.Replace("<!-- #USER#ANCHOR# -->", CreateListUser(fileString, dataReader));
             }
 
             databaseConnection.Close();

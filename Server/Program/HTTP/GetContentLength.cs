@@ -4,7 +4,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Boolean GetContentLength(String header, out Int64 contentLength)
+        internal static Boolean GetContentLength(String header, out Int64 contentLength)
         {
             if (header == null || header.Length < 20)
             {

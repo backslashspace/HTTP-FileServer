@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="Entry.cs" />
     <Compile Include="App\AssemblyInfo.cs" />
+    <Compile Include="Program\HTTP\GetContentTypeBoundary.cs" />
     <Compile Include="Program\Logging\Logging.cs" />
     <Compile Include="Program\Logging\LogMessage.cs" />
     <Compile Include="Program\Logging\LogSeverity.cs" />
@@ -108,7 +109,7 @@
     <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\ParseUserAndFilename.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\RemoveFile.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\DownloadFile.cs" />
-    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\UploadFile.cs" />
+    <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\ReceiveFile.cs" />
     <Compile Include="Program\Worker\ConnectionHandler\Serve\Files\SendUploadView.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

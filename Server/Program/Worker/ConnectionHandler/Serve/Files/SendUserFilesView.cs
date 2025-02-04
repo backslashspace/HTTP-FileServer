@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Text.RegularExpressions;
 using System.Text;
 using BSS.Logging;
 using BSS.Threading;
@@ -13,7 +12,7 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void SendUserFilesView(Socket connection, ref readonly UserDB.User invokingUser, ref readonly UserDB.User destinationUser, String insertInfoString = null!, Boolean setSelfURL = false)
+            internal static void SendUserFilesView(Socket connection, ref readonly UserDB.User invokingUser, ref readonly UserDB.User targetUser, String insertInfoString = null!, Boolean setSelfURL = false)
             {
                 Log.Debug("userFiles.html", "SendFile()");
                 String fileContent = Worker.ReadFileText("userFiles.html");
@@ -22,24 +21,24 @@ namespace Server
 
                 if (invokingUser.Write || invokingUser.IsAdministrator)
                 {
-                    fileContent = Regex.Replace(fileContent, "<!-- #UPLOAD#ANCHOR# -->", "<form action=\"/fileSharing/files/upload\" method=\"get\" style=\"display: inline;\">\r\n    <button type=\"submit\">Upload File</button>\r\n</form>");
+                    fileContent = fileContent.Replace("<!-- #UPLOAD#ANCHOR# -->", $"<form action=\"/fileSharing/files/upload/userSelectFile\" method=\"get\" style=\"display: inline;\">\r\n   <input type=\"hidden\" name=\"name\" value=\"{HttpUtility.HtmlEncode(targetUser.LoginUsername)}\" required readonly />\r\n<button type=\"submit\">Upload File</button>\r\n</form>");
                 }
 
                 if (invokingUser.Read || invokingUser.IsAdministrator)
                 {
-                    if (!InsertFiles(connection, destinationUser.LoginUsername, ref fileContent)) return;
+                    if (!InsertFiles(connection, targetUser.LoginUsername, ref fileContent)) return;
                 }
 
-                if (invokingUser.IsAdministrator) fileContent = Regex.Replace(fileContent, "<!-- #THREADPOOL#ANCHOR# -->", $"Thread pool Threads: {ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
+                if (invokingUser.IsAdministrator) fileContent = fileContent.Replace("<!-- #THREADPOOL#ANCHOR# -->", $"Thread pool Threads: {ThreadPoolFast.Count}/{ThreadPoolFast.Capacity}");
 
-                if (destinationUser.LoginUsername == invokingUser.LoginUsername) fileContent = Regex.Replace(fileContent, "<!-- #HEADLINE#ANCHOR# -->", "Your Files");
-                else fileContent = Regex.Replace(fileContent, "<!-- #HEADLINE#ANCHOR# -->", $"{HttpUtility.HtmlEncode(destinationUser.DisplayName)}'s Files");
+                if (targetUser.LoginUsername == invokingUser.LoginUsername) fileContent = fileContent.Replace("<!-- #HEADLINE#ANCHOR# -->", "Your Files");
+                else fileContent = fileContent.Replace("<!-- #HEADLINE#ANCHOR# -->", $"{HttpUtility.HtmlEncode(targetUser.DisplayName)}'s Files");
 
-                if (insertInfoString != null) fileContent = Regex.Replace(fileContent, "<!-- #INFO#ANCHOR# -->", insertInfoString);
+                if (insertInfoString != null) fileContent = fileContent.Replace("<!-- #INFO#ANCHOR# -->", insertInfoString);
 
-                if (setSelfURL) fileContent = Regex.Replace(fileContent, "<!-- #SCRIPT#ANCHOR# -->", "<script type=\"text/javascript\">\r\n\t\t\twindow.history.replaceState(null, document.title, \"/fileSharing/controlPanel\")\r\n\t\t</script>");
+                if (setSelfURL) fileContent = fileContent.Replace("<!-- #SCRIPT#ANCHOR# -->", "<script type=\"text/javascript\">\r\n\t\t\twindow.history.replaceState(null, document.title, \"/fileSharing/files\")\r\n\t\t</script>");
 
-                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#USERNAME#ANCHOR# -->", invokingUser.DisplayName);
+                fileContent = fileContent.Replace("<!-- #DISPLAY#USERNAME#ANCHOR# -->", invokingUser.DisplayName);
 
                 //
 
@@ -52,7 +51,7 @@ namespace Server
                 connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
                 connection.Send(buffer, 0, buffer.Length, SocketFlags.None);
 
-                Log.FastLog($"'{invokingUser.LoginUsername}' enumerated files for '{destinationUser.LoginUsername}'", LogSeverity.Info, "FileInfo");
+                Log.FastLog($"'{invokingUser.LoginUsername}' enumerated files for '{targetUser.LoginUsername}'", LogSeverity.Info, "FileInfo");
 
                 Worker.CloseConnection(connection);
             }
@@ -64,13 +63,13 @@ namespace Server
                 if (loginUsername.Length > 128)
                 {
                     Log.FastLog($"Detected long username (over 128 char), skipping: {loginUsername}", LogSeverity.Warning, "FileInfo");
-                    fileContent = Regex.Replace(fileContent, "<!-- #FILE#ANCHOR# -->", "<td><span style=\"margin: 1em\">error - user name to long (more than 128 chars) - skipping file system check for compatibility reasons</span></td>");
+                    fileContent = fileContent.Replace("<!-- #FILE#ANCHOR# -->", "<td><span style=\"margin: 1em\">error - user name to long (more than 128 chars) - skipping file system check for compatibility reasons</span></td>");
                     return true;
                 }
 
                 if (!Directory.Exists("\\\\?\\" + Worker.AssemblyPath + "\\files\\" + loginUsername))
                 {
-                    fileContent = Regex.Replace(fileContent, "<!-- #FILE#ANCHOR# -->", "<td><span style=\"margin: 1em\">No files found!</span></td>");
+                    fileContent = fileContent.Replace("<!-- #FILE#ANCHOR# -->", "<td><span style=\"margin: 1em\">No files found!</span></td>");
                     return true;
                 }
 
@@ -81,13 +80,13 @@ namespace Server
 
                     if (fileInfo.Length == 0)
                     {
-                        fileContent = Regex.Replace(fileContent, "<!-- #FILE#ANCHOR# -->", "<td><span style=\"margin: 1em\">No files found!</span></td>");
+                        fileContent = fileContent.Replace("<!-- #FILE#ANCHOR# -->", "<td><span style=\"margin: 1em\">No files found!</span></td>");
                         return true;
                     }
 
                     for (Int32 i = 0; i < fileInfo.Length; ++i)
                     {
-                        fileContent = Regex.Replace(fileContent, "<!-- #FILE#ANCHOR# -->", $@"
+                        fileContent = fileContent.Replace("<!-- #FILE#ANCHOR# -->", $@"
 <tr>
     <td><span style=""margin: 1em"">{HttpUtility.HtmlEncode(fileInfo[i].Name)}</span></td>
     <td>

@@ -9,34 +9,47 @@ namespace Server
     {
         internal static partial class CGI
         {
-            internal static void DownloadFile(Socket connection, String header, ref readonly UserDB.User user)
+            internal static void DownloadFile(Socket connection, String header, ref readonly UserDB.User invokingUser)
             {
                 if (!Worker.GetContent(header, connection, out String content)) return;
 
                 if (!ParseUserAndFilename(content, out String targetUsername, out String filename))
                 {
-                    Log.FastLog($"'{user.LoginUsername}' attempted to download a file but send an invalid request -> sending 400", LogSeverity.Warning, "Download");
+                    Log.FastLog($"'{invokingUser.LoginUsername}' attempted to download a file but send an invalid request -> sending 400", LogSeverity.Warning, "Download");
                     HTTP.ERRORS.Send_400(connection);
                     return;
                 }
 
-                if (!UserDB.UserExistsPlusEnabled(targetUsername))
+                if (!UserDB.GetUser(targetUsername, out UserDB.User targetUser))
                 {
-                    Log.FastLog($"'{user.LoginUsername}' attempted to download a file from user '{targetUsername}' but the user is either invalid or not enabled -> sending 404", LogSeverity.Warning, "Download");
+                    Log.FastLog($"'{invokingUser.LoginUsername}' attempted to download a file from unknown user '{targetUsername}' -> sending 404", LogSeverity.Warning, "Download");
                     HTTP.ERRORS.Send_404(connection);
                     return;
                 }
 
-                if (!user.IsAdministrator && user.LoginUsername != targetUsername)
+                //
+
+                if (!invokingUser.IsAdministrator)
                 {
-                    Log.FastLog($"'{user.LoginUsername}' attempted to download a file from '{targetUsername}' but does not have the admin permission -> sending 403", LogSeverity.Warning, "Download");
-                    HTTP.ERRORS.Send_403(connection);
-                    return;
+                    if (invokingUser.LoginUsername != targetUser.LoginUsername)
+                    {
+                        Log.FastLog($"'{invokingUser.LoginUsername}' attempted to download a file from '{targetUsername}' but does not have the admin permission -> sending 403", LogSeverity.Alert, "Download");
+                        HTTP.ERRORS.Send_403(connection);
+                        return;
+                    }
+                    else if (!targetUser.Read)
+                    {
+                        Log.FastLog($"'{invokingUser.LoginUsername}' attempted to download a file but does not have the read permission -> sending 403", LogSeverity.Alert, "Download");
+                        HTTP.ERRORS.Send_403(connection);
+                        return;
+                    }
                 }
+
+                //
 
                 if (!File.Exists("\\\\?\\" + Worker.AssemblyPath + "\\files\\" + targetUsername + "\\" + filename))
                 {
-                    Log.FastLog($"'{user.LoginUsername}' attempted to download a file but file '{filename}' is not present -> sending 404", LogSeverity.Warning, "Download");
+                    Log.FastLog($"'{invokingUser.LoginUsername}' attempted to download a file but file '{filename}' is not present -> sending 404", LogSeverity.Warning, "Download");
                     HTTP.ERRORS.Send_404(connection);
                     return;
                 }
@@ -53,14 +66,14 @@ namespace Server
 
                 if (fileInfo.Length > 65535)
                 {
-                    Log.FastLog($"'{user.LoginUsername}' started to download a file '{filename}' from '{targetUsername}' - using buffered send", LogSeverity.Info, "Download");
-                    if (BufferedSend(connection, "\\\\?\\" + Worker.AssemblyPath + "\\files\\" + targetUsername + "\\" + filename, user.LoginUsername, headerBuffer))
+                    Log.FastLog($"'{invokingUser.LoginUsername}' started to download a file '{filename}' from '{targetUsername}' - using buffered send", LogSeverity.Info, "Download");
+                    if (BufferedSend(connection, "\\\\?\\" + Worker.AssemblyPath + "\\files\\" + targetUsername + "\\" + filename, invokingUser.LoginUsername, headerBuffer))
                     {
-                        Log.FastLog($"'{user.LoginUsername}' successfully downloaded file '{filename}' from '{targetUsername}' - using buffered send", LogSeverity.Info, "Download");
+                        Log.FastLog($"'{invokingUser.LoginUsername}' successfully downloaded file '{filename}' from '{targetUsername}' - using buffered send", LogSeverity.Info, "Download");
                     }
                     else
                     {
-                        Log.FastLog($"'{user.LoginUsername}' failed to download file '{filename}' from '{targetUsername}' - using buffered send", LogSeverity.Error, "Download");
+                        Log.FastLog($"'{invokingUser.LoginUsername}' failed to download file '{filename}' from '{targetUsername}' - using buffered send", LogSeverity.Error, "Download");
                     }
 
                     return;
@@ -70,7 +83,7 @@ namespace Server
                     Byte[] buffer = File.ReadAllBytes("\\\\?\\" + Worker.AssemblyPath + "\\files\\" + targetUsername + "\\" + filename);
                     connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
                     connection.Send(buffer, 0, buffer.Length, SocketFlags.None);
-                    Log.FastLog($"'{user.LoginUsername}' download a file '{filename}' from '{targetUsername}'", LogSeverity.Info, "Download");
+                    Log.FastLog($"'{invokingUser.LoginUsername}' download a file '{filename}' from '{targetUsername}'", LogSeverity.Info, "Download");
                 }
 
                 Worker.CloseConnection(connection);
@@ -96,10 +109,10 @@ namespace Server
 
                 connection.Send(headerBuffer, 0, headerBuffer.Length, SocketFlags.None);
 
-                Int64 receivedBytes;
-                while ((receivedBytes = fileStream.Read(fileBuffer, 0, 65535)) != 0)
+                Int32 readBytes;
+                while ((readBytes = fileStream.Read(fileBuffer, 0, 65535)) != 0)
                 {
-                    connection.Send(fileBuffer, 0, (Int32)receivedBytes, SocketFlags.None);
+                    connection.Send(fileBuffer, 0, readBytes, SocketFlags.None);
                 }
 
                 connection.Shutdown(SocketShutdown.Both);

@@ -14,7 +14,8 @@ namespace Server
                     return;
 
                 case "upload":
-                    HTTP.ERRORS.Send_501(connection);
+                    if (pathParts.Length == 4 && pathParts[3].ToLower() == "userselectfile") HTML.CGI.SendUploadView(connection, header, in user);
+                    else HTML.CGI.ReceiveFile(connection, header, in user);
                     return;
 
                 case "remove":

@@ -17,8 +17,8 @@ namespace Server
 
                 String fileContent = Worker.ReadFileText("changePassword.html");
 
-                fileContent = Regex.Replace(fileContent, "<!-- #DISPLAY#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(user.DisplayName));
-                fileContent = Regex.Replace(fileContent, "<!-- #LOGIN#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(user.LoginUsername));
+                fileContent = fileContent.Replace("<!-- #DISPLAY#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(user.DisplayName));
+                fileContent = fileContent.Replace("<!-- #LOGIN#NAME#ANCHOR# -->", HttpUtility.HtmlEncode(user.LoginUsername));
 
                 Byte[] buffer = Encoding.UTF8.GetBytes(fileContent);
                 HTTP.CraftHeader(new HTTP.HeaderOptions(HTTP.ResponseType.HTTP_200, new HTTP.ContentOptions(HTTP.ContentType.HTML), (UInt64)buffer.LongLength), out Byte[] headerBuffer);

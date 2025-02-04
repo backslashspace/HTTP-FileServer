@@ -21,7 +21,7 @@ namespace Server
                     return;
 
                 case "files":
-                    if (pathParts.Length == 3) FilesPOSTHandler(connection, header, pathParts, in user); // upload, download and remove
+                    if (pathParts.Length == 3 || pathParts.Length == 4) FilesPOSTHandler(connection, header, pathParts, in user); // upload, download and remove
                     else HTML.CGI.SendUserFilesFromPOST(connection, header, ref user); // view files
                     return;
 

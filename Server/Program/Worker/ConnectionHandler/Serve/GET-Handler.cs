@@ -20,7 +20,7 @@ namespace Server
                     return;
 
                 case "files":
-                    if (pathParts.Length == 3 && pathParts[2].ToLower() == "upload?") HTML.CGI.SendUploadView(connection);
+                    if (pathParts.Length == 3 && pathParts[2].ToLower() == "upload?") HTML.CGI.SendUploadView(connection, header, in user);
                     else HTML.CGI.SendUserFilesView(connection, ref user, ref user);
                     return;
 
