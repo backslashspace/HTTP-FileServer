@@ -10,7 +10,7 @@ namespace Server
             switch (pathParts[2].ToLower())
             {
                 case "download":
-                    HTML.CGI.DownloadFile(connection, header, in user);
+                    DownloadFile(connection, header, in user);
                     return;
 
                 case "upload":
@@ -19,7 +19,7 @@ namespace Server
                     return;
 
                 case "remove":
-                    HTTP.ERRORS.Send_501(connection);
+                    RemoveFile(connection, header, in user);
                     return;
 
                 default:
