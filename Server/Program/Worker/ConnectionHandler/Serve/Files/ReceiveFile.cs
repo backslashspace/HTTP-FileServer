@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using BSS.Logging;
 
 namespace Server
@@ -81,6 +82,11 @@ namespace Server
 
                 try
                 {
+                    if (!Directory.Exists(Worker.AssemblyPath + $"\\files\\{targetUser.LoginUsername}"))
+                    {
+                        Directory.CreateDirectory(Worker.AssemblyPath + $"\\files\\{targetUser.LoginUsername}");
+                    }
+
                     if (File.Exists("\\\\?\\" + Worker.AssemblyPath + $"\\files\\{targetUser.LoginUsername}\\" + filename))
                     {
                         File.Delete("\\\\?\\" + Worker.AssemblyPath + $"\\files\\{targetUser.LoginUsername}\\" + filename);
@@ -145,6 +151,7 @@ namespace Server
                 fileStream.Dispose();
 
                 Log.FastLog($"{invokingUser.LoginUsername} finished uploading file '{filename}' to {targetUser.LoginUsername}", LogSeverity.Info, "Upload");
+
                 SendUserFilesView(connection, in invokingUser, in targetUser, $"<span style=\"color: green; font-weight: bold\">Successfully uploaded {fileLength} bytes</span>", true);
             }
 

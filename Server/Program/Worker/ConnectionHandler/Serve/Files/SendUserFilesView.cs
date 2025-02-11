@@ -21,7 +21,7 @@ namespace Server
 
                 if (invokingUser.Write || invokingUser.IsAdministrator)
                 {
-                    fileContent = fileContent.Replace("<!-- #UPLOAD#ANCHOR# -->", $"<form action=\"/fileSharing/files/upload/userSelectFile\" method=\"get\" style=\"display: inline;\">\r\n   <input type=\"hidden\" name=\"name\" value=\"{HttpUtility.HtmlEncode(targetUser.LoginUsername)}\" required readonly />\r\n<button type=\"submit\">Upload File</button>\r\n</form>");
+                    fileContent = fileContent.Replace("<!-- #UPLOAD#ANCHOR# -->", $"<form action=\"/fileSharing/files/upload/userSelectFile\" method=\"post\" style=\"display: inline;\">\r\n   <input type=\"hidden\" name=\"name\" value=\"{HttpUtility.HtmlEncode(targetUser.LoginUsername)}\" required readonly />\r\n<button type=\"submit\">Upload File</button>\r\n</form>");
                 }
 
                 if (invokingUser.Read || invokingUser.IsAdministrator)
