@@ -13,7 +13,7 @@ namespace Server
 
             try
             {
-                if (!GetHeader(connection, out header)) return;
+                if (!HTTP.GetHeader(connection, out header)) return;
                 if (!GetHttpPath(connection, header, out String loweredPath)) return;
 
                 Log.Debug(header.Split(['\r'], 2, StringSplitOptions.RemoveEmptyEntries)[0], Thread.CurrentThread.Name!);

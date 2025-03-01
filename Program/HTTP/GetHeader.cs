@@ -5,13 +5,13 @@ using System.Threading;
 
 namespace Server
 {
-    internal static partial class Worker
+    internal static partial class HTTP
     {
-        private unsafe static Boolean GetHeader(SecureSocket connection, out String headerString)
+        internal unsafe static Boolean GetHeader(SecureSocket connection, out String headerString)
         {
-            Span<Byte> receiveBuffer = stackalloc Byte[2048];
+            Span<Byte> receiveBuffer = stackalloc Byte[4069];
 
-            for (Int32 i = 0; i < 2048; ++i)
+            for (Int32 i = 0; i < 4069; ++i)
             {
                 try
                 {
