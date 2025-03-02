@@ -62,7 +62,7 @@ namespace Server
                 SecureListener.SendTimeout = 5120;
                 SecureListener.Bind(new IPEndPoint(configuration->ListenerAddress, configuration->HttpsListenerPort));
                 SecureListener.Listen(4);
-                Log.FastLog($"Successfully bound secure secure listener to: {configuration->ListenerAddress}:{configuration->HttpsListenerPort}", LogSeverity.Info, "Init->Socket");
+                Log.FastLog("Successfully bound secure secure listener to: " + configuration->ListenerAddress.ToString() + ":" + configuration->HttpsListenerPort, LogSeverity.Info, "Init->Socket");
 
                 if (configuration->EnableHttpRedirector)
                 {
@@ -72,13 +72,13 @@ namespace Server
                     RedirectListener.SendTimeout = 5120;
                     RedirectListener.Bind(new IPEndPoint(configuration->ListenerAddress, configuration->HttpListenerPort));
                     RedirectListener.Listen(4);
-                    Log.FastLog($"Successfully bound http redirect listener to: {configuration->ListenerAddress}:{configuration->HttpListenerPort}", LogSeverity.Info, "Init->Socket");
+                    Log.FastLog("Successfully bound http redirect listener to: " + configuration->ListenerAddress.ToString() + ":" + configuration->HttpListenerPort, LogSeverity.Info, "Init->Socket");
                 }
             }
             catch (Exception exception)
             {
-                if (configuration->EnableHttpRedirector) Log.FastLog($"Unable to bind to {configuration->ListenerAddress} {configuration->HttpsListenerPort}/{configuration->HttpListenerPort} >> " + exception.Message, LogSeverity.Error, "Init->Socket");
-                else Log.FastLog($"Unable to bind to: {configuration->ListenerAddress}:{configuration->HttpsListenerPort} >> " + exception.Message, LogSeverity.Error, "Init->Socket");
+                if (configuration->EnableHttpRedirector) Log.FastLog("Unable to bind to " + configuration->ListenerAddress.ToString() + " " + configuration->HttpsListenerPort + "/" + configuration->HttpListenerPort + " >> " + exception.Message, LogSeverity.Error, "Init->Socket");
+                else Log.FastLog("Unable to bind to: " + configuration->ListenerAddress.ToString() + ":" + configuration->HttpsListenerPort +" >> " + exception.Message, LogSeverity.Error, "Init->Socket");
                 return false;
             }
 

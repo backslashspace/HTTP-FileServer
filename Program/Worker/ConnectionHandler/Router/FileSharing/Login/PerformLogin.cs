@@ -29,14 +29,14 @@ namespace Server
 
             if (!UserDB.GetLoginInfo(loginUsername, out UserDB.LoginInfo loginInfo))
             {
-                Log.FastLog($"Authenticating client send invalid username {loginUsername}", LogSeverity.Warning, "PerformLogin()");
+                Log.FastLog("Authenticating client send invalid username " + loginUsername, LogSeverity.Warning, "PerformLogin()");
                 SendStackFile(connection, "fileSharing\\loginError.html");
                 return;
             }
 
             if (!Authentication.Validate(loginUsername, password, loginInfo.HashedPassword, loginInfo.Salt))
             {
-                Log.FastLog($"Authenticating client send invalid password for username {loginUsername}", LogSeverity.Alert, "PerformLogin()");
+                Log.FastLog("Authenticating client send invalid password for username " + loginUsername, LogSeverity.Alert, "PerformLogin()");
                 SendStackFile(connection, "fileSharing\\loginError.html");
                 return;
             }
@@ -45,14 +45,14 @@ namespace Server
 
             if (!loginInfo.IsEnabled)
             {
-                Log.FastLog($"User {loginUsername} is disabled -> sending 403", LogSeverity.Warning, "PerformLogin()");
+                Log.FastLog("User " + loginUsername + " is disabled -> sending 403", LogSeverity.Warning, "PerformLogin()");
                 HTTP.ERRORS.Send_403(connection);
                 return;
             }
 
             if (!loginInfo.IsAdministrator && !loginInfo.Read && !loginInfo.Write)
             {
-                Log.FastLog($"User attempted to {loginUsername} log in, but had no permissions -> sending 403", LogSeverity.Warning, "PerformLogin()");
+                Log.FastLog("User attempted to " + loginUsername + " log in, but had no permissions -> sending 403", LogSeverity.Warning, "PerformLogin()");
                 HTTP.ERRORS.Send_403(connection);
                 return;
             }
@@ -62,12 +62,12 @@ namespace Server
             String userToken = CookieDB.AddUser(loginUsername, ((IPEndPoint)connection.Socket!.RemoteEndPoint!).Address);
             if (userToken == null)
             {
-                Log.FastLog($"Failed to add {loginUsername} token to database  -> sending 500", LogSeverity.Error, "CookieDB");
+                Log.FastLog("Failed to add " + loginUsername + " token to database  -> sending 500", LogSeverity.Error, "CookieDB");
                 HTTP.ERRORS.Send_500(connection);
                 return;
             }
 
-            Log.FastLog($"User {loginUsername} logged in", LogSeverity.Info, "PerformLogin()");
+            Log.FastLog("User " + loginUsername + " logged in", LogSeverity.Info, "PerformLogin()");
 
             //
 

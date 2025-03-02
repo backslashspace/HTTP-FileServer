@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using static Server.ConfigurationLoader;
 
 #pragma warning disable IDE0032
 
@@ -76,13 +77,15 @@ namespace BSS.Logging
 
             _configuration = configuration;
 
-            if (Directory.Exists($"{configuration.LogDirectoryPath}\\logs"))
+            if (Directory.Exists(configuration.LogDirectoryPath +"\\logs"))
             {
                 DateTime now = DateTime.Now;
 
-                if (File.Exists($"{configuration.LogDirectoryPath}\\logs\\{now.ToString(configuration.FilenameFormat)}.txt"))
+                String filePath = configuration.LogDirectoryPath + "\\logs\\" + now.ToString(configuration.FilenameFormat) + ".txt";
+
+                if (File.Exists(filePath))
                 {
-                    using (StreamWriter streamWriter = new($"{configuration.LogDirectoryPath}\\logs\\{now.ToString(configuration.FilenameFormat)}.txt", true, Encoding.UTF8))
+                    using (StreamWriter streamWriter = new(filePath, true, Encoding.UTF8))
                     {
                         streamWriter.WriteLine();
                     }
@@ -127,14 +130,16 @@ namespace BSS.Logging
         internal static void WriteFile(ref readonly LogMessage formattedLogMessage, ref readonly DateTime timeStamp)
         {
             if (!_isInitialized) throw new MethodAccessException("Logging class not initialized");
-            if (!Directory.Exists($"{_configuration!.LogDirectoryPath}\\logs")) Directory.CreateDirectory($"{_configuration.LogDirectoryPath}\\logs");
+            if (!Directory.Exists(_configuration!.LogDirectoryPath + "\\logs")) Directory.CreateDirectory(_configuration!.LogDirectoryPath + "\\logs");
 
             //
 
+            String filePath = _configuration.LogDirectoryPath + "\\logs\\" + timeStamp.ToString(_configuration.FilenameFormat) + ".txt";
+
             Int32 lineLength = 27 + formattedLogMessage.Source.Length;
 
-            String source = $"]-[{formattedLogMessage.Source}]";
-            String timeStampString = $"[{timeStamp.ToString(_configuration.TimeFormat)}] [";
+            String source = "]-[" + formattedLogMessage.Source + "]";
+            String timeStampString = "[" + timeStamp.ToString(_configuration.TimeFormat) + "] [";
 
             String severityString = null!;
             switch (formattedLogMessage.Severity)
@@ -181,6 +186,8 @@ namespace BSS.Logging
 
             String logLine = timeStampString + severityString + source + padding + formattedLogMessage.Message;
 
+
+
             try
             {
                 lock (_fileLock)
@@ -191,7 +198,7 @@ namespace BSS.Logging
                     if (_configuration.AllocateConsoleInReleaseMode) ColoredDebugPrint(timeStampString, formattedLogMessage.Severity, severityString!, source, padding, formattedLogMessage.Message);
 #endif
 
-                    using (StreamWriter streamWriter = new($"{_configuration.LogDirectoryPath}\\logs\\{timeStamp.ToString(_configuration.FilenameFormat)}.txt", true, Encoding.UTF8))
+                    using (StreamWriter streamWriter = new(filePath, true, Encoding.UTF8))
                     {
                         streamWriter.WriteLine(logLine);
                     }
@@ -199,7 +206,7 @@ namespace BSS.Logging
             }
             catch (Exception ex)
             {
-                throw new FieldAccessException($"Unable to write log file to:\n{_configuration.LogDirectoryPath}\\logs\\{timeStamp.ToString(_configuration.FilenameFormat)}.txt\n\nError: {ex.Message}");
+                throw new FieldAccessException("Unable to write log file to:\n" + filePath + "\n\nError: " + ex.Message);
             }
         }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using BSS.Logging;
-using System.Threading;
 
 namespace Server
 {
@@ -20,7 +19,7 @@ namespace Server
                 catch (Exception exception)
                 {
                     Log.FastLog("Unable to parse request header: " + exception.Message + " -> sending 431", LogSeverity.Error, "GetHeader()");
-                    HTTP.ERRORS.Send_431(connection);
+                    ERRORS.Send_431(connection);
 
                     headerString = null!;
                     return false;
@@ -38,7 +37,7 @@ namespace Server
             }
 
             Log.FastLog("Unable to parse request header - reached buffer end before finding CRLF -> sending 431", LogSeverity.Error, "GetHeader()");
-            HTTP.ERRORS.Send_431(connection);
+            ERRORS.Send_431(connection);
 
             headerString = null!;
             return false;

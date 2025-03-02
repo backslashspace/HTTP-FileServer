@@ -11,7 +11,7 @@ namespace Server
 
             if (fileSize < 1)
             {
-                Log.FastLog($"Unable to load html\\{subPath} file size -> 500", LogSeverity.Error, "StackFile");
+                Log.FastLog("Unable to load html\\" + subPath + "file size -> 500", LogSeverity.Error, "StackFile");
                 HTTP.ERRORS.Send_500(connection);
                 connection.Close();
                 return;
@@ -20,7 +20,7 @@ namespace Server
             Span<Byte> fileBuffer = stackalloc Byte[(Int32)fileSize];
             if (!LoadStackFile(Program.AssemblyPath + "html\\" + subPath, fileBuffer))
             {
-                Log.FastLog($"Unable to load html\\{subPath} from disk -> 500", LogSeverity.Error, "StackFile");
+                Log.FastLog("Unable to load html\\" + subPath + "file size -> 500", LogSeverity.Error, "StackFile");
                 HTTP.ERRORS.Send_500(connection);
                 connection.Close();
                 return;

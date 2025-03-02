@@ -14,7 +14,7 @@ namespace Server
     {
         internal static Boolean IsInitialized { get; private set; }
 
-        private const String CONNECTION_STRING = $"data_source=user.db; version=3; foreign_keys=TRUE; journal_mode=TRUNCATE; synchronous=FULL; secure_delete=on; busy_timeout=2048;";
+        private const String CONNECTION_STRING = "data_source=user.db; version=3; foreign_keys=TRUE; journal_mode=TRUNCATE; synchronous=FULL; secure_delete=on; busy_timeout=2048;";
 
         static UserDB()
         {
@@ -36,7 +36,7 @@ namespace Server
                 {
                     if (!PutSecret()) return;
 
-                    Log.FastLog($"Unable to find database file, creating default instance (user='admin', password='admin')", LogSeverity.Critical, "DB-Init");
+                    Log.FastLog("Unable to find database file, creating default instance (user='admin', password='admin')", LogSeverity.Critical, "DB-Init");
 
                     SQLiteConnection.CreateFile("user.db");
                     databaseConnection.Open();
@@ -44,7 +44,7 @@ namespace Server
                     //
 
                     command = databaseConnection.CreateCommand();
-                    command.CommandText = $"PRAGMA user_version={DATABASE_VERSION}";
+                    command.CommandText = "PRAGMA user_version=" + DATABASE_VERSION;
                     command.ExecuteNonQuery();
 
                     command = new(DATABASE_SCHEME_USER, databaseConnection);
@@ -56,7 +56,7 @@ namespace Server
                     String encodedPassword = Convert.ToBase64String(password);
                     String encodedSalt = Convert.ToBase64String(salt);
 
-                    command = new($"INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '{encodedPassword}', '{encodedSalt}', 1, 1, 1, 1);", databaseConnection);
+                    command = new("INSERT INTO User (LoginUsername, DisplayName, HashedPassword, Salt, IsAdministrator, IsEnabled, Read, Write) VALUES ('admin', 'admin', '" + encodedPassword + "', ' " + encodedSalt + "', 1, 1, 1, 1);", databaseConnection);
                     command.ExecuteNonQuery();
 
                     try
@@ -65,13 +65,13 @@ namespace Server
                     }
                     catch (Exception exception)
                     {
-                        Log.FastLog($"Unable to create, admin file repository under '{Program.AssemblyPath}\\files\\admin' error: {exception.Message}", LogSeverity.Error, "UserDB");
+                        Log.FastLog("Unable to create, admin file repository under '" + Program.AssemblyPath + "\\files\\admin' error: " + exception.Message, LogSeverity.Error, "UserDB");
                     }
                 }
             }
             catch (Exception exception)
             {
-                Log.FastLog($"Unable to load, open or create database: {exception.Message}", LogSeverity.Error, "UserDB");
+                Log.FastLog("Unable to load, open or create database: " + exception.Message, LogSeverity.Error, "UserDB");
                 return;
             }
 
@@ -86,7 +86,7 @@ namespace Server
 
             if (DATABASE_VERSION != databaseVersion)
             {
-                Log.FastLog($"Invalid database, wrong database version, found: {databaseVersion}, required: {DATABASE_VERSION}", LogSeverity.Error, "UserDB-Verify");
+                Log.FastLog("Invalid database, wrong database version, found: " + databaseVersion + ", required: " + DATABASE_VERSION, LogSeverity.Error, "UserDB-Verify");
                 return;
             }
 
@@ -96,7 +96,7 @@ namespace Server
 
             if (tables.Rows.Count < TABLE_COUNT)
             {
-                Log.FastLog($"Invalid database, expected {TABLE_COUNT} tables, found {tables.Rows.Count} tables", LogSeverity.Error, "UserDB");
+                Log.FastLog("Invalid database, expected " + TABLE_COUNT + " tables, found " + tables.Rows.Count + " tables", LogSeverity.Error, "UserDB");
                 return;
             }
 
@@ -117,7 +117,7 @@ namespace Server
 
             if (!schemaIsValid) 
             {
-                Log.FastLog($"Invalid database, not all required tables were found", LogSeverity.Error, "UserDB-Verify");
+                Log.FastLog("Invalid database, not all required tables were found", LogSeverity.Error, "UserDB-Verify");
                 return;
             }
 

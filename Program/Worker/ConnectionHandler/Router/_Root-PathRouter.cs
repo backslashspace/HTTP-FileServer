@@ -33,7 +33,8 @@ namespace Server
                 }
             }
 
-           
+            // ##   ##   ##   ##   ##   ##   ##   ##   ##   ##   ##   ##  1
+
             if (pathParts[0] == "filesharing")
             {
                 FileSharingPathRouter(connection, header, pathParts);

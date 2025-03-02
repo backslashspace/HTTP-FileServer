@@ -47,7 +47,7 @@ namespace Server
 
             _worker.WaitOne();
 
-            Log.Debug($"Worker fully stopped - exiting", "Service");
+            Log.Debug("Worker fully stopped - exiting", "Service");
 
             Program.Exit.Set();
         }

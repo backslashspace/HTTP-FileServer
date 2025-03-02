@@ -40,7 +40,7 @@ namespace Server
 
                 if (!ThreadPoolX.Execute(() => HandleConnection(secureSocket)))
                 {
-                    Log.FastLog($"To many requests, ran out of threads", LogSeverity.Warning, "Worker");
+                    Log.FastLog("To many requests, ran out of threads", LogSeverity.Warning, "Worker");
 
                     try
                     {

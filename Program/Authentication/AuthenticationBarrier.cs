@@ -27,19 +27,19 @@ namespace Server
                     break;
 
                 case CookieDB.TokenState.Expired:
-                    Log.FastLog($"{loginUsername} send expired session token -> sending to login (expired)", LogSeverity.Info, "AuthBarrier");
+                    Log.FastLog(loginUsername + " send expired session token -> sending to login (expired)", LogSeverity.Info, "AuthBarrier");
                     SendSessionExpiredPage(connection);
                     invokingUser = new();
                     return false;
 
                 case CookieDB.TokenState.HostMismatch:
-                    Log.FastLog($"{loginUsername} send valid session token from different ip ({clientIP}) -> sending to login (expired)", LogSeverity.Alert, "AuthBarrier");
+                    Log.FastLog(loginUsername + " send valid session token from different ip (" + clientIP.ToString() + ") -> sending to login (expired)", LogSeverity.Alert, "AuthBarrier");
                     SendSessionExpiredPage(connection);
                     invokingUser = new();
                     return false;
 
                 case CookieDB.TokenState.Invalid:
-                    Log.FastLog($"{clientIP} send valid session token -> sending to login", LogSeverity.Alert, "AuthBarrier");
+                    Log.FastLog(clientIP.ToString() + " send valid session token -> sending to login", LogSeverity.Alert, "AuthBarrier");
                     SendSessionExpiredPage(connection);
                     invokingUser = new();
                     return false;
@@ -63,14 +63,14 @@ namespace Server
 
             if (!invokingUser.IsEnabled)
             {
-                Log.FastLog($"User {loginUsername} is disabled -> sending 403", LogSeverity.Warning, "AuthBarrier");
+                Log.FastLog("User " + loginUsername + " is disabled -> sending 403", LogSeverity.Warning, "AuthBarrier");
                 HTTP.ERRORS.Send_403(connection);
                 return false;
             }
 
             if (!invokingUser.IsAdministrator && !invokingUser.Read && !invokingUser.Write)
             {
-                Log.FastLog($"User attempted to {loginUsername} log in, but had no permissions -> sending 403", LogSeverity.Warning, "AuthBarrier");
+                Log.FastLog("User attempted to " + loginUsername + " log in, but had no permissions -> sending 403", LogSeverity.Warning, "AuthBarrier");
                 HTTP.ERRORS.Send_403(connection);
                 return false;
             }
@@ -84,7 +84,7 @@ namespace Server
 
             if (fileSize < 1)
             {
-                Log.FastLog($"Unable to load html\\fileSharing\\loginExpired.html file size -> 500", LogSeverity.Error, "AuthBarrier");
+                Log.FastLog("Unable to load html\\fileSharing\\loginExpired.html file size -> 500", LogSeverity.Error, "AuthBarrier");
                 HTTP.ERRORS.Send_500(connection);
                 connection.Close();
                 return;
@@ -93,7 +93,7 @@ namespace Server
             Span<Byte> fileBuffer = stackalloc Byte[(Int32)fileSize];
             if (!LoadStackFile(Program.AssemblyPath + "html\\fileSharing\\loginExpired.html", fileBuffer))
             {
-                Log.FastLog($"Unable to load html\\fileSharing\\loginExpired.html from disk -> 500", LogSeverity.Error, "AuthBarrier");
+                Log.FastLog("Unable to load html\\fileSharing\\loginExpired.html from disk -> 500", LogSeverity.Error, "AuthBarrier");
                 HTTP.ERRORS.Send_500(connection);
                 connection.Close();
                 return;

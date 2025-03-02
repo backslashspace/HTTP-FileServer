@@ -15,7 +15,7 @@ namespace Server
 
 #if DEBUG
             stopwatch.Stop();
-            Log.Debug($"Hash calculation took {stopwatch.ElapsedMilliseconds}ms for user {loginUsername}", "Validate");
+            Log.Debug("Hash calculation took " + stopwatch.ElapsedMilliseconds + "ms for user " + loginUsername, "Validate");
 #endif
 
             if (databaseHash.Length != clientHash.Length) return false;

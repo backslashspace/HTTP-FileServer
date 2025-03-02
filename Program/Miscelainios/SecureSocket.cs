@@ -104,7 +104,7 @@ namespace Server
 
             if (!SslStream.IsAuthenticated || !SslStream.IsEncrypted || !SslStream.IsSigned)
             {
-                Log.FastLog($"Unable to create a secure connection - IsAuthenticated:{SslStream.IsAuthenticated}, IsEncrypted:{SslStream.IsEncrypted}, IsSigned:{SslStream.IsSigned}", LogSeverity.Error, "SecureSocket");
+                Log.FastLog("Unable to create a secure connection - IsAuthenticated: " + SslStream.IsAuthenticated + ", IsEncrypted: " + SslStream.IsEncrypted + ", IsSigned: " + SslStream.IsSigned, LogSeverity.Error, "SecureSocket");
                 secureSocket = null!;
                 return false;
             }

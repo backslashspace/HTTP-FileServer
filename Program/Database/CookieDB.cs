@@ -94,7 +94,7 @@ namespace Server
                 command.ExecuteNonQuery();
                 command.Dispose();
 
-                if (overwriteToken) Log.FastLog($"User '{loginUsername}' overwrote the previous token", LogSeverity.Verbose, "CookieDB");
+                if (overwriteToken) Log.FastLog("User " + loginUsername + " overwrote the previous token", LogSeverity.Verbose, "CookieDB");
 
                 if (!_timerIsRunning) _timer.Start();
             }
@@ -115,11 +115,11 @@ namespace Server
                     command.ExecuteNonQuery();
                     command.Dispose();
 
-                    Log.FastLog($"User '{loginUsername}' logged out", LogSeverity.Info, "CookieDB");
+                    Log.FastLog("User " + loginUsername + " logged out", LogSeverity.Info, "CookieDB");
                 }
                 catch (Exception exception)
                 {
-                    Log.FastLog($"Failed to log-out user '{loginUsername}':\n{exception.Message}", LogSeverity.Error, "CookieDB");
+                    Log.FastLog("Failed to log-out user " + loginUsername + ":\n" + exception.Message, LogSeverity.Error, "CookieDB");
                     success = false;
                 }
             }
@@ -202,7 +202,7 @@ namespace Server
                 GC.Collect(5, GCCollectionMode.Forced, true, true);
                 stopwatch.Stop();
 
-                Log.FastLog($"Successfully truncated login-token database (removed {removedEntries}) and ran full GC in {stopwatch.Elapsed.Ticks * 0.1}µs", LogSeverity.Info, "CookieDB");
+                Log.FastLog("Successfully truncated login-token database (removed " + removedEntries + ") and ran full GC in " + (stopwatch.Elapsed.Ticks * 0.1).ToString() + "µs", LogSeverity.Info, "CookieDB");
             }
         }
 

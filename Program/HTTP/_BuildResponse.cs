@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
 using System.Text;
 
 namespace Server
@@ -148,7 +147,7 @@ namespace Server
             /// <exception cref="InvalidEnumArgumentException"></exception>
             internal RedirectOptions(ResponseType method, String location)
             {
-                if ((UInt32)method < 300u || ((UInt32)method) > 399u) throw new InvalidEnumArgumentException($"{method} is not a redirect");
+                if ((UInt32)method < 300u || ((UInt32)method) > 399u) throw new InvalidEnumArgumentException(method.ToString() + " is not a redirect");
 
                 Method = method;
                 Location = location;
@@ -205,10 +204,7 @@ namespace Server
         {
             String cookieField = null!;
 
-            if (headerOptions.CookieOptions.IsSet)
-            {
-                cookieField = $"Set-Cookie: {headerOptions.CookieOptions.Name}={headerOptions.CookieOptions.Value}; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age={headerOptions.CookieOptions.MaxAge}\r\n";
-            }
+            if (headerOptions.CookieOptions.IsSet) cookieField = "Set-Cookie: " + headerOptions.CookieOptions.Name + "=" + headerOptions.CookieOptions.Value + "; Secure; HttpOnly; Path=/fileSharing; SameSite=Strict; Max-Age=" + headerOptions.CookieOptions.MaxAge + "\r\n";
 
             //
 
@@ -218,12 +214,8 @@ namespace Server
             {
                 responseLine = headerOptions.RedirectOptions.Method switch
                 {
-                    ResponseType.HTTP_303 => "HTTP/1.1 303 See Other\r\n" +
-                                                $"Location: {headerOptions.RedirectOptions.Location}\r\n",
-
-                    ResponseType.HTTP_307 => "HTTP/1.1 307 Temporary Redirect\r\n" +
-                                                $"Location: {headerOptions.RedirectOptions.Location}\r\n",
-
+                    ResponseType.HTTP_303 => "HTTP/1.1 303 See Other\r\nLocation: " + headerOptions.RedirectOptions.Location + "\r\n",
+                    ResponseType.HTTP_307 => "HTTP/1.1 307 Temporary Redirect\r\nLocation: " + headerOptions.RedirectOptions.Location + "\r\n",
                     _ => null!,
                 };
 
@@ -248,40 +240,20 @@ namespace Server
             {
                 responseLine = headerOptions.ResponseType switch
                 {
-                    ResponseType.HTTP_200 => "HTTP/1.1 200 OK\r\n" +
-                                            $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_400 => "HTTP/1.1 400 Bad Request\r\n" +
-                                            $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_401 => "HTTP/1.1 401 Unauthorized\r\n" +
-                                            $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_403 => "HTTP/1.1 403 Forbidden\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_404 => "HTTP/1.1 404 Not Found\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_409 => "HTTP/1.1 409 Conflict\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_429 => "HTTP/1.1 429 Too Many Requests\r\n" +
-                                            "Retry-After: 150\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_431 => "HTTP/1.1 431 Request Header Fields Too Large\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_500 => "HTTP/1.1 500 Internal Server Error\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_501 => "HTTP/1.1 501 Not Implemented\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
-                    ResponseType.HTTP_507 => "HTTP/1.1 507 Insufficient Storage\r\n" +
-                                           $"Content-length: {headerOptions.ContentLength}\r\n",
-
+                    ResponseType.HTTP_200 => "HTTP/1.1 200 OK\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    
+                    ResponseType.HTTP_400 => "HTTP/1.1 400 Bad Request\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_401 => "HTTP/1.1 401 Unauthorized\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_403 => "HTTP/1.1 403 Forbidden\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_404 => "HTTP/1.1 404 Not Found\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_409 => "HTTP/1.1 409 Conflict\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_429 => "HTTP/1.1 429 Too Many Requests\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_431 => "HTTP/1.1 431 Request Header Fields Too Large\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    
+                    ResponseType.HTTP_500 => "HTTP/1.1 500 Internal Server Error\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_501 => "HTTP/1.1 501 Not Implemented\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    ResponseType.HTTP_507 => "HTTP/1.1 507 Insufficient Storage\r\nContent-length: " + headerOptions.ContentLength + "\r\n",
+                    
                     _ => null!,
                 };
 
@@ -297,7 +269,7 @@ namespace Server
             String contentTypeField = headerOptions.ContentOptions.ContentType switch
             {
                 ContentType.HTML => "Content-Type: text/html; charset=UTF-8\r\n",
-                ContentType.Download => $"Content-Type: application/octet-stream\r\nContent-Disposition: inline; filename=\"{headerOptions.ContentOptions.FileName}\"\r\n",
+                ContentType.Download => "Content-Type: application/octet-stream\r\nContent-Disposition: inline; filename=\"" + headerOptions.ContentOptions.FileName + "\"\r\n",
                 ContentType.Icon => "Content-Type: image/x-icon\r\n",
                 ContentType.PainText => "Content-Type: text/plain; charset=UTF-8\r\n",
                 _ => "Content-Type: application/octet-stream\r\n",
@@ -314,14 +286,5 @@ namespace Server
                 return true;
             }
         }
-    }
-
-    internal static partial class Worker
-    {
-        // todo: remove
-
-        internal static Byte[] ReadFileBytes(String relativePath) => File.ReadAllBytes(Program.AssemblyPath + "html\\" + relativePath);
-
-        internal static String ReadFileText(String relativePath) => File.ReadAllText(Program.AssemblyPath + "html\\" + relativePath);
     }
 }

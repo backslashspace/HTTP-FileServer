@@ -18,11 +18,6 @@ namespace Server
                 try
                 {
                     connection = RedirectListener!.Accept();
-
-                    if (!Redirect(connection))
-                    {
-                        Log.FastLog("Http request was longer than 4096 bytes - closing connection", LogSeverity.Warning, "Redirector");
-                    }
                 }
                 catch (SocketException)
                 {
@@ -36,10 +31,15 @@ namespace Server
                     return;
                 }
 
-                // todo: protection
-
                 try
                 {
+                    if (!Redirect(connection))
+                    {
+                        Log.FastLog("Http request was longer than 4096 bytes - closing connection", LogSeverity.Warning, "Redirector");
+                    }
+
+                    // todo: protection
+
                     connection.Shutdown(SocketShutdown.Both);
                     connection.Close();
                 }
@@ -58,7 +58,7 @@ namespace Server
                 {
                     if (connection.Receive(headerBuffer.Slice(i, 1), SocketFlags.None) == 0) return false;
 
-                    if (24 < i                             // min size
+                    if (24 < i                            // min size
                         && headerBuffer[i - 3] == 0x0D    // first CR
                         && headerBuffer[i - 2] == 0x0A    // first LF
                         && headerBuffer[i - 1] == 0x0D    // second CR
@@ -106,7 +106,7 @@ namespace Server
 
                 String host = Encoding.UTF8.GetString(headerBuffer[hostStartIndex..hostEndIndex]);
 
-                HTTP.RedirectOptions redirectOptions = new(HTTP.ResponseType.HTTP_303, $"https://{host}");
+                HTTP.RedirectOptions redirectOptions = new(HTTP.ResponseType.HTTP_303, "https://" + host);
                 HTTP.CraftHeader(new HTTP.HeaderOptions(redirectOptions), out Byte[] rawResponse);
                 connection.Send(rawResponse, 0, rawResponse.Length, SocketFlags.None);
 

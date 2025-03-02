@@ -75,11 +75,11 @@ namespace BSS.Threading
             }
             catch (Exception exception)
             {
-                Log.FastLog($"Failed to initialize the thread pool: " + exception.Message, LogSeverity.Error, "ThreadPool");
+                Log.FastLog("Failed to initialize the thread pool: " + exception.Message, LogSeverity.Error, "ThreadPool");
                 return false;
             }
 
-            Log.FastLog($"Initialized ThreadPool with {threadCount} threads", LogSeverity.Info, "ThreadPool");
+            Log.FastLog("Initialized ThreadPool with " + threadCount + " threads", LogSeverity.Info, "ThreadPool");
             return true;
         }
 
@@ -111,7 +111,7 @@ namespace BSS.Threading
             if (!_isInitialized) return false;
             _isInitialized = true;
 
-            Log.FastLog($"Shutting down", LogSeverity.Info, "ThreadPool");
+            Log.FastLog("Shutting down", LogSeverity.Info, "ThreadPool");
 
             _shutdown = true;
 
@@ -127,8 +127,8 @@ namespace BSS.Threading
                     if (_threadIsBusy![i]) activeWorkers++;
                 }
 
-                if (activeWorkers == 0) Log.FastLog($"Skipped thread join - no threads were active", LogSeverity.Info, "ThreadPool");
-                else Log.FastLog($"Skipped thread join - {activeWorkers}/{_count} threads were still active", LogSeverity.Info, "ThreadPool");
+                if (activeWorkers == 0) Log.FastLog("Skipped thread join - no threads were active", LogSeverity.Info, "ThreadPool");
+                else Log.FastLog("Skipped thread join - " + activeWorkers + "/" + _count + " threads were still active", LogSeverity.Info, "ThreadPool");
             }
             else
             {
@@ -137,7 +137,7 @@ namespace BSS.Threading
                     _threads![i].Join();
                 }
 
-                Log.FastLog($"Joined all threads", LogSeverity.Info, "ThreadPool");
+                Log.FastLog("Joined all threads", LogSeverity.Info, "ThreadPool");
             }
 
             return true;

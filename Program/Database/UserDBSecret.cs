@@ -16,7 +16,7 @@ namespace Server
         {
             if (!File.Exists(Program.AssemblyPath + "\\" + SECRET_FILENAME))
             {
-                Log.FastLog($"Database secret not found! | File missing at: " + Program.AssemblyPath + "\\" + SECRET_FILENAME, LogSeverity.Critical, "Init");
+                Log.FastLog("Database secret not found! | File missing at: " + Program.AssemblyPath + "\\" + SECRET_FILENAME, LogSeverity.Critical, "Init");
                 return false;
             }
 
@@ -25,7 +25,7 @@ namespace Server
                 FileStream fileStream = new(Program.AssemblyPath + "\\" + SECRET_FILENAME, FileMode.Open, FileAccess.Read, FileShare.Read, SECRET_SIZE, FileOptions.SequentialScan);
                 if (fileStream.Length != SECRET_SIZE)
                 {
-                    Log.FastLog($"Database secret found but had the wrong size! | Current size: {fileStream.Length}, expected size: {SECRET_SIZE}", LogSeverity.Critical, "Init");
+                    Log.FastLog("Database secret found but had the wrong size! | Current size: " + fileStream.Length + ", expected size: " + SECRET_SIZE, LogSeverity.Critical, "Init");
                     
                     fileStream.Close();
                     fileStream.Dispose();
@@ -39,13 +39,13 @@ namespace Server
                 fileStream.Close();
                 fileStream.Dispose();
 
-                Log.FastLog($"Loaded database secret", LogSeverity.Info, "UserDB");
+                Log.FastLog("Loaded database secret", LogSeverity.Info, "UserDB");
 
                 return true;
             }
             catch (Exception ex)
             {
-                Log.FastLog($"An error occurred whilst reading the database secret: {ex.Message}", LogSeverity.Critical, "Init");
+                Log.FastLog("An error occurred whilst reading the database secret: " + ex.Message, LogSeverity.Critical, "Init");
                 return false;
             }
         }
@@ -77,7 +77,7 @@ namespace Server
             }
             catch (Exception ex)
             {
-                Log.FastLog($"An error occurred whilst writing to the database secret: {ex.Message}", LogSeverity.Critical, "Init");
+                Log.FastLog("An error occurred whilst writing to the database secret: " + ex.Message, LogSeverity.Critical, "Init");
                 return false;
             }
         }
