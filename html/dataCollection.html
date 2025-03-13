@@ -19,53 +19,50 @@
 		right: 0;
 		bottom: 0;
 		height: 50px;
-	}
+}
 </style>
 
 <html style="background-color:#202020;font-family:Helvetica;color:#fbfbfb;">
 	<head>
 		<meta charset="utf-8">
-		<title>Landing Page</title>
+		<title>User Data Info</title>
 	</head>
 
 	<body>
 
 		<nav link="#0067C0" alink="aqua" vlink="coral">
 			<p align="right" style="margin-right:10em;">
-				<a href="/fileSharing" style="padding:10px;">File Sharing</a> 
-				<a href="/dataCollection">Data Collection</a>
+				<a href="/">Back to Main-Page</a>
 			</p>
 		</nav>
-	
+
 		<center>
 
-			<h1>Web Root</h1>
+			<h1>What does this site collect</h1>
 
 			<hr style="margin-right:10em; margin-left:10em;" />
 
-			<p style="font-size: 18px; margin-top: 40px">Access for authorized humans only</p>
+			<div style="max-width: 600px; margin-top:40px;">
 
-			<table style="margin-top: 10px;">
-				<tr>
-					<td style="text-align: center;">Port</td>
-					<td style="text-align: center;">Service</td>
-					<td style="text-align: center;">Additional Info</td>
-				</tr>
-				<tr>
-					<td> --- </td>
-					<td> --- </td>
-					<td> --- </td>
-				</tr>
-				<tr>
-					<td> --- </td>
-					<td> --- </td>
-					<td> --- </td>
-				</tr>
-			</table>
+				<h3>NGINX:</h3>
+
+				<div style="text-align: left; width: 200px; margin-left:5em;">
+					<p>- no access logs</p>
+					<p>- normal error logs</p>
+				</div>
+
+				<h3 style="margin-top:30px;">File Sharing App</h3>
+
+				<div style="text-align: left; width: 500px; margin-left:15em;">
+					<p>- no ips</p>
+					<p>- when and who logs in and out</p>
+					<p>- all session data it at least cleared when the application restarts</p>
+				</div>
+
+			</div>
 
 		</center>
 
 		<div class="footer"/>
-
 	</body>
-</html>
+</html> 
