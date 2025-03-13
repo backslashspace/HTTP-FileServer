@@ -77,7 +77,7 @@ namespace BSS.Logging
 
             _configuration = configuration;
 
-            if (Directory.Exists(configuration.LogDirectoryPath +"\\logs"))
+            if (Directory.Exists(configuration.LogDirectoryPath + "\\logs"))
             {
                 DateTime now = DateTime.Now;
 

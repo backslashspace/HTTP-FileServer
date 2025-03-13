@@ -147,7 +147,7 @@ namespace Server
             /// <exception cref="InvalidEnumArgumentException"></exception>
             internal RedirectOptions(ResponseType method, String location)
             {
-                if ((UInt32)method < 300u || ((UInt32)method) > 399u) throw new InvalidEnumArgumentException(method.ToString() + " is not a redirect");
+                if ((UInt32)method < 300u || ((UInt32)method) > 399u) throw new InvalidEnumArgumentException(method + " is not a redirect");
 
                 Method = method;
                 Location = location;

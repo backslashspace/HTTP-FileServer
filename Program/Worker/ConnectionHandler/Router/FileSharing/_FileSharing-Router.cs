@@ -25,12 +25,6 @@ namespace Server
                 }
             }
 
-            // files router
-
-            // cp router
-
-            // todo: protection
-
             Log.FastLog("Resource not found: /" + String.Join('/', pathParts), LogSeverity.Alert, "FileSharingHandler");
             HTTP.ERRORS.Send_404(connection);
         }

@@ -9,23 +9,32 @@ namespace Server
         {
             if (!AuthenticationBarrier(connection, header, out UserDB.User invokingUser)) return;
 
-            switch (HTTP.GetRequestMethod(header))
+            if (pathParts.Length == 2)
             {
-                case HTTP.RequestMethod.GET:
-                    HTTP.ERRORS.Send_501(connection);
-                    //SendStackFile(connection, "fileSharing\\controlPanel.html");
-                    return;
-
-                //case HTTP.RequestMethod.POST:
-                //    PerformLogin(connection, header);
-                //    return;
-
-                case HTTP.RequestMethod.Invalid:
-                    HTTP.ERRORS.Send_400(connection);
-                    return;
+                SendControlPanel(connection, invokingUser);
+                return;
             }
+            
 
-            // todo: protection
+
+
+
+            //switch (HTTP.GetRequestMethod(header))
+            //{
+            //    case HTTP.RequestMethod.GET:
+            //        SendControlPanel(connection);
+            //        return;
+
+            //    //case HTTP.RequestMethod.POST:
+            //    //    PerformLogin(connection, header);
+            //    //    return;
+
+            //    case HTTP.RequestMethod.Invalid:
+            //        HTTP.ERRORS.Send_400(connection);
+            //        return;
+            //}
+
+           
 
             Log.FastLog("Resource not found: /" + String.Join('/', pathParts), LogSeverity.Alert, "ControlPanelHandler");
             HTTP.ERRORS.Send_404(connection);
