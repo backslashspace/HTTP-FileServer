@@ -53,8 +53,26 @@ namespace Server
 
             //
 
-            loweredPath = header.Substring(pathStartIndex, pathEndIndex - pathStartIndex).ToLower();
+            loweredPath = header[pathStartIndex..pathEndIndex];
+            ToLower(loweredPath);
+
             return true;
+        }
+
+        private unsafe static void ToLower(String data)
+        {
+            Int32 length = data.Length;
+
+            fixed (Char* ptr = &data.GetPinnableReference())
+            {
+                for (Int32 i = 0; i < length; ++i)
+                {
+                    if (ptr[i] > 64 && ptr[i] < 91)
+                    {
+                        ptr[i] += (Char)32;
+                    }
+                }
+            }
         }
     }
 }
