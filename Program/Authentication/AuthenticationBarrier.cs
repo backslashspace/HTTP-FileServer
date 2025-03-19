@@ -80,7 +80,7 @@ namespace Server
 
         private static void SendSessionExpiredPage(SecureSocket connection)
         {
-            Int64 fileSize = GetFileSize(Program.AssemblyPath + "html\\fileSharing\\loginExpired.html");
+            Int64 fileSize = Tools.GetFileSize(Program.AssemblyPath + "html\\fileSharing\\loginExpired.html");
 
             if (fileSize < 1)
             {
@@ -91,7 +91,7 @@ namespace Server
             }
 
             Span<Byte> fileBuffer = stackalloc Byte[(Int32)fileSize];
-            if (!LoadStackFile(Program.AssemblyPath + "html\\fileSharing\\loginExpired.html", fileBuffer))
+            if (!Tools.LoadStackFile(Program.AssemblyPath + "html\\fileSharing\\loginExpired.html", fileBuffer))
             {
                 Log.FastLog("Unable to load html\\fileSharing\\loginExpired.html from disk -> 500", LogSeverity.Error, "AuthBarrier");
                 HTTP.ERRORS.Send_500(connection);

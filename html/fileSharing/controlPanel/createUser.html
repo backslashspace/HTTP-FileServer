@@ -102,28 +102,28 @@
         <h1>Create New User</h1>
         <hr>
         <p>Please enter the information below to create a new user. Ensure all required fields are completed.</p>
-        <form action="" method="post">
+        <form action="/fileSharing/controlPanel/createUser/commit" method="post">
             <label for="username">Username</label>
-            <input type="text" id="loginUsername" name="loginUsername" required />
+            <input type="text" id="loginUsername" name="lU" required />
 
             <label for="displayName">Display Name</label>
-            <input type="text" id="displayUsername" name="displayUsername" required />
+            <input type="text" id="displayUsername" name="dU" required />
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
+            <input type="password" id="password" name="pw" required />
 
             <label>
-                <input type="checkbox" name="isEnabled" checked />
+                <input type="checkbox" name="ac" checked />
                 Enable User
             </label>
 
             <label>
-                <input type="checkbox" name="write" />
+                <input type="checkbox" name="wr" />
                 Write Access
             </label>
 
             <label>
-                <input type="checkbox" name="read" />
+                <input type="checkbox" name="rd" />
                 Read Access
             </label>
 

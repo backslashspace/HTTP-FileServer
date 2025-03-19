@@ -1,7 +1,6 @@
-﻿using BSS.Logging;
-using System;
+﻿using System;
 using System.Net;
-using System.Text;
+using BSS.Logging;
 
 namespace Server
 {
@@ -9,338 +8,487 @@ namespace Server
     {
         private unsafe static Boolean Parse(ref Span<Byte> buffer, Configuration* configuration)
         {
-            if (buffer.Length < 85)
+            Int32 length = buffer.Length;
+            Int32 newLineWidth = 0;
+            Char newLineStart = '\0';
+
+            for (Int32 i = 0; i < length; ++i)
             {
-                Log.FastLog("Config file was less than 85 chars", LogSeverity.Error, LOG_WORD);
-                return false;
+                if (buffer[i] == '\r')
+                {
+                    if (i + 1 < length && buffer[i] == '\n')
+                    {
+                        // CRLF -> Windows
+                        newLineWidth = 2;
+                        newLineStart = '\r';
+                        break;
+                    }
+                    else
+                    {
+                        // CR -> Mac
+                        newLineWidth = 1;
+                        newLineStart = '\r';
+                        break;
+                    }
+                }
+
+                if (buffer[i] == '\n')
+                {
+                    // LF -> Linux
+                    newLineWidth = 1;
+                    newLineStart = '\n';
+                    break;
+                }
             }
 
-            Int32 bufferLength = buffer.Length;
+            if (newLineWidth == 0) return false;
 
-            // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+            IPAddress listenIP = null!;
+            UInt16 httpsPort = 0;
+            UInt16 redirectPort = 0;
+            Int32 enableRedirect = 2;
+            UInt16 threads = 0;
+            Int32 enableProtection = 2;
+            Int32 enableReload = 2;
+            String pfxPath = null!;
+            String pfxPassphrase = null!;
 
-            Span<Byte> ipBuffer = null;
-            Span<Byte> securePortBuffer = null;
-            Span<Byte> enableRedirectBuffer = null;
-            Span<Byte> redirectPortBuffer = null;
-            Span<Byte> threadsBuffer = null;
-            Span<Byte> protectionBuffer = null;
+            Int32 currentStartIndex = 0;
+            Boolean increment = true;
 
-            Int32 startIndex = 0;
-
-            for (Int32 i = 0; i < bufferLength; ++i)
+            for (Int32 i = 0; i < length; i = increment ? ++i : i)
             {
-                if (buffer[i] == 'l'
-                && buffer[i + 1] == 'i'
-                && buffer[i + 2] == 's'
-                && buffer[i + 3] == 't'
-                && buffer[i + 4] == 'e'
-                && buffer[i + 5] == 'n'
-                && buffer[i + 6] == 'I'
-                && buffer[i + 7] == 'P'
-                && buffer[i + 8] == '=')
+            OUTER:
+                if (buffer[i] == '#')
                 {
-                    startIndex = i + 9;
-                    i = startIndex;
-
-                    for (; i < bufferLength; ++i)
+                    for (++i; i < length; ++i)
                     {
-                        if (buffer[i] == '\r' || buffer[i] == ' ' || buffer[i] == 'n')
+                        if (buffer[i] == newLineStart)
                         {
-                            ipBuffer = buffer[startIndex..i];
-                            if (bufferLength > i + 1 && buffer[i + 1] == '\n') ++i;
-                            goto OUTER;
-                        }
-                        else if (bufferLength == i + 1)
-                        {
-                            ipBuffer = buffer[startIndex..(i + 1)];
+                            i += newLineWidth;
                             goto OUTER;
                         }
                     }
                 }
 
-                if (buffer[i] == 's'
-                && buffer[i + 1] == 'e'
-                && buffer[i + 2] == 'c'
-                && buffer[i + 3] == 'u'
-                && buffer[i + 4] == 'r'
-                && buffer[i + 5] == 'e'
-                && buffer[i + 6] == 'P'
-                && buffer[i + 7] == 'o'
-                && buffer[i + 8] == 'r'
-                && buffer[i + 9] == 't'
-                && buffer[i + 10] == '=')
+                if (buffer[i] == newLineStart)
                 {
-                    startIndex = i + 11;
-                    i = startIndex;
+                    i += newLineWidth;
+                    goto OUTER;
+                }
 
-                    for (; i < bufferLength; ++i)
+                //
+
+                increment = true;
+
+                if (listenIP == null && i + 9 < length)
+                {
+                    if (buffer[i] == 'l'
+                        && buffer[i + 1] == 'i'
+                        && buffer[i + 2] == 's'
+                        && buffer[i + 3] == 't'
+                        && buffer[i + 4] == 'e'
+                        && buffer[i + 5] == 'n'
+                        && buffer[i + 6] == 'I'
+                        && buffer[i + 7] == 'P'
+                        && buffer[i + 8] == '=')
                     {
-                        if (buffer[i] == '\r' || buffer[i] == ' ' || buffer[i] == 'n')
+                        increment = false;
+                        currentStartIndex = i += 9;
+
+                        for (++i; i < length; ++i)
                         {
-                            securePortBuffer = buffer[startIndex..i];
-                            if (bufferLength > i + 1 && buffer[i + 1] == '\n') ++i;
-                            goto OUTER;
+                            if (buffer[i] == newLineStart)
+                            {
+                                Int32 sliceLength = i - currentStartIndex;
+                                Span<Char> charCopy = stackalloc Char[sliceLength];
+
+                                for (Int32 j = 0; j < sliceLength; ++j)
+                                {
+                                    charCopy[j] = (Char)buffer[currentStartIndex + j];
+                                }
+
+                                if (!IPAddress.TryParse(charCopy, out listenIP!))
+                                {
+                                    Log.FastLog("listenIP was invalid: " + charCopy.ToString(), LogSeverity.Error, LOG_WORD);
+                                    return false;
+                                }
+
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
                         }
-                        else if (bufferLength == i + 1)
+
+                        if (i == length)
                         {
-                            securePortBuffer = buffer[startIndex..(i + 1)];
-                            goto OUTER;
+                            Int32 sliceLength = i - currentStartIndex;
+                            Span<Char> charCopy = stackalloc Char[sliceLength];
+
+                            for (Int32 j = 0; j < sliceLength; ++j)
+                            {
+                                charCopy[j] = (Char)buffer[currentStartIndex + j];
+                            }
+
+                            if (!IPAddress.TryParse(charCopy, out listenIP!))
+                            {
+                                Log.FastLog("listenIP was invalid: " + charCopy.ToString(), LogSeverity.Error, LOG_WORD);
+                                return false;
+                            }
+
+                            break;
                         }
                     }
                 }
 
-                if (buffer[i] == 'e'
-                && buffer[i + 1] == 'n'
-                && buffer[i + 2] == 'a'
-                && buffer[i + 3] == 'b'
-                && buffer[i + 4] == 'l'
-                && buffer[i + 5] == 'e'
-                && buffer[i + 6] == 'R'
-                && buffer[i + 7] == 'e'
-                && buffer[i + 8] == 'd'
-                && buffer[i + 9] == 'i'
-                && buffer[i + 10] == 'r'
-                && buffer[i + 11] == 'e'
-                && buffer[i + 12] == 'c'
-                && buffer[i + 13] == 't'
-                && buffer[i + 14] == '=')
+                if (httpsPort == 0 && i + 11 < length)
                 {
-                    startIndex = i + 15;
-                    i = startIndex;
-
-                    for (; i < bufferLength; ++i)
+                    if (buffer[i] == 's'
+                        && buffer[i + 1] == 'e'
+                        && buffer[i + 2] == 'c'
+                        && buffer[i + 3] == 'u'
+                        && buffer[i + 4] == 'r'
+                        && buffer[i + 5] == 'e'
+                        && buffer[i + 6] == 'P'
+                        && buffer[i + 7] == 'o'
+                        && buffer[i + 8] == 'r'
+                        && buffer[i + 9] == 't'
+                        && buffer[i + 10] == '=')
                     {
-                        if (buffer[i] == '\r' || buffer[i] == ' ' || buffer[i] == 'n')
+                        increment = false;
+                        currentStartIndex = i += 11;
+
+                        for (++i; i < length; ++i)
                         {
-                            enableRedirectBuffer = buffer[startIndex..i];
-                            if (bufferLength > i + 1 && buffer[i + 1] == '\n') ++i;
-                            goto OUTER;
+                            if (buffer[i] == newLineStart)
+                            {
+                                if (!Tools.GetUInt16(buffer[currentStartIndex..i], out httpsPort))
+                                {
+                                    Log.FastLog("securePort (https) was invalid: " + buffer[currentStartIndex..i].ToString(), LogSeverity.Error, LOG_WORD);
+                                    return false;
+                                }
+
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
                         }
-                        else if (bufferLength == i + 1)
+
+                        if (i == length)
                         {
-                            enableRedirectBuffer = buffer[startIndex..(i + 1)];
-                            goto OUTER;
+                            if (!Tools.GetUInt16(buffer[currentStartIndex..i], out httpsPort))
+                            {
+                                Log.FastLog("securePort (https) was invalid: " + buffer[currentStartIndex..i].ToString(), LogSeverity.Error, LOG_WORD);
+                                return false;
+                            }
+
+                            break;
                         }
                     }
                 }
 
-                if (buffer[i] == 'r'
-                && buffer[i + 1] == 'e'
-                && buffer[i + 2] == 'd'
-                && buffer[i + 3] == 'i'
-                && buffer[i + 4] == 'r'
-                && buffer[i + 5] == 'e'
-                && buffer[i + 6] == 'c'
-                && buffer[i + 7] == 't'
-                && buffer[i + 8] == 'P'
-                && buffer[i + 9] == 'o'
-                && buffer[i + 10] == 'r'
-                && buffer[i + 11] == 't'
-                && buffer[i + 12] == '=')
+                if (redirectPort == 0 && i + 13 < length)
                 {
-                    startIndex = i + 13;
-                    i = startIndex;
-
-                    for (; i < bufferLength; ++i)
+                    if (buffer[i] == 'r'
+                        && buffer[i + 1] == 'e'
+                        && buffer[i + 2] == 'd'
+                        && buffer[i + 3] == 'i'
+                        && buffer[i + 4] == 'r'
+                        && buffer[i + 5] == 'e'
+                        && buffer[i + 6] == 'c'
+                        && buffer[i + 7] == 't'
+                        && buffer[i + 8] == 'P'
+                        && buffer[i + 9] == 'o'
+                        && buffer[i + 10] == 'r'
+                        && buffer[i + 11] == 't'
+                        && buffer[i + 12] == '=')
                     {
-                        if (buffer[i] == '\r' || buffer[i] == ' ' || buffer[i] == 'n')
+                        increment = false;
+                        currentStartIndex = i += 13;
+
+                        for (++i; i < length; ++i)
                         {
-                            redirectPortBuffer = buffer[startIndex..i];
-                            if (bufferLength > i + 1 && buffer[i + 1] == '\n') ++i;
-                            goto OUTER;
+                            if (buffer[i] == newLineStart)
+                            {
+                                if (!Tools.GetUInt16(buffer[currentStartIndex..i], out redirectPort))
+                                {
+                                    Log.FastLog("redirectPort (http) was invalid: " + buffer[currentStartIndex..i].ToString(), LogSeverity.Error, LOG_WORD);
+                                    return false;
+                                }
+
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
                         }
-                        else if (bufferLength == i + 1)
+
+                        if (i == length)
                         {
-                            redirectPortBuffer = buffer[startIndex..(i + 1)];
-                            goto OUTER;
+                            if (!Tools.GetUInt16(buffer[currentStartIndex..i], out redirectPort))
+                            {
+                                Log.FastLog("redirectPort (http) was invalid: " + buffer[currentStartIndex..i].ToString(), LogSeverity.Error, LOG_WORD);
+                                return false;
+                            }
+
+                            break;
                         }
                     }
                 }
 
-                if (buffer[i] == 't'
-                && buffer[i + 1] == 'h'
-                && buffer[i + 2] == 'r'
-                && buffer[i + 3] == 'e'
-                && buffer[i + 4] == 'a'
-                && buffer[i + 5] == 'd'
-                && buffer[i + 6] == 's'
-                && buffer[i + 7] == '=')
+                if (enableRedirect == 2 && i + 15 < length)
                 {
-                    startIndex = i + 8;
-                    i = startIndex;
-
-                    for (; i < bufferLength; ++i)
+                    if (buffer[i] == 'e'
+                        && buffer[i + 1] == 'n'
+                        && buffer[i + 2] == 'a'
+                        && buffer[i + 3] == 'b'
+                        && buffer[i + 4] == 'l'
+                        && buffer[i + 5] == 'e'
+                        && buffer[i + 6] == 'R'
+                        && buffer[i + 7] == 'e'
+                        && buffer[i + 8] == 'd'
+                        && buffer[i + 9] == 'i'
+                        && buffer[i + 10] == 'r'
+                        && buffer[i + 11] == 'e'
+                        && buffer[i + 12] == 'c'
+                        && buffer[i + 13] == 't'
+                        && buffer[i + 14] == '=')
                     {
-                        if (buffer[i] == '\r' || buffer[i] == ' ' || buffer[i] == 'n')
+                        increment = false;
+                        currentStartIndex = i += 15;
+
+                        enableRedirect = buffer[i] == 't' ? 1 : 0;
+
+                        for (++i; i < length; ++i)
                         {
-                            threadsBuffer = buffer[startIndex..i];
-                            if (bufferLength > i + 1 && buffer[i + 1] == '\n') ++i;
-                            goto OUTER;
-                        }
-                        else if (bufferLength == i + 1)
-                        {
-                            threadsBuffer = buffer[startIndex..(i + 1)];
-                            goto OUTER;
+                            if (buffer[i] == newLineStart)
+                            {
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
                         }
                     }
                 }
 
-                if (buffer[i] == 'p'
-                && buffer[i + 1] == 'r'
-                && buffer[i + 2] == 'o'
-                && buffer[i + 3] == 't'
-                && buffer[i + 4] == 'e'
-                && buffer[i + 5] == 'c'
-                && buffer[i + 6] == 't'
-                && buffer[i + 7] == 'i'
-                && buffer[i + 8] == 'o'
-                && buffer[i + 9] == 'n'
-                && buffer[i + 10] == '=')
+                if (threads == 0 && i + 8 < length)
                 {
-                    startIndex = i + 11;
-                    i = startIndex;
-
-                    for (; i < bufferLength; ++i)
+                    if (buffer[i] == 't'
+                        && buffer[i + 1] == 'h'
+                        && buffer[i + 2] == 'r'
+                        && buffer[i + 3] == 'e'
+                        && buffer[i + 4] == 'a'
+                        && buffer[i + 5] == 'd'
+                        && buffer[i + 6] == 's'
+                        && buffer[i + 7] == '=')
                     {
-                        if (buffer[i] == '\r' || buffer[i] == ' ' || buffer[i] == 'n')
+                        increment = false;
+                        currentStartIndex = i += 8;
+
+                        for (++i; i < length; ++i)
                         {
-                            protectionBuffer = buffer[startIndex..i];
-                            if (bufferLength > i + 1 && buffer[i + 1] == '\n') ++i;
-                            goto OUTER;
+                            if (buffer[i] == newLineStart)
+                            {
+                                if (!Tools.GetUInt16(buffer[currentStartIndex..i], out threads))
+                                {
+                                    Log.FastLog("threads was invalid: " + buffer[currentStartIndex..i].ToString(), LogSeverity.Error, LOG_WORD);
+                                    return false;
+                                }
+
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
                         }
-                        else if (bufferLength == i + 1)
+
+                        if (i == length)
                         {
-                            protectionBuffer = buffer[startIndex..(i + 1)];
-                            goto OUTER;
+                            if (!Tools.GetUInt16(buffer[currentStartIndex..i], out threads))
+                            {
+                                Log.FastLog("threads was invalid: " + buffer[currentStartIndex..i].ToString(), LogSeverity.Error, LOG_WORD);
+                                return false;
+                            }
+
+                            break;
                         }
                     }
                 }
 
-            OUTER:;
+                if (enableProtection == 2 && i + 11 < length)
+                {
+                    if (buffer[i] == 'p'
+                        && buffer[i + 1] == 'r'
+                        && buffer[i + 2] == 'o'
+                        && buffer[i + 3] == 't'
+                        && buffer[i + 4] == 'e'
+                        && buffer[i + 5] == 'c'
+                        && buffer[i + 6] == 't'
+                        && buffer[i + 7] == 'i'
+                        && buffer[i + 8] == 'o'
+                        && buffer[i + 9] == 'n'
+                        && buffer[i + 10] == '=')
+                    {
+                        increment = false;
+                        currentStartIndex = i += 11;
 
-                if (!ipBuffer.IsEmpty
-                    && !securePortBuffer.IsEmpty
-                    && !enableRedirectBuffer.IsEmpty
-                    && !redirectPortBuffer.IsEmpty
-                    && !threadsBuffer.IsEmpty
-                    && !protectionBuffer.IsEmpty) break;
+                        enableProtection = buffer[i] == 't' ? 1 : 0;
+
+                        for (++i; i < length; ++i)
+                        {
+                            if (buffer[i] == newLineStart)
+                            {
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
+                        }
+                    }
+                }
+
+                if (enableReload == 2 && i + 13 < length)
+                {
+                    if (buffer[i] == 'e'
+                        && buffer[i + 1] == 'n'
+                        && buffer[i + 2] == 'a'
+                        && buffer[i + 3] == 'b'
+                        && buffer[i + 4] == 'l'
+                        && buffer[i + 5] == 'e'
+                        && buffer[i + 6] == 'R'
+                        && buffer[i + 7] == 'e'
+                        && buffer[i + 8] == 'l'
+                        && buffer[i + 9] == 'o'
+                        && buffer[i + 10] == 'a'
+                        && buffer[i + 11] == 'd'
+                        && buffer[i + 12] == '=')
+                    {
+                        increment = false;
+                        currentStartIndex = i += 13;
+
+                        enableReload = buffer[i] == 't' ? 1 : 0;
+
+                        for (++i; i < length; ++i)
+                        {
+                            if (buffer[i] == newLineStart)
+                            {
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
+                        }
+                    }
+                }
+
+                if (pfxPath == null && i + 8 < length)
+                {
+                    if (buffer[i] == 'p'
+                        && buffer[i + 1] == 'f'
+                        && buffer[i + 2] == 'x'
+                        && buffer[i + 3] == 'P'
+                        && buffer[i + 4] == 'a'
+                        && buffer[i + 5] == 't'
+                        && buffer[i + 6] == 'h'
+                        && buffer[i + 7] == '=')
+                    {
+                        increment = false;
+                        currentStartIndex = i += 8;
+
+                        for (++i; i < length; ++i)
+                        {
+                            if (buffer[i] == newLineStart)
+                            {
+                                Int32 sliceLength = i - currentStartIndex;
+                                pfxPath = new('\0', sliceLength);
+
+                                fixed (Char* pfxPathPointer = &pfxPath.GetPinnableReference())
+                                {
+                                    for (Int32 j = 0; j < sliceLength; ++j)
+                                    {
+                                        pfxPathPointer[j] = (Char)buffer[currentStartIndex + j];
+                                    }
+                                }
+
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
+                        }
+
+                        if (i == length)
+                        {
+                            Int32 sliceLength = i - currentStartIndex;
+                            pfxPath = new('\0', sliceLength);
+
+                            fixed (Char* pfxPathPointer = &pfxPath.GetPinnableReference())
+                            {
+                                for (Int32 j = 0; j < sliceLength; ++j)
+                                {
+                                    pfxPathPointer[j] = (Char)buffer[currentStartIndex + j];
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                if (pfxPassphrase == null && i + 12 < length)
+                {
+                    if (buffer[i] == 'p'
+                        && buffer[i + 1] == 'f'
+                        && buffer[i + 2] == 'x'
+                        && buffer[i + 3] == 'P'
+                        && buffer[i + 4] == 'a'
+                        && buffer[i + 5] == 's'
+                        && buffer[i + 6] == 's'
+                        && buffer[i + 7] == 'w'
+                        && buffer[i + 8] == 'o'
+                        && buffer[i + 9] == 'r'
+                        && buffer[i + 10] == 'd'
+                        && buffer[i + 11] == '=')
+                    {
+                        increment = false;
+                        currentStartIndex = i += 12;
+
+                        for (++i; i < length; ++i)
+                        {
+                            if (buffer[i] == newLineStart)
+                            {
+                                Int32 sliceLength = i - currentStartIndex;
+                                pfxPassphrase = new('\0', sliceLength);
+
+                                fixed (Char* pfxPassphrasePointer = &pfxPassphrase.GetPinnableReference())
+                                {
+                                    for (Int32 j = 0; j < sliceLength; ++j)
+                                    {
+                                        pfxPassphrasePointer[j] = (Char)buffer[currentStartIndex + j];
+                                    }
+                                }
+
+                                i += newLineWidth;
+                                goto OUTER;
+                            }
+                        }
+
+                        if (i == length)
+                        {
+                            Int32 sliceLength = i - currentStartIndex;
+                            pfxPassphrase = new('\0', sliceLength);
+
+                            fixed (Char* pfxPassphrasePointer = &pfxPassphrase.GetPinnableReference())
+                            {
+                                for (Int32 j = 0; j < sliceLength; ++j)
+                                {
+                                    pfxPassphrasePointer[j] = (Char)buffer[currentStartIndex + j];
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+                }
             }
 
-            //
+            configuration->ListenerAddress = listenIP!;
+            configuration->HttpsListenerPort = httpsPort;
+            configuration->HttpListenerPort = redirectPort;
+            configuration->EnableHttpRedirector = *(Boolean*)&enableRedirect;
+            configuration->ThreadPoolThreads = threads;
+            configuration->EnableServiceProtection = *(Boolean*)&enableProtection;
+            configuration->EnableReload = *(Boolean*)&enableReload;
+            configuration->PfxPath = pfxPath!;
+            configuration->PfxPassphrase = pfxPassphrase!;
 
-            if (ipBuffer.IsEmpty
-                    || securePortBuffer.IsEmpty
-                    || enableRedirectBuffer.IsEmpty
-                    || redirectPortBuffer.IsEmpty
-                    || threadsBuffer.IsEmpty
-                    || protectionBuffer.IsEmpty)
-            {
-                Log.FastLog("Config incomplete or invalid", LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-
-            // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-            Span<Char> ip = stackalloc Char[ipBuffer.Length];
-            for (Int32 i = 0; i < ipBuffer.Length; ++i)
-            {
-                ip[i] = (Char)ipBuffer[i];
-            }
-            if (!IPAddress.TryParse(ip, out IPAddress? parsedIP))
-            {
-                Log.FastLog("listenIP was invalid, expected ip, found: " + ip.ToString(), LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-            configuration->ListenerAddress = parsedIP!;
-
-            if (!GetUInt16(ref securePortBuffer, out configuration->HttpsListenerPort))
-            {
-                Log.FastLog("securePort was invalid, expected number from 0 to 65535, found: " + Encoding.ASCII.GetString(securePortBuffer), LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-            if (configuration->HttpsListenerPort == 0)
-            {
-                Log.FastLog("securePort was invalid, expected number from 1 to 65535, port was 0", LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-
-            *(Byte*)&configuration->EnableHttpRedirector = (Char)enableRedirectBuffer[0] switch
-            {
-                't' => 1,
-                'T' => 1,
-                '1' => 1,
-                'f' => 0,
-                'F' => 0,
-                '0' => 0,
-                _ => 2
-            };
-            if (*(Byte*)&configuration->EnableHttpRedirector == 2)
-            {
-                Log.FastLog("enableRedirect was invalid, expected t,T,1,f,F,0 - found: " + (Char)enableRedirectBuffer[0], LogSeverity.Error, LOG_WORD);
-                configuration->EnableHttpRedirector = false;
-                return false;
-            }
-
-            if (!GetUInt16(ref redirectPortBuffer, out configuration->HttpListenerPort))
-            {
-                Log.FastLog("redirectPort was invalid, expected number from 0 to 65535, found: " + Encoding.ASCII.GetString(redirectPortBuffer), LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-            if (configuration->HttpListenerPort == 0)
-            {
-                Log.FastLog("redirectPort was invalid, expected number from 1 to 65535, port was 0", LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-
-            if (!GetUInt16(ref threadsBuffer, out configuration->ThreadPoolThreads))
-            {
-                Log.FastLog("threads was invalid, expected number from 0 to 65535, found: " + Encoding.ASCII.GetString(threadsBuffer), LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-            if (configuration->ThreadPoolThreads == 0)
-            {
-                Log.FastLog("threads was invalid, expected number from 1 to 65535, port was 0", LogSeverity.Error, LOG_WORD);
-                return false;
-            }
-
-            *(Byte*)&configuration->EnableServiceProtection = (Char)protectionBuffer[0] switch
-            {
-                't' => 1,
-                'T' => 1,
-                '1' => 1,
-                'f' => 0,
-                'F' => 0,
-                '0' => 0,
-                _ => 2
-            };
-            if (*(Byte*)&configuration->EnableServiceProtection == 2)
-            {
-                Log.FastLog("protection was invalid, expected t,T,1,f,F,0 - found: " + (Char)protectionBuffer[0], LogSeverity.Error, LOG_WORD);
-                configuration->EnableServiceProtection = false;
-                return false;
-            }
-
-            return true;
-        }
-
-        private static Boolean GetUInt16(ref Span<Byte> buffer, out UInt16 value)
-        {
-            Int32 internalValue= 0;
-
-            for (Int32 i = 0; i < buffer.Length; i++)
-            {
-                // shift whole to left by doing x10, then add the new number
-                internalValue = (internalValue * 10) + (buffer[i] - 48);
-            }
-
-            if (internalValue < 1 && internalValue > UInt16.MaxValue)
-            {
-                value = 0;
-                return false;
-            }
-
-            value = (UInt16)internalValue;
             return true;
         }
     }

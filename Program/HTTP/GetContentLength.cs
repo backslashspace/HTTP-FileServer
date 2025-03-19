@@ -7,6 +7,7 @@ namespace Server
         internal static Boolean GetContentLength(String header, out Int64 contentLength)
         {
             Int32 headerLength = header.Length;
+
             Int32 lengthStartIndex = 0;
             Int32 lengthEndIndex = 0;
 

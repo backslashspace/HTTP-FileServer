@@ -12,10 +12,15 @@ namespace Server
 
         internal static readonly ManualResetEvent Exit = new(false);
 
-        private static void Main()
+        private static void Main(String[] args)
         {
             AssemblyPath = AppContext.BaseDirectory;
             Log.Initialize(new(AssemblyPath));
+
+            if (args.Length == 1 && args[0] == "/reload")
+            {
+                Environment.Exit(0);
+            }
 
             HostApplicationBuilderSettings hostApplicationBuilderSettings = new();
             hostApplicationBuilderSettings.ApplicationName = "File Server";

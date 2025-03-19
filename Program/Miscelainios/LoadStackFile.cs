@@ -4,15 +4,15 @@ using System.IO;
 
 namespace Server
 {
-    internal static partial class Worker
+    internal static partial class Tools
     {
-        private static Int64 GetFileSize(String path)
+        internal static Int64 GetFileSize(String path)
         {
             if (!File.Exists("\\\\?\\" + path)) return -1;
             return new FileInfo("\\\\?\\" + path).Length;
         }
 
-        private static Boolean LoadStackFile(String path, Span<Byte> fileBuffer)
+        internal static Boolean LoadStackFile(String path, Span<Byte> fileBuffer)
         {
             try
             {

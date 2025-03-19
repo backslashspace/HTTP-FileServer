@@ -30,14 +30,8 @@ namespace Server
         /// <param name="pfxPath">Path to the certificate and private key</param>
         /// <param name="password">Optional password for the PFX file</param>
         /// <returns></returns>
-        internal static Boolean Initialize(String pfxPath, String? password)
+        internal static Boolean LoadCertificate(String pfxPath, String? password)
         {
-            if (!File.Exists(pfxPath))
-            {
-                Log.FastLog("PFX certificate not found: " + pfxPath, LogSeverity.Error, "SecureSocket");
-                return false;
-            }
-
             try
             {
                 _serverCertificate = X509CertificateLoader.LoadPkcs12FromFile(pfxPath, password, X509KeyStorageFlags.DefaultKeySet);
@@ -45,12 +39,19 @@ namespace Server
             catch (Exception exception)
             {
                 Log.FastLog("Failed to load PFX certificate: " + exception.Message, LogSeverity.Error, "SecureSocket");
+
+                _initialized = false;
+                _serverCertificate = null;
+                _sslServerAuthenticationOptions = null;
+
                 return false;
             }
 
             _sslServerAuthenticationOptions = new();
             _sslServerAuthenticationOptions.AllowTlsResume = false;
             _sslServerAuthenticationOptions.AllowRenegotiation = false;
+            _sslServerAuthenticationOptions.CertificateRevocationCheckMode = X509RevocationMode.Online;
+            // todo: _sslServerAuthenticationOptions.ServerCertificateContext = 
             //sslServerAuthenticationOptions.CipherSuitesPolicy = new([TlsCipherSuite.TLS_AES_256_GCM_SHA384]);
             _sslServerAuthenticationOptions.EncryptionPolicy = EncryptionPolicy.RequireEncryption;
             _sslServerAuthenticationOptions.EnabledSslProtocols = SslProtocols.Tls13;
@@ -65,17 +66,22 @@ namespace Server
 
         internal static Boolean CreateSecureConnection(Socket socket, out SecureSocket secureSocket)
         {
+            if (!_initialized)
+            {
+                Log.FastLog("TLS not initialized - call static initializer -> load certificate", LogSeverity.Error, "SecureSocket");
+                secureSocket = null!;
+                return false;
+            }
+
             secureSocket = new();
 
-            if (!secureSocket.InternalCreate(socket, ref secureSocket)) return false;
-            else  return true;
+            return secureSocket.InternalCreate(socket, out secureSocket);
         }
 
-        private Boolean InternalCreate(Socket socket, ref SecureSocket secureSocket)
+        private Boolean InternalCreate(Socket socket, out SecureSocket secureSocket)
         {
             if (!_initialized)
             {
-                Log.FastLog("TLS not initialized - call static initializer", LogSeverity.Error, "SecureSocket");
                 secureSocket = null!;
                 return false;
             }

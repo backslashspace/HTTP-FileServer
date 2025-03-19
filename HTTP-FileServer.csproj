@@ -16,11 +16,11 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
-    <NoWarn>1701;1702;IDE0130;CS0618;CS8500</NoWarn>
+    <NoWarn>1701;1702;IDE0130;CS0618;CS8500;CA2014</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;IDE0130;CS0618;CS8500</NoWarn>
+    <NoWarn>1701;1702;IDE0130;CS0618;CS8500;CA2014</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -46,7 +46,6 @@
   <ItemGroup>
     <Folder Include="Program\Logging\" />
     <Folder Include="Program\HTTP\" />
-    <Folder Include="Program\Worker\FileSharing\" />
   </ItemGroup>
 
   <ItemGroup>

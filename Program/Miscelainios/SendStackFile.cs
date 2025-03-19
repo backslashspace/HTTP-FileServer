@@ -7,7 +7,7 @@ namespace Server
     {
         private static void SendStackFile(SecureSocket connection, String subPath)
         {
-            Int64 fileSize = GetFileSize(Program.AssemblyPath + "html\\" + subPath);
+            Int64 fileSize = Tools.GetFileSize(Program.AssemblyPath + "html\\" + subPath);
 
             if (fileSize < 1)
             {
@@ -18,7 +18,7 @@ namespace Server
             }
 
             Span<Byte> fileBuffer = stackalloc Byte[(Int32)fileSize];
-            if (!LoadStackFile(Program.AssemblyPath + "html\\" + subPath, fileBuffer))
+            if (!Tools.LoadStackFile(Program.AssemblyPath + "html\\" + subPath, fileBuffer))
             {
                 Log.FastLog("Unable to load html\\" + subPath + "file size -> 500", LogSeverity.Error, "StackFile");
                 HTTP.ERRORS.Send_500(connection);

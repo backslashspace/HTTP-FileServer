@@ -15,7 +15,13 @@ namespace Server
                 return;
             }
             
-
+            switch (pathParts[2])
+            {
+                case "createuser":
+                    if (pathParts.Length == 4 && pathParts[3] == "commit") CreateUser(connection, header, pathParts, in invokingUser);
+                    else SendStackFile(connection, "fileSharing\\controlPanel\\createUser.html");
+                    return;
+            }
 
 
 

@@ -22,7 +22,7 @@ namespace Server
         {
             Log.FastLog("Initializing", LogSeverity.Info, "Init");
 
-            if (!SecureSocket.Initialize(Program.AssemblyPath + "certificate.pfx", "Kennwort1")) return false;
+            if (!SecureSocket.LoadCertificate(configuration->PfxPath, configuration->PfxPassphrase)) return false;
 
             if (HWRandom.GetSupportedInstructions() != HWRandom.SupportedInstructions.All)
             {

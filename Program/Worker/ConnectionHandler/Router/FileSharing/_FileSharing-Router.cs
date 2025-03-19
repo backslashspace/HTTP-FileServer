@@ -7,7 +7,7 @@ namespace Server
     {
         private static void FileSharingPathRouter(SecureSocket connection, String header, String[] pathParts)
         {
-            if (pathParts.Length == 2)
+            if (pathParts.Length > 1)
             {
                 switch (pathParts[1])
                 {
