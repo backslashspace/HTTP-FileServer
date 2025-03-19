@@ -17,6 +17,8 @@ namespace Server
 
         private static X509Certificate2? _serverCertificate;
         private static SslServerAuthenticationOptions? _sslServerAuthenticationOptions;
+        private static String? _pfxPath;
+        private static String? _pfxPassword;
 
         internal Socket? Socket;
         private NetworkStream? _networkStream;
@@ -24,17 +26,23 @@ namespace Server
 
         // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+        internal static void SetPfxOptions(String pfxPath, String pfxPassword)
+        {
+            _pfxPath = pfxPath;
+            _pfxPassword = pfxPassword;
+        }
+
         /// <summary>
         /// Error handled method
         /// </summary>
         /// <param name="pfxPath">Path to the certificate and private key</param>
-        /// <param name="password">Optional password for the PFX file</param>
+        /// <param name="_pfxPassword">Optional password for the PFX file</param>
         /// <returns></returns>
-        internal static Boolean LoadCertificate(String pfxPath, String? password)
+        internal static Boolean LoadCertificate()
         {
             try
             {
-                _serverCertificate = X509CertificateLoader.LoadPkcs12FromFile(pfxPath, password, X509KeyStorageFlags.DefaultKeySet);
+                _serverCertificate = X509CertificateLoader.LoadPkcs12FromFile(_pfxPath!, _pfxPassword, X509KeyStorageFlags.DefaultKeySet);
             }
             catch (Exception exception)
             {

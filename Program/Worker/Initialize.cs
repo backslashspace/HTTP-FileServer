@@ -22,8 +22,6 @@ namespace Server
         {
             Log.FastLog("Initializing", LogSeverity.Info, "Init");
 
-            if (!SecureSocket.LoadCertificate(configuration->PfxPath, configuration->PfxPassphrase)) return false;
-
             if (HWRandom.GetSupportedInstructions() != HWRandom.SupportedInstructions.All)
             {
                 Log.FastLog("CPU not compatible! RDSEED instruction not found!\nShutting down..", LogSeverity.Critical, "HWRandom");
@@ -39,6 +37,11 @@ namespace Server
                 Log.FastLog("HTTP_ERRORS not initialized", LogSeverity.Error, "Init");
                 return false;
             }
+
+            SecureSocket.SetPfxOptions(configuration->PfxPath, configuration->PfxPassphrase);
+            if (!SecureSocket.LoadCertificate()) return false;
+
+            if (configuration->EnableReload) IPC.StartServerModule();
 
             if (!ThreadPoolX.Initialize(configuration->ThreadPoolThreads)) return false;
 

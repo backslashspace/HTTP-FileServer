@@ -15,12 +15,16 @@ namespace Server
         private static void Main(String[] args)
         {
             AssemblyPath = AppContext.BaseDirectory;
-            Log.Initialize(new(AssemblyPath));
 
             if (args.Length == 1 && args[0] == "/reload")
             {
-                Environment.Exit(0);
+                Log.Initialize(new(AssemblyPath), false);
+                Int32 exitCode = IPC.SendReloadSignal();
+                Environment.Exit(exitCode);
+                return;
             }
+
+            Log.Initialize(new(AssemblyPath), true);
 
             HostApplicationBuilderSettings hostApplicationBuilderSettings = new();
             hostApplicationBuilderSettings.ApplicationName = "File Server";

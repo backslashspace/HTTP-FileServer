@@ -14,6 +14,7 @@ namespace Server
         internal static volatile Boolean UngracefulShutdown = false;
 
         private static readonly ManualResetEvent _worker = new(false);
+
         private static Int32 Stopping = 0;
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -43,6 +44,7 @@ namespace Server
 
             Shutdown = true;
 
+            IPC.IpcActionHandle?.Set();
             Worker.CloseListeners();
 
             _worker.WaitOne();

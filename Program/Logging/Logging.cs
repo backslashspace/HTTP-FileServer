@@ -65,7 +65,7 @@ namespace BSS.Logging
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial Boolean AllocConsole();
 
-        internal static Boolean Initialize(Options configuration)
+        internal static Boolean Initialize(Options configuration, Boolean newLine)
         {
             if (_isInitialized || !configuration.Initialized) return false;
 
@@ -77,7 +77,7 @@ namespace BSS.Logging
 
             _configuration = configuration;
 
-            if (Directory.Exists(configuration.LogDirectoryPath + "\\logs"))
+            if (newLine && Directory.Exists(configuration.LogDirectoryPath + "\\logs"))
             {
                 DateTime now = DateTime.Now;
 

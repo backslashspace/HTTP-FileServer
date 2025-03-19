@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "HTTP-FileServer": {
+      "commandName": "Project"
+    },
+    "/reload": {
+      "commandName": "Project",
+      "commandLineArgs": "/reload"
+    }
+  }
+}
