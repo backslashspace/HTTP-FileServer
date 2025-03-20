@@ -7,7 +7,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        internal static void Run(Boolean protection)
+        internal static void Run()
         {
             while (!Service.Shutdown)
             {
@@ -15,7 +15,7 @@ namespace Server
 
                 try
                 {
-                    connection = SecureListener!.Accept();
+                    connection = _secureListener!.Accept();
                 }
                 catch (SocketException)
                 {
@@ -28,8 +28,6 @@ namespace Server
                     Service.InternalShutdown();
                     return;
                 }
-
-                // todo: check ip
 
                 if (!SecureSocket.CreateSecureConnection(connection, out SecureSocket secureSocket))
                 {

@@ -13,7 +13,7 @@ namespace Server
             Int32 exitCode = 0;
             Thread redirector = null!;
 
-            ConfigurationLoader.Configuration configuration;
+            ConfigurationLoader.Configuration configuration = default;
             if (!ConfigurationLoader.Load(AssemblyPath!, &configuration))
             {
                 exitCode = -1;
@@ -35,7 +35,7 @@ namespace Server
 
             Log.FastLog("Done", LogSeverity.Info, "Init");
 
-            Worker.Run(configuration.EnableServiceProtection);
+            Worker.Run();
 
         SHUTDOWN:
 

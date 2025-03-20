@@ -27,17 +27,36 @@ namespace Server
             Span<Byte> buffer = stackalloc Byte[(Int32)contentLength];
             connection.SslStream!.ReadExactly(buffer);
 
-            if (!ParseUserConfiguration(buffer, out UserConfiguration newUser))
+            if (buffer.Length < 32)
             {
                 HTTP.ERRORS.Send_400(connection);
                 return;
             }
 
+            if (!ParseUserConfiguration(ref buffer, out UserConfiguration newUser))
+            {
+                HTTP.ERRORS.Send_400(connection);
+                return;
+            }
 
+            if (newUser.LoginUsername == null || !Tools.IsNumberOrLetterOrDashOrUnderscore(newUser.LoginUsername))
+            {
+                SendControlPanel(connection, in user, $"<span style=\"color: orangered; font-weight: bold\">Invalid login name: only [a-zA-Z0-9_-] is allowed</span>", true);
+            }
 
+            if (newUser.DisplayUsername == null || !Tools.IsNumberOrLetterOrDashOrUnderscore(newUser.DisplayUsername))
+            {
+                //
+            }
 
+            if (newUser.Password == null || newUser.Password.Length < 12)
+            {
+                //
+            }
 
-
+            newUser.IsEnabled = *(Int32*)&newUser.IsEnabled == 1; 
+            newUser.Write = *(Int32*)&newUser.Write == 1; 
+            newUser.Read = *(Int32*)&newUser.Read == 1; 
 
             HTTP.ERRORS.Send_501(connection);
 

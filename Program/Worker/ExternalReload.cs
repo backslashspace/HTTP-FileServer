@@ -1,5 +1,5 @@
-﻿using BSS.Logging;
-using System;
+﻿using System;
+using BSS.Logging;
 using System.Threading;
 
 namespace Server
@@ -8,6 +8,7 @@ namespace Server
     {
         private const String LOG_WORD = "IPC";
         private const String LOG_WORD_EXTERNAL = "IPC-Client";
+
         private const String ACTION_HANDLE_NAME = "Local\\action-web-filesharing-13926412133428964810";
         private const String CONTROL_HANDLE_NAME = "Local\\control-web-filesharing-16524518571576731302";
 

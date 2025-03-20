@@ -10,7 +10,7 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static void SendControlPanel(SecureSocket connection, UserDB.User invokingUser, String insertInfoString = null!, Boolean setSelfURL = false)
+        private static void SendControlPanel(SecureSocket connection, ref readonly UserDB.User invokingUser, String insertInfoString = null!, Boolean setSelfURL = false)
         {
             String fileContent;
 

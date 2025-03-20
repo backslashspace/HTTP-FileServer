@@ -9,18 +9,22 @@ namespace Server
 {
     internal static partial class Worker
     {
-        private static Socket? SecureListener;
-        private static Socket? RedirectListener;
+        private static Boolean _protectionEnabled;
+
+        private static Socket? _secureListener;
+        private static Socket? _redirectListener;
 
         internal static void CloseListeners()
         {
-            SecureListener?.Close();
-            RedirectListener?.Close();
+            _secureListener?.Close();
+            _redirectListener?.Close();
         }
 
         internal unsafe static Boolean Initialize(ConfigurationLoader.Configuration* configuration)
         {
             Log.FastLog("Initializing", LogSeverity.Info, "Init");
+
+            _protectionEnabled = configuration->EnableServiceProtection;
 
             if (HWRandom.GetSupportedInstructions() != HWRandom.SupportedInstructions.All)
             {
@@ -59,22 +63,22 @@ namespace Server
 
             try
             {
-                SecureListener = new(SocketType.Stream, ProtocolType.Tcp);
-                SecureListener.NoDelay = true;
-                SecureListener.ReceiveTimeout = 5120;
-                SecureListener.SendTimeout = 5120;
-                SecureListener.Bind(new IPEndPoint(configuration->ListenerAddress, configuration->HttpsListenerPort));
-                SecureListener.Listen(4);
+                _secureListener = new(SocketType.Stream, ProtocolType.Tcp);
+                _secureListener.NoDelay = true;
+                _secureListener.ReceiveTimeout = 5120;
+                _secureListener.SendTimeout = 5120;
+                _secureListener.Bind(new IPEndPoint(configuration->ListenerAddress, configuration->HttpsListenerPort));
+                _secureListener.Listen(4);
                 Log.FastLog("Successfully bound secure secure listener to: " + configuration->ListenerAddress.ToString() + ":" + configuration->HttpsListenerPort, LogSeverity.Info, "Init->Socket");
 
                 if (configuration->EnableHttpRedirector)
                 {
-                    RedirectListener = new(SocketType.Stream, ProtocolType.Tcp);
-                    RedirectListener.NoDelay = true;
-                    RedirectListener.ReceiveTimeout = 5120;
-                    RedirectListener.SendTimeout = 5120;
-                    RedirectListener.Bind(new IPEndPoint(configuration->ListenerAddress, configuration->HttpListenerPort));
-                    RedirectListener.Listen(4);
+                    _redirectListener = new(SocketType.Stream, ProtocolType.Tcp);
+                    _redirectListener.NoDelay = true;
+                    _redirectListener.ReceiveTimeout = 5120;
+                    _redirectListener.SendTimeout = 5120;
+                    _redirectListener.Bind(new IPEndPoint(configuration->ListenerAddress, configuration->HttpListenerPort));
+                    _redirectListener.Listen(4);
                     Log.FastLog("Successfully bound http redirect listener to: " + configuration->ListenerAddress.ToString() + ":" + configuration->HttpListenerPort, LogSeverity.Info, "Init->Socket");
                 }
             }

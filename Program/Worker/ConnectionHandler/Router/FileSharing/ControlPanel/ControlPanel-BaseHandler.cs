@@ -11,7 +11,7 @@ namespace Server
 
             if (pathParts.Length == 2)
             {
-                SendControlPanel(connection, invokingUser);
+                SendControlPanel(connection, in invokingUser);
                 return;
             }
             

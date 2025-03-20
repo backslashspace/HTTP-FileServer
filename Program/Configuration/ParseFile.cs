@@ -91,7 +91,8 @@ namespace Server
                         && buffer[i + 5] == 'n'
                         && buffer[i + 6] == 'I'
                         && buffer[i + 7] == 'P'
-                        && buffer[i + 8] == '=')
+                        && buffer[i + 8] == '='
+                        && buffer[i + 9] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 9;
@@ -152,7 +153,8 @@ namespace Server
                         && buffer[i + 7] == 'o'
                         && buffer[i + 8] == 'r'
                         && buffer[i + 9] == 't'
-                        && buffer[i + 10] == '=')
+                        && buffer[i + 10] == '='
+                        && buffer[i + 11] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 11;
@@ -199,7 +201,8 @@ namespace Server
                         && buffer[i + 9] == 'o'
                         && buffer[i + 10] == 'r'
                         && buffer[i + 11] == 't'
-                        && buffer[i + 12] == '=')
+                        && buffer[i + 12] == '='
+                        && buffer[i + 13] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 13;
@@ -248,7 +251,8 @@ namespace Server
                         && buffer[i + 11] == 'e'
                         && buffer[i + 12] == 'c'
                         && buffer[i + 13] == 't'
-                        && buffer[i + 14] == '=')
+                        && buffer[i + 14] == '='
+                        && buffer[i + 15] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 15;
@@ -275,7 +279,8 @@ namespace Server
                         && buffer[i + 4] == 'a'
                         && buffer[i + 5] == 'd'
                         && buffer[i + 6] == 's'
-                        && buffer[i + 7] == '=')
+                        && buffer[i + 7] == '='
+                        && buffer[i + 8] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 8;
@@ -320,7 +325,8 @@ namespace Server
                         && buffer[i + 7] == 'i'
                         && buffer[i + 8] == 'o'
                         && buffer[i + 9] == 'n'
-                        && buffer[i + 10] == '=')
+                        && buffer[i + 10] == '='
+                        && buffer[i + 11] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 11;
@@ -352,7 +358,8 @@ namespace Server
                         && buffer[i + 9] == 'o'
                         && buffer[i + 10] == 'a'
                         && buffer[i + 11] == 'd'
-                        && buffer[i + 12] == '=')
+                        && buffer[i + 12] == '='
+                        && buffer[i + 13] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 13;
@@ -379,7 +386,8 @@ namespace Server
                         && buffer[i + 4] == 'a'
                         && buffer[i + 5] == 't'
                         && buffer[i + 6] == 'h'
-                        && buffer[i + 7] == '=')
+                        && buffer[i + 7] == '='
+                        && buffer[i + 8] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 8;
@@ -435,7 +443,8 @@ namespace Server
                         && buffer[i + 8] == 'o'
                         && buffer[i + 9] == 'r'
                         && buffer[i + 10] == 'd'
-                        && buffer[i + 11] == '=')
+                        && buffer[i + 11] == '='
+                        && buffer[i + 12] != newLineStart)
                     {
                         increment = false;
                         currentStartIndex = i += 12;

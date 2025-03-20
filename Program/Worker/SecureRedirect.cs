@@ -17,7 +17,7 @@ namespace Server
 
                 try
                 {
-                    connection = RedirectListener!.Accept();
+                    connection = _redirectListener!.Accept();
                 }
                 catch (SocketException)
                 {
